@@ -83,7 +83,7 @@ like CVS' $Log$, are not supported. A keyword template map "Log =
 '''
 
 
-from __future__ import absolute_import
+
 
 import os
 import re
@@ -231,7 +231,7 @@ class kwtemplater(object):
     @util.propertycache
     def escape(self):
         '''Returns bar-separated and escaped keywords.'''
-        return '|'.join(map(re.escape, self.templates.keys()))
+        return '|'.join(map(re.escape, list(self.templates.keys())))
 
     @util.propertycache
     def rekw(self):
@@ -455,7 +455,7 @@ def demo(ui, repo, *args, **opts):
         kwmaps = _defaultkwmaps(ui)
         if uikwmaps:
             ui.status(_('\tdisabling current template maps\n'))
-            for k, v in kwmaps.iteritems():
+            for k, v in kwmaps.items():
                 ui.setconfig('keywordmaps', k, v, 'keyword')
     else:
         ui.status(_('\n\tconfiguration using current keyword template maps\n'))
@@ -469,7 +469,7 @@ def demo(ui, repo, *args, **opts):
     ui.write(('[extensions]\nkeyword =\n'))
     demoitems('keyword', ui.configitems('keyword'))
     demoitems('keywordset', ui.configitems('keywordset'))
-    demoitems('keywordmaps', kwmaps.iteritems())
+    demoitems('keywordmaps', iter(kwmaps.items()))
     keywords = '$' + '$\n$'.join(sorted(kwmaps.keys())) + '$\n'
     repo.wvfs.write(fn, keywords)
     repo[None].add([fn])
@@ -550,7 +550,7 @@ def files(ui, repo, *pats, **opts):
         showfiles += ([f for f in files if f not in kwfiles],
                       [f for f in status.unknown if f not in kwunknown])
     kwlabels = 'enabled deleted enabledunknown ignored ignoredunknown'.split()
-    kwstates = zip(kwlabels, 'K!kIi', showfiles)
+    kwstates = list(zip(kwlabels, 'K!kIi', showfiles))
     fm = ui.formatter('kwfiles', opts)
     fmt = '%.0s%s\n'
     if opts.get('all') or ui.verbose:

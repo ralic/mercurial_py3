@@ -5,7 +5,7 @@
 # This software may be used and distributed according to the terms of the
 # GNU General Public License version 2 or any later version.
 
-from __future__ import absolute_import
+
 
 import io
 import locale
@@ -32,12 +32,12 @@ _jsonescapeu8fast = charencode.jsonescapeu8fast
 _sysstr = pycompat.sysstr
 
 if pycompat.ispy3:
-    unichr = chr
+    chr = chr
 
 # These unicode characters are ignored by HFS+ (Apple Technote 1150,
 # "Unicode Subtleties"), so we need to ignore them in some places for
 # sanity.
-_ignore = [unichr(int(x, 16)).encode("utf-8") for x in
+_ignore = [chr(int(x, 16)).encode("utf-8") for x in
            "200c 200d 200e 200f 202a 202b 202c 202d 202e "
            "206a 206b 206c 206d 206e 206f feff".split()]
 # verify the next function will work
@@ -46,9 +46,9 @@ assert all(i.startswith(("\xe2", "\xef")) for i in _ignore)
 def hfsignoreclean(s):
     """Remove codepoints ignored by HFS+ from s.
 
-    >>> hfsignoreclean(u'.h\u200cg'.encode('utf-8'))
+    >>> hfsignoreclean(u'.h\\u200cg'.encode('utf-8'))
     '.hg'
-    >>> hfsignoreclean(u'.h\ufeffg'.encode('utf-8'))
+    >>> hfsignoreclean(u'.h\\ufeffg'.encode('utf-8'))
     '.hg'
     """
     if "\xe2" in s or "\xef" in s:
@@ -66,8 +66,8 @@ elif _nativeenviron:
 else:
     # preferred encoding isn't known yet; use utf-8 to avoid unicode error
     # and recreate it once encoding is settled
-    environ = dict((k.encode(u'utf-8'), v.encode(u'utf-8'))
-                   for k, v in os.environ.items())  # re-exports
+    environ = dict((k.encode('utf-8'), v.encode('utf-8'))
+                   for k, v in list(os.environ.items()))  # re-exports
 
 _encodingfixers = {
     '646': lambda: 'ascii',
@@ -138,7 +138,7 @@ def tolocal(s):
             if encoding == 'UTF-8':
                 # fast path
                 return s
-            r = u.encode(_sysstr(encoding), u"replace")
+            r = u.encode(_sysstr(encoding), "replace")
             if u == r.decode(_sysstr(encoding)):
                 # r is a safe, non-lossy encoding of s
                 return r
@@ -147,7 +147,7 @@ def tolocal(s):
             # we should only get here if we're looking at an ancient changeset
             try:
                 u = s.decode(_sysstr(fallbackencoding))
-                r = u.encode(_sysstr(encoding), u"replace")
+                r = u.encode(_sysstr(encoding), "replace")
                 if u == r.decode(_sysstr(encoding)):
                     # r is a safe, non-lossy encoding of s
                     return r
@@ -155,7 +155,7 @@ def tolocal(s):
             except UnicodeDecodeError:
                 u = s.decode("utf-8", "replace") # last ditch
                 # can't round-trip
-                return u.encode(_sysstr(encoding), u"replace")
+                return u.encode(_sysstr(encoding), "replace")
     except LookupError as k:
         raise error.Abort(k, hint="please check your locale settings")
 
@@ -215,8 +215,8 @@ else:
 if not _nativeenviron:
     # now encoding and helper functions are available, recreate the environ
     # dict to be exported to other modules
-    environ = dict((tolocal(k.encode(u'utf-8')), tolocal(v.encode(u'utf-8')))
-                   for k, v in os.environ.items())  # re-exports
+    environ = dict((tolocal(k.encode('utf-8')), tolocal(v.encode('utf-8')))
+                   for k, v in list(os.environ.items()))  # re-exports
 
 # How to treat ambiguous-width characters. Set to 'wide' to treat as wide.
 _wide = _sysstr(environ.get("HGENCODINGAMBIGUOUS", "narrow") == "wide"
@@ -224,7 +224,7 @@ _wide = _sysstr(environ.get("HGENCODINGAMBIGUOUS", "narrow") == "wide"
 
 def colwidth(s):
     "Find the column width of a string for display in the local encoding"
-    return ucolwidth(s.decode(_sysstr(encoding), u'replace'))
+    return ucolwidth(s.decode(_sysstr(encoding), 'replace'))
 
 def ucolwidth(d):
     "Find the column width of a Unicode string for display"
@@ -236,7 +236,7 @@ def ucolwidth(d):
 def getcols(s, start, c):
     '''Use colwidth to find a c-column substring of s starting at byte
     index start'''
-    for x in xrange(start + c, len(s)):
+    for x in range(start + c, len(s)):
         t = s[start:x]
         if colwidth(t) == c:
             return t
@@ -267,7 +267,7 @@ def trim(s, width, ellipsis='', leftside=False):
     +++
     >>> print trim(t, 1, ellipsis=ellipsis)
     +
-    >>> u = u'\u3042\u3044\u3046\u3048\u304a' # 2 x 5 = 10 columns
+    >>> u = u'\\u3042\\u3044\\u3046\\u3048\\u304a' # 2 x 5 = 10 columns
     >>> t = u.encode(encoding.encoding)
     >>> print trim(t, 12, ellipsis=ellipsis)
     \xe3\x81\x82\xe3\x81\x84\xe3\x81\x86\xe3\x81\x88\xe3\x81\x8a
@@ -328,7 +328,7 @@ def trim(s, width, ellipsis='', leftside=False):
     else:
         uslice = lambda i: u[:-i]
         concat = lambda s: s + ellipsis
-    for i in xrange(1, len(u)):
+    for i in range(1, len(u)):
         usub = uslice(i)
         if ucolwidth(usub) <= width:
             return concat(usub.encode(_sysstr(encoding)))
@@ -513,12 +513,12 @@ def toutf8b(s):
             c = getutf8char(s, pos)
             if "\xed\xb0\x80" <= c <= "\xed\xb3\xbf":
                 # have to re-escape existing U+DCxx characters
-                c = unichr(0xdc00 + ord(s[pos])).encode('utf-8')
+                c = chr(0xdc00 + ord(s[pos])).encode('utf-8')
                 pos += 1
             else:
                 pos += len(c)
         except UnicodeDecodeError:
-            c = unichr(0xdc00 + ord(s[pos])).encode('utf-8')
+            c = chr(0xdc00 + ord(s[pos])).encode('utf-8')
             pos += 1
         r += c
     return r

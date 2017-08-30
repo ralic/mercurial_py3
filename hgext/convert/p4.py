@@ -4,7 +4,7 @@
 #
 # This software may be used and distributed according to the terms of the
 # GNU General Public License version 2 or any later version.
-from __future__ import absolute_import
+
 
 import marshal
 import re
@@ -130,11 +130,11 @@ class p4_source(common.converter_source):
                     views[sview] = cview
 
         # list of changes that affect our source files
-        p4changes = p4changes.keys()
+        p4changes = list(p4changes.keys())
         p4changes.sort(key=int)
 
         # list with depot pathnames, longest first
-        vieworder = views.keys()
+        vieworder = list(views.keys())
         vieworder.sort(key=len, reverse=True)
 
         # handle revision limiting

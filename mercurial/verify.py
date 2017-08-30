@@ -5,7 +5,7 @@
 # This software may be used and distributed according to the terms of the
 # GNU General Public License version 2 or any later version.
 
-from __future__ import absolute_import
+
 
 import os
 
@@ -282,10 +282,10 @@ class verifier(object):
                 ui.progress(_('checking'), currentsubdir[0], total=subdircount,
                             unit=_('manifests'))
 
-        for subdir, linkrevs in subdirnodes.iteritems():
+        for subdir, linkrevs in subdirnodes.items():
             subdirfilenodes = self._verifymanifest(linkrevs, subdir, storefiles,
                                                    progress)
-            for f, onefilenodes in subdirfilenodes.iteritems():
+            for f, onefilenodes in subdirfilenodes.items():
                 filenodes.setdefault(f, {}).update(onefilenodes)
 
         if not dir and subdirnodes:
@@ -476,7 +476,7 @@ class verifier(object):
 
             # cross-check
             if f in filenodes:
-                fns = [(v, k) for k, v in filenodes[f].iteritems()]
+                fns = [(v, k) for k, v in filenodes[f].items()]
                 for lr, node in sorted(fns):
                     self.err(lr, _("manifest refers to unknown revision %s") %
                              short(node), f)

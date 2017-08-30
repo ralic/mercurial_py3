@@ -1,6 +1,6 @@
 # Extension dedicated to test patch.diff() upgrade modes
 
-from __future__ import absolute_import
+
 
 from mercurial import (
     error,

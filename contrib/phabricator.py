@@ -30,7 +30,7 @@ Config::
 
 """
 
-from __future__ import absolute_import
+
 
 import itertools
 import json
@@ -68,7 +68,7 @@ def urlencodenested(params):
     """
     flatparams = util.sortdict()
     def process(prefix, obj):
-        items = {list: enumerate, dict: lambda x: x.items()}.get(type(obj))
+        items = {list: enumerate, dict: lambda x: list(x.items())}.get(type(obj))
         if items is None:
             flatparams[prefix] = obj
         else:
@@ -190,13 +190,13 @@ def getoldnodedrevmap(repo, nodelist):
     # Double check if tags are genuine by collecting all old nodes from
     # Phabricator, and expect precursors overlap with it.
     if toconfirm:
-        drevs = [drev for force, precs, drev in toconfirm.values()]
+        drevs = [drev for force, precs, drev in list(toconfirm.values())]
         alldiffs = callconduit(unfi, 'differential.querydiffs',
                                {'revisionIDs': drevs})
         getnode = lambda d: bin(encoding.unitolocal(
             getdiffmeta(d).get(r'node', ''))) or None
-        for newnode, (force, precset, drev) in toconfirm.items():
-            diffs = [d for d in alldiffs.values()
+        for newnode, (force, precset, drev) in list(toconfirm.items()):
+            diffs = [d for d in list(alldiffs.values())
                      if int(d[r'revisionID']) == drev]
 
             # "precursors" as known by Phabricator
@@ -308,7 +308,7 @@ def createdifferentialrevision(ctx, revid=None, parentrevid=None, oldnode=None,
     desc = ctx.description()
     info = callconduit(repo, 'differential.parsecommitmessage',
                        {'corpus': desc})
-    for k, v in info[r'fields'].items():
+    for k, v in list(info[r'fields'].items()):
         if k in ['title', 'summary', 'testPlan']:
             transactions.append({'type': k, 'value': v})
 
@@ -648,7 +648,7 @@ def querydrev(repo, spec):
     # Prefetch Differential Revisions in batch
     tofetch = set(drevs)
     for r in ancestordrevs:
-        tofetch.update(range(max(1, r - batchsize), r + 1))
+        tofetch.update(list(range(max(1, r - batchsize), r + 1)))
     if drevs:
         fetch({r'ids': list(tofetch)})
     validids = sorted(set(getstack(list(ancestordrevs))) | set(drevs))
@@ -690,7 +690,7 @@ def getdescfromdrev(drev):
     if testplan:
         testplan = 'Test Plan:\n%s' % testplan
     uri = 'Differential Revision: %s' % drev[r'uri']
-    return '\n\n'.join(filter(None, [title, summary, testplan, uri]))
+    return '\n\n'.join([_f for _f in [title, summary, testplan, uri] if _f])
 
 def getdiffmeta(diff):
     """get commit metadata (date, node, user, p1) from a diff object
@@ -765,7 +765,7 @@ def readpatch(repo, drevs, write):
         # headers that can be read by the "import" command. See patchheadermap
         # and extract in mercurial/patch.py for supported headers.
         meta = getdiffmeta(diffs[str(diffid)])
-        for k in _metanamemap.keys():
+        for k in list(_metanamemap.keys()):
             if k in meta:
                 header += '# %s %s\n' % (_metanamemap[k], meta[k])
 

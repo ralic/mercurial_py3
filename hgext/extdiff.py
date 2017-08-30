@@ -60,7 +60,7 @@ needed files, so running the external diff program will actually be
 pretty fast (at least faster than having to compare the entire tree).
 '''
 
-from __future__ import absolute_import
+
 
 import os
 import re
@@ -168,12 +168,12 @@ def dodiff(ui, repo, cmdline, pats, opts):
         if node2 is None:
             raise error.Abort(_('--patch requires two revisions'))
     else:
-        mod_a, add_a, rem_a = map(set, repo.status(node1a, node2, matcher,
-                                                   listsubrepos=subrepos)[:3])
+        mod_a, add_a, rem_a = list(map(set, repo.status(node1a, node2, matcher,
+                                                   listsubrepos=subrepos)[:3]))
         if do3way:
-            mod_b, add_b, rem_b = map(set,
+            mod_b, add_b, rem_b = list(map(set,
                                       repo.status(node1b, node2, matcher,
-                                                  listsubrepos=subrepos)[:3])
+                                                  listsubrepos=subrepos)[:3]))
         else:
             mod_b, add_b, rem_b = set(), set(), set()
         modadd = mod_a | add_a | mod_b | add_b

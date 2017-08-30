@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from __future__ import absolute_import, print_function
+
 
 import ast
 import collections
@@ -13,7 +13,7 @@ import sys
 # so that the return value matches the return value without virtualenv.
 if True: # disable lexical sorting checks
     try:
-        import BaseHTTPServer as basehttpserver
+        import http.server as basehttpserver
     except ImportError:
         basehttpserver = None
     import zlib

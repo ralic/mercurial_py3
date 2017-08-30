@@ -67,7 +67,7 @@ The header is followed by the markers. Marker format depend of the version. See
 comment associated with each format for details.
 
 """
-from __future__ import absolute_import
+
 
 import errno
 import struct
@@ -225,7 +225,7 @@ def _fm0readmarkers(data, off, stop):
                 # if content cannot be translated to nodeid drop the data.
                 parents = None
 
-        metadata = tuple(sorted(metadata.iteritems()))
+        metadata = tuple(sorted(metadata.items()))
 
         yield (pre, sucs, flags, metadata, date, parents)
 
@@ -253,7 +253,7 @@ def _fm0encodemeta(meta):
     """Return encoded metadata string to string mapping.
 
     Assume no ':' in key and no '\0' in both key and value."""
-    for key, value in meta.iteritems():
+    for key, value in meta.items():
         if ':' in key or '\0' in key:
             raise ValueError("':' and '\0' are forbidden in metadata key'")
         if '\0' in value:
@@ -382,7 +382,7 @@ def _fm1purereadmarkers(data, off, stop):
         off = o3 + metasize * nummeta
         metapairsize = unpack('>' + (metafmt * nummeta), data[o3:off])
         metadata = []
-        for idx in xrange(0, len(metapairsize), 2):
+        for idx in range(0, len(metapairsize), 2):
             o1 = off + metapairsize[idx]
             o2 = o1 + metapairsize[idx + 1]
             metadata.append((data[off:o1], data[o1:o2]))
@@ -533,7 +533,7 @@ class obsstore(object):
     def __len__(self):
         return len(self._all)
 
-    def __nonzero__(self):
+    def __bool__(self):
         if not self._cached('_all'):
             try:
                 return self.svfs.stat('obsstore').st_size > 1
@@ -588,7 +588,7 @@ class obsstore(object):
         if prec in succs:
             raise ValueError(_('in-marker cycle with %s') % node.hex(prec))
 
-        metadata = tuple(sorted(metadata.iteritems()))
+        metadata = tuple(sorted(metadata.items()))
 
         marker = (bytes(prec), tuple(succs), int(flag), metadata, date, parents)
         return bool(self.add(transaction, [marker]))

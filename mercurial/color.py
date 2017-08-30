@@ -5,7 +5,7 @@
 # This software may be used and distributed according to the terms of the
 # GNU General Public License version 2 or any later version.
 
-from __future__ import absolute_import
+
 
 import re
 
@@ -154,7 +154,7 @@ def _terminfosetup(ui, mode, formatted):
         ui._terminfoparams.clear()
         return
 
-    for key, (b, e, c) in ui._terminfoparams.items():
+    for key, (b, e, c) in list(ui._terminfoparams.items()):
         if not b:
             continue
         if not c and not curses.tigetstr(e):

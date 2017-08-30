@@ -11,7 +11,7 @@ bookmarks were previously located.
 
 """
 
-from __future__ import absolute_import
+
 
 import collections
 import errno
@@ -112,7 +112,7 @@ def recordbookmarks(orig, store, fp):
     repo = store._repo
     if util.safehasattr(repo, 'journal'):
         oldmarks = bookmarks.bmstore(repo)
-        for mark, value in store.iteritems():
+        for mark, value in store.items():
             oldvalue = oldmarks.get(mark, node.nullid)
             if value != oldvalue:
                 repo.journal.record(bookmarktype, mark, oldvalue, value)
@@ -148,7 +148,7 @@ def _mergeentriesiter(*iterables, **kwargs):
             pass
 
     while iterable_map:
-        value, key, it = order(iterable_map.itervalues())
+        value, key, it = order(iter(iterable_map.values()))
         yield value
         try:
             iterable_map[key][0] = next(it)
@@ -188,8 +188,8 @@ def unsharejournal(orig, ui, repo, repopath):
     return orig(ui, repo, repopath)
 
 class journalentry(collections.namedtuple(
-        u'journalentry',
-        u'timestamp user command namespace name oldhashes newhashes')):
+        'journalentry',
+        'timestamp user command namespace name oldhashes newhashes')):
     """Individual journal entry
 
     * timestamp: a mercurial (time, timezone) tuple
@@ -481,9 +481,9 @@ def journal(ui, repo, *args, **opts):
     for count, entry in enumerate(repo.journal.filtered(name=name)):
         if count == limit:
             break
-        newhashesstr = fm.formatlist(map(fm.hexfunc, entry.newhashes),
+        newhashesstr = fm.formatlist(list(map(fm.hexfunc, entry.newhashes)),
                                      name='node', sep=',')
-        oldhashesstr = fm.formatlist(map(fm.hexfunc, entry.oldhashes),
+        oldhashesstr = fm.formatlist(list(map(fm.hexfunc, entry.oldhashes)),
                                      name='node', sep=',')
 
         fm.startitem()

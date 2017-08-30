@@ -1,4 +1,4 @@
-from __future__ import absolute_import
+
 
 import binascii
 import itertools
@@ -98,7 +98,7 @@ if 'xrange' not in globals():
 
 A_HUGE_MANIFEST = b''.join(sorted(
     b'file%d\0%s%s\n' % (i, h, f) for i, h, f in
-    izip(xrange(200001),
+    zip(range(200001),
          itertools.cycle((HASH_1, HASH_2)),
          itertools.cycle((b'', b'x', b'l')))))
 
@@ -223,7 +223,7 @@ class basemanifesttests(object):
         self.assertEqual(want, m[b'foo'])
         self.assertEqual([(b'bar/baz/qux.py', BIN_HASH_2),
                           (b'foo', BIN_HASH_1 + b'a')],
-                         list(m.iteritems()))
+                         list(m.items()))
         # Sometimes it even tries a 22-byte fake hash, but we can
         # return 21 and it'll work out
         m[b'foo'] = want + b'+'
@@ -238,7 +238,7 @@ class basemanifesttests(object):
         # suffix with iteration
         self.assertEqual([(b'bar/baz/qux.py', BIN_HASH_2),
                           (b'foo', want)],
-                         list(m.iteritems()))
+                         list(m.items()))
 
         # shows up in diff
         self.assertEqual({b'foo': ((want, f), (h, b''))}, m.diff(clean))
@@ -378,7 +378,7 @@ class basemanifesttests(object):
 
         self.assertEqual(
                 [b'a/b/c/bar.txt', b'a/b/d/qux.py', b'readme.txt'],
-                m2.keys())
+                list(m2.keys()))
 
     def testMatchesNonexistentDirectory(self):
         '''Tests matches() for a relpath match on a directory that doesn't
@@ -388,18 +388,18 @@ class basemanifesttests(object):
         match = matchmod.match(b'/', b'', [b'a/f'], default=b'relpath')
         m2 = m.matches(match)
 
-        self.assertEqual([], m2.keys())
+        self.assertEqual([], list(m2.keys()))
 
     def testMatchesExactLarge(self):
         '''Tests matches() for files matching a large list of exact files.
         '''
         m = self.parsemanifest(A_HUGE_MANIFEST)
 
-        flist = m.keys()[80:300]
+        flist = list(m.keys())[80:300]
         match = matchmod.match(b'/', b'', flist, exact=True)
         m2 = m.matches(match)
 
-        self.assertEqual(flist, m2.keys())
+        self.assertEqual(flist, list(m2.keys()))
 
     def testMatchesFull(self):
         '''Tests matches() for what should be a full match.'''
@@ -408,7 +408,7 @@ class basemanifesttests(object):
         match = matchmod.match(b'/', b'', [b''])
         m2 = m.matches(match)
 
-        self.assertEqual(m.keys(), m2.keys())
+        self.assertEqual(list(m.keys()), list(m2.keys()))
 
     def testMatchesDirectory(self):
         '''Tests matches() on a relpath match on a directory, which should
@@ -422,7 +422,7 @@ class basemanifesttests(object):
             b'a/b/c/bar.py', b'a/b/c/bar.txt', b'a/b/c/foo.py',
             b'a/b/c/foo.txt',
             b'a/b/d/baz.py', b'a/b/d/qux.py', b'a/b/d/ten.txt', b'a/b/dog.py',
-            b'a/b/fish.py'], m2.keys())
+            b'a/b/fish.py'], list(m2.keys()))
 
     def testMatchesExactPath(self):
         '''Tests matches() on an exact match on a directory, which should
@@ -433,7 +433,7 @@ class basemanifesttests(object):
         match = matchmod.match(b'/', b'', [b'a/b'], exact=True)
         m2 = m.matches(match)
 
-        self.assertEqual([], m2.keys())
+        self.assertEqual([], list(m2.keys()))
 
     def testMatchesCwd(self):
         '''Tests matches() on a relpath match with the current directory ('.')
@@ -446,7 +446,7 @@ class basemanifesttests(object):
         self.assertEqual([
             b'a/b/c/bar.py', b'a/b/c/bar.txt', b'a/b/c/foo.py',
             b'a/b/c/foo.txt', b'a/b/d/baz.py', b'a/b/d/qux.py',
-            b'a/b/d/ten.txt', b'a/b/dog.py', b'a/b/fish.py'], m2.keys())
+            b'a/b/d/ten.txt', b'a/b/dog.py', b'a/b/fish.py'], list(m2.keys()))
 
     def testMatchesWithPattern(self):
         '''Tests matches() for files matching a pattern that reside
@@ -458,7 +458,7 @@ class basemanifesttests(object):
 
         self.assertEqual(
                 [b'a/b/c/bar.txt', b'a/b/c/foo.txt', b'a/b/d/ten.txt'],
-                m2.keys())
+                list(m2.keys()))
 
 class testmanifestdict(unittest.TestCase, basemanifesttests):
     def parsemanifest(self, text):

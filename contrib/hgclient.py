@@ -1,6 +1,6 @@
 # A minimal client for Mercurial's command server
 
-from __future__ import absolute_import, print_function
+
 import os
 import signal
 import socket
@@ -10,7 +10,7 @@ import sys
 import time
 
 try:
-    import cStringIO as io
+    import io as io
     stringio = io.StringIO
 except ImportError:
     import io

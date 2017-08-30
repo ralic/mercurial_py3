@@ -26,9 +26,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+
+
+
 # no unicode literals
 
 import binascii
@@ -58,12 +58,12 @@ BSER_UTF8STRING = b'\x0d'
 
 if compat.PYTHON3:
     STRING_TYPES = (str, bytes)
-    unicode = str
+    str = str
     def tobytes(i):
         return str(i).encode('ascii')
     long = int
 else:
-    STRING_TYPES = (unicode, str)
+    STRING_TYPES = (str, str)
     tobytes = bytes
 
 # Leave room for the serialization header, which includes
@@ -80,7 +80,7 @@ def _int_size(x):
         return 2
     elif -0x80000000 <= x <= 0x7FFFFFFF:
         return 4
-    elif long(-0x8000000000000000) <= x <= long(0x7FFFFFFFFFFFFFFF):
+    elif int(-0x8000000000000000) <= x <= int(0x7FFFFFFFFFFFFFFF):
         return 8
     else:
         raise RuntimeError('Cannot represent value: ' + str(x))
@@ -130,7 +130,7 @@ class _bser_buffer(object):
 
 
     def append_string(self, s):
-        if isinstance(s, unicode):
+        if isinstance(s, str):
             s = s.encode('utf-8')
         s_len = len(s)
         size = _int_size(s_len)
@@ -168,7 +168,7 @@ class _bser_buffer(object):
             self.ensure_size(needed)
             struct.pack_into(b'=c', self.buf, self.wpos, BSER_NULL)
             self.wpos += needed
-        elif isinstance(val, (int, long)):
+        elif isinstance(val, int):
             self.append_long(val)
         elif isinstance(val, STRING_TYPES):
             self.append_string(val)
@@ -199,9 +199,9 @@ class _bser_buffer(object):
                 raise RuntimeError('Cannot represent this mapping value')
             self.wpos += needed
             if compat.PYTHON3:
-                iteritems = val.items()
+                iteritems = list(val.items())
             else:
-                iteritems = val.iteritems()
+                iteritems = iter(val.items())
             for k, v in iteritems:
                 self.append_string(k)
                 self.append_recursive(v)
@@ -259,7 +259,7 @@ class _BunserDict(object):
         return self.__getitem__(name)
 
     def __getitem__(self, key):
-        if isinstance(key, (int, long)):
+        if isinstance(key, int):
             return self._values[key]
         elif key.startswith('st_'):
             # hack^Wfeature to allow mercurial to use "st_size" to

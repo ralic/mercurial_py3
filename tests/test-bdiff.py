@@ -1,4 +1,4 @@
-from __future__ import absolute_import, print_function
+
 import collections
 import struct
 import unittest
@@ -97,7 +97,7 @@ class BdiffTests(unittest.TestCase):
                      diffreplace(12, 12, '', 'b\nc\n.\n'),
                      'd\ne\n',
                      diffreplace(16, 18, '.\n', ''), 'f\n']
-        self.assert_(got in (want_c, want_pure),
+        self.assertTrue(got in (want_c, want_pure),
                      'got: %r, wanted either %r or %r' % (
                          got, want_c, want_pure))
 

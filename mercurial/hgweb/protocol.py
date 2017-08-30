@@ -5,7 +5,7 @@
 # This software may be used and distributed according to the terms of the
 # GNU General Public License version 2 or any later version.
 
-from __future__ import absolute_import
+
 
 import cgi
 import struct
@@ -55,7 +55,7 @@ class webproto(wireproto.abstractserverproto):
         for k in keys:
             if k == '*':
                 star = {}
-                for key in knownargs.keys():
+                for key in list(knownargs.keys()):
                     if key != 'cmd' and key not in keys:
                         star[key] = knownargs[key][0]
                 data['*'] = star

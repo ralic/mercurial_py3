@@ -5,7 +5,7 @@
 # This software may be used and distributed according to the terms of the
 # GNU General Public License version 2 or any later version.
 
-from __future__ import absolute_import
+
 
 import errno
 import hashlib
@@ -586,7 +586,7 @@ def _pushdiscoverybookmarks(pushop):
     ui.debug("checking for updated bookmarks\n")
     ancestors = ()
     if pushop.revs:
-        revnums = map(repo.changelog.rev, pushop.revs)
+        revnums = list(map(repo.changelog.rev, pushop.revs))
         ancestors = repo.changelog.ancestors(revnums, inclusive=True)
     remotebookmark = remote.listkeys('bookmarks')
 
@@ -719,7 +719,7 @@ def _pushb2ctxcheckheads(pushop, bundler):
             bundler.newpart('check:heads', data=iter(pushop.remoteheads))
         else:
             affected = set()
-            for branch, heads in pushop.pushbranchmap.iteritems():
+            for branch, heads in pushop.pushbranchmap.items():
                 remoteheads, newheads, unsyncedheads, discardedheads = heads
                 if remoteheads is not None:
                     remote = set(remoteheads)
@@ -891,7 +891,7 @@ def _getbundlesendvars(pushop, bundler):
 
         part = bundler.newpart('pushvars')
 
-        for key, value in shellvars.iteritems():
+        for key, value in shellvars.items():
             part.addparam(key, value, mandatory=False)
 
 def _pushbundle2(pushop):
@@ -1657,7 +1657,7 @@ def _getbundlelistkeysparts(bundler, repo, source, bundlecaps=None,
     for namespace in listkeys:
         part = bundler.newpart('listkeys')
         part.addparam('namespace', namespace)
-        keys = repo.listkeys(namespace).items()
+        keys = list(repo.listkeys(namespace).items())
         part.data = pushkey.encodekeys(keys)
 
 @getbundle2partsgenerator('obsmarkers')

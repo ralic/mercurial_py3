@@ -5,7 +5,7 @@
 # that have proven likely to expose bugs and divergent behavior in
 # different encoding implementations.
 
-from __future__ import absolute_import, print_function
+
 
 import binascii
 import collections
@@ -19,15 +19,15 @@ from mercurial import (
     store,
 )
 
-validchars = set(map(chr, range(0, 256)))
-alphanum = range(ord('A'), ord('Z'))
+validchars = set(map(chr, list(range(0, 256))))
+alphanum = list(range(ord('A'), ord('Z')))
 
 for c in '\0/':
     validchars.remove(c)
 
 winreserved = ('aux con prn nul'.split() +
-               ['com%d' % i for i in xrange(1, 10)] +
-               ['lpt%d' % i for i in xrange(1, 10)])
+               ['com%d' % i for i in range(1, 10)] +
+               ['lpt%d' % i for i in range(1, 10)])
 
 def casecombinations(names):
     '''Build all case-diddled combinations of names.'''
@@ -35,8 +35,8 @@ def casecombinations(names):
     combos = set()
 
     for r in names:
-        for i in xrange(len(r) + 1):
-            for c in itertools.combinations(xrange(len(r)), i):
+        for i in range(len(r) + 1):
+            for c in itertools.combinations(range(len(r)), i):
                 d = r
                 for j in c:
                     d = ''.join((d[:j], d[j].upper(), d[j + 1:]))
@@ -57,9 +57,9 @@ def buildprobtable(fp, cmd='hg manifest tip'):
             counts[c] += 1
     for c in '\r/\n':
         counts.pop(c, None)
-    t = sum(counts.itervalues()) / 100.0
+    t = sum(counts.values()) / 100.0
     fp.write('probtable = (')
-    for i, (k, v) in enumerate(sorted(counts.iteritems(), key=lambda x: x[1],
+    for i, (k, v) in enumerate(sorted(iter(counts.items()), key=lambda x: x[1],
                                       reverse=True)):
         if (i % 5) == 0:
             fp.write('\n    ')
@@ -142,7 +142,7 @@ def makepart(rng, k):
 def makepath(rng, j, k):
     '''Construct a complete pathname.'''
 
-    return ('data/' + '/'.join(makepart(rng, k) for _ in xrange(j)) +
+    return ('data/' + '/'.join(makepart(rng, k) for _ in range(j)) +
             rng.choice(['.d', '.i']))
 
 def genpath(rng, count):
@@ -150,7 +150,7 @@ def genpath(rng, count):
 
     mink, maxk = 1, 4096
     def steps():
-        for i in xrange(count):
+        for i in range(count):
             yield mink + int(round(math.sqrt((maxk - mink) * float(i) / count)))
     for k in steps():
         x = rng.randint(1, k)
@@ -183,7 +183,7 @@ def main():
         if o in ('-c', '--count'):
             count = int(a)
         elif o in ('-s', '--seed'):
-            seed = long(a, base=0) # accepts base 10 or 16 strings
+            seed = int(a, base=0) # accepts base 10 or 16 strings
         elif o == '--build':
             buildprobtable(sys.stdout,
                            'find .hg/store/data -type f && '
@@ -192,9 +192,9 @@ def main():
 
     if seed is None:
         try:
-            seed = long(binascii.hexlify(os.urandom(16)), 16)
+            seed = int(binascii.hexlify(os.urandom(16)), 16)
         except AttributeError:
-            seed = long(time.time() * 1000)
+            seed = int(time.time() * 1000)
 
     rng = random.Random(seed)
     if runtests(rng, seed, count):

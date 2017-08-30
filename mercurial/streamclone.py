@@ -5,7 +5,7 @@
 # This software may be used and distributed according to the terms of the
 # GNU General Public License version 2 or any later version.
 
-from __future__ import absolute_import
+
 
 import struct
 
@@ -142,7 +142,7 @@ def maybeperformlegacystreamclone(pullop):
 
     l = fp.readline()
     try:
-        filecount, bytecount = map(int, l.split(' ', 1))
+        filecount, bytecount = list(map(int, l.split(' ', 1)))
     except (ValueError, TypeError):
         raise error.ResponseError(
             _('unexpected response from remote server:'), l)
@@ -331,7 +331,7 @@ def consumev1(repo, fp, filecount, bytecount):
 
         with repo.transaction('clone'):
             with repo.svfs.backgroundclosing(repo.ui, expectedcount=filecount):
-                for i in xrange(filecount):
+                for i in range(filecount):
                     # XXX doesn't support '\n' or '\r' in filenames
                     l = fp.readline()
                     try:

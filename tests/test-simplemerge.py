@@ -13,7 +13,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import
+
 
 import unittest
 from mercurial import (
@@ -123,19 +123,19 @@ class TestMerge3(TestCase):
                     ['aaa', 'bbb'],
                     ['aaa', 'bbb'])
 
-        self.assertEquals(m3.find_unconflicted(),
+        self.assertEqual(m3.find_unconflicted(),
                           [(0, 2)])
 
-        self.assertEquals(list(m3.find_sync_regions()),
+        self.assertEqual(list(m3.find_sync_regions()),
                           [(0, 2,
                             0, 2,
                             0, 2),
                            (2, 2,  2, 2,  2, 2)])
 
-        self.assertEquals(list(m3.merge_regions()),
+        self.assertEqual(list(m3.merge_regions()),
                           [('unchanged', 0, 2)])
 
-        self.assertEquals(list(m3.merge_groups()),
+        self.assertEqual(list(m3.merge_groups()),
                           [('unchanged', ['aaa', 'bbb'])])
 
     def test_front_insert(self):
@@ -145,15 +145,15 @@ class TestMerge3(TestCase):
 
         # todo: should use a sentinel at end as from get_matching_blocks
         # to match without zz
-        self.assertEquals(list(m3.find_sync_regions()),
+        self.assertEqual(list(m3.find_sync_regions()),
                           [(0, 1,  2, 3,  0, 1),
                            (1, 1,  3, 3,  1, 1)])
 
-        self.assertEquals(list(m3.merge_regions()),
+        self.assertEqual(list(m3.merge_regions()),
                           [('a', 0, 2),
                            ('unchanged', 0, 1)])
 
-        self.assertEquals(list(m3.merge_groups()),
+        self.assertEqual(list(m3.merge_groups()),
                           [('a', ['aaa', 'bbb']),
                            ('unchanged', ['zz'])])
 
@@ -163,13 +163,13 @@ class TestMerge3(TestCase):
                     [])
         # todo: should use a sentinel at end as from get_matching_blocks
         # to match without zz
-        self.assertEquals(list(m3.find_sync_regions()),
+        self.assertEqual(list(m3.find_sync_regions()),
                           [(0, 0,  2, 2,  0, 0)])
 
-        self.assertEquals(list(m3.merge_regions()),
+        self.assertEqual(list(m3.merge_regions()),
                           [('a', 0, 2)])
 
-        self.assertEquals(list(m3.merge_lines()),
+        self.assertEqual(list(m3.merge_lines()),
                           ['aaa', 'bbb'])
 
     def test_no_conflicts(self):
@@ -178,15 +178,15 @@ class TestMerge3(TestCase):
                     ['aaa', '111', 'bbb'],
                     ['aaa', 'bbb'])
 
-        self.assertEquals(m3.find_unconflicted(),
+        self.assertEqual(m3.find_unconflicted(),
                           [(0, 1), (1, 2)])
 
-        self.assertEquals(list(m3.find_sync_regions()),
+        self.assertEqual(list(m3.find_sync_regions()),
                           [(0, 1,  0, 1,  0, 1),
                            (1, 2,  2, 3,  1, 2),
                            (2, 2,  3, 3,  2, 2)])
 
-        self.assertEquals(list(m3.merge_regions()),
+        self.assertEqual(list(m3.merge_regions()),
                           [('unchanged', 0, 1),
                            ('a', 1, 2),
                            ('unchanged', 1, 2)])
@@ -196,7 +196,7 @@ class TestMerge3(TestCase):
                     ['aaa\n', 'bbb\n', '222\n'],
                     ['aaa\n', 'bbb\n'])
 
-        self.assertEquals(''.join(m3.merge_lines()),
+        self.assertEqual(''.join(m3.merge_lines()),
                           'aaa\nbbb\n222\n')
 
     def test_append_b(self):
@@ -204,7 +204,7 @@ class TestMerge3(TestCase):
                     ['aaa\n', 'bbb\n'],
                     ['aaa\n', 'bbb\n', '222\n'])
 
-        self.assertEquals(''.join(m3.merge_lines()),
+        self.assertEqual(''.join(m3.merge_lines()),
                           'aaa\nbbb\n222\n')
 
     def test_append_agreement(self):
@@ -212,7 +212,7 @@ class TestMerge3(TestCase):
                     ['aaa\n', 'bbb\n', '222\n'],
                     ['aaa\n', 'bbb\n', '222\n'])
 
-        self.assertEquals(''.join(m3.merge_lines()),
+        self.assertEqual(''.join(m3.merge_lines()),
                           'aaa\nbbb\n222\n')
 
     def test_append_clash(self):
@@ -225,7 +225,7 @@ class TestMerge3(TestCase):
                             start_marker='<<',
                             mid_marker='--',
                             end_marker='>>')
-        self.assertEquals(''.join(ml),
+        self.assertEqual(''.join(ml),
                           'aaa\n'
                           'bbb\n'
                           '<< a\n'
@@ -245,7 +245,7 @@ class TestMerge3(TestCase):
                             start_marker='<<',
                             mid_marker='--',
                             end_marker='>>')
-        self.assertEquals(''.join(ml), 'aaa\n222\nbbb\n')
+        self.assertEqual(''.join(ml), 'aaa\n222\nbbb\n')
 
 
     def test_insert_clash(self):
@@ -254,20 +254,20 @@ class TestMerge3(TestCase):
                     ['aaa\n', '111\n', 'bbb\n'],
                     ['aaa\n', '222\n', 'bbb\n'])
 
-        self.assertEquals(m3.find_unconflicted(),
+        self.assertEqual(m3.find_unconflicted(),
                           [(0, 1), (1, 2)])
 
-        self.assertEquals(list(m3.find_sync_regions()),
+        self.assertEqual(list(m3.find_sync_regions()),
                           [(0, 1,  0, 1,  0, 1),
                            (1, 2,  2, 3,  2, 3),
                            (2, 2,  3, 3,  3, 3)])
 
-        self.assertEquals(list(m3.merge_regions()),
+        self.assertEqual(list(m3.merge_regions()),
                           [('unchanged', 0, 1),
                            ('conflict', 1, 1,  1, 2,  1, 2),
                            ('unchanged', 1, 2)])
 
-        self.assertEquals(list(m3.merge_groups()),
+        self.assertEqual(list(m3.merge_groups()),
                           [('unchanged', ['aaa\n']),
                            ('conflict', [], ['111\n'], ['222\n']),
                            ('unchanged', ['bbb\n']),
@@ -278,7 +278,7 @@ class TestMerge3(TestCase):
                             start_marker='<<',
                             mid_marker='--',
                             end_marker='>>')
-        self.assertEquals(''.join(ml),
+        self.assertEqual(''.join(ml),
 '''aaa
 << a
 111
@@ -294,10 +294,10 @@ bbb
                     ['aaa', '111', 'bbb'],
                     ['aaa', '222', 'bbb'])
 
-        self.assertEquals(m3.find_unconflicted(),
+        self.assertEqual(m3.find_unconflicted(),
                           [(0, 1), (2, 3)])
 
-        self.assertEquals(list(m3.find_sync_regions()),
+        self.assertEqual(list(m3.find_sync_regions()),
                           [(0, 1,  0, 1,  0, 1),
                            (2, 3,  2, 3,  2, 3),
                            (3, 3,  3, 3,  3, 3)])
@@ -308,11 +308,11 @@ bbb
                     ['aaa', '111', '111', '111', 'bbb'],
                     ['aaa', '222', '222', '222', '222', 'bbb'])
 
-        self.assertEquals(m3.find_unconflicted(),
+        self.assertEqual(m3.find_unconflicted(),
                           [(0, 1), (3, 4)])
 
 
-        self.assertEquals(list(m3.find_sync_regions()),
+        self.assertEqual(list(m3.find_sync_regions()),
                           [(0, 1,  0, 1,  0, 1),
                            (3, 4,  4, 5,  5, 6),
                            (4, 4,  5, 5,  6, 6)])
@@ -323,7 +323,7 @@ bbb
         ml = list(m3.merge_lines('LAO', 'TAO'))
         self.log('merge result:')
         self.log(''.join(ml))
-        self.assertEquals(ml, MERGED_RESULT)
+        self.assertEqual(ml, MERGED_RESULT)
 
     def test_binary(self):
         with self.assertRaises(error.Abort):

@@ -5,7 +5,7 @@
 # This software may be used and distributed according to the terms of the
 # GNU General Public License version 2 or any later version.
 
-from __future__ import absolute_import
+
 
 import gzip
 import os
@@ -65,7 +65,7 @@ exts = {
     }
 
 def guesskind(dest):
-    for kind, extensions in exts.iteritems():
+    for kind, extensions in exts.items():
         if any(dest.endswith(ext) for ext in extensions):
             return kind
     return None
@@ -143,7 +143,7 @@ class tarit(object):
             if fname:
                 flags = gzip.FNAME
             self.fileobj.write(chr(flags))
-            gzip.write32u(self.fileobj, long(self.timestamp))
+            gzip.write32u(self.fileobj, int(self.timestamp))
             self.fileobj.write('\002')
             self.fileobj.write('\377')
             if fname:
@@ -325,9 +325,9 @@ def archive(repo, dest, node, kind, decode=True, matchfn=None,
             write(name, 0o644, False, lambda: buildmetadata(ctx))
 
     if matchfn:
-        files = [f for f in ctx.manifest().keys() if matchfn(f)]
+        files = [f for f in list(ctx.manifest().keys()) if matchfn(f)]
     else:
-        files = ctx.manifest().keys()
+        files = list(ctx.manifest().keys())
     total = len(files)
     if total:
         files.sort()

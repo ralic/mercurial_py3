@@ -5,7 +5,7 @@
 # This software may be used and distributed according to the terms of the
 # GNU General Public License version 2 or any later version.
 
-from __future__ import absolute_import
+
 
 import re
 import struct
@@ -70,7 +70,7 @@ class diffopts(object):
 
     def __init__(self, **opts):
         opts = pycompat.byteskwargs(opts)
-        for k in self.defaults.keys():
+        for k in list(self.defaults.keys()):
             v = opts.get(k)
             if v is None:
                 v = self.defaults[k]
@@ -351,7 +351,7 @@ def _unidiff(t1, t2, opts=defaultopts):
             # walk backwards from the start of the context up to the start of
             # the previous hunk context until we find a line starting with an
             # alphanumeric char.
-            for i in xrange(astart - 1, lastpos - 1, -1):
+            for i in range(astart - 1, lastpos - 1, -1):
                 if l1[i][0].isalnum():
                     func = ' ' + l1[i].rstrip()[:40]
                     lastfunc[1] = func
@@ -371,7 +371,7 @@ def _unidiff(t1, t2, opts=defaultopts):
         hunklines = (
             ["@@ -%d,%d +%d,%d @@%s\n" % (hunkrange + (func,))]
             + delta
-            + [' ' + l1[x] for x in xrange(a2, aend)]
+            + [' ' + l1[x] for x in range(a2, aend)]
         )
         yield hunkrange, hunklines
 

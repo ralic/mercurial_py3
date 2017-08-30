@@ -7,7 +7,7 @@
 # GNU General Public License version 2 or any later version.
 
 '''Overridden Mercurial commands and functions for the largefiles extension'''
-from __future__ import absolute_import
+
 
 import copy
 import os
@@ -40,7 +40,7 @@ def composelargefilematcher(match, manifest):
     matcher'''
     m = copy.copy(match)
     lfile = lambda f: lfutil.standin(f) in manifest
-    m._files = filter(lfile, m._files)
+    m._files = list(filter(lfile, m._files))
     m._fileset = set(m._files)
     m.always = lambda: False
     origmatchfn = m.matchfn
@@ -55,7 +55,7 @@ def composenormalfilematcher(match, manifest, exclude=None):
     m = copy.copy(match)
     notlfile = lambda f: not (lfutil.isstandin(f) or lfutil.standin(f) in
             manifest or f in excluded)
-    m._files = filter(notlfile, m._files)
+    m._files = list(filter(notlfile, m._files))
     m._fileset = set(m._files)
     m.always = lambda: False
     origmatchfn = m.matchfn
@@ -570,7 +570,7 @@ def copiespathcopies(orig, ctx1, ctx2, match=None):
     copies = orig(ctx1, ctx2, match=match)
     updated = {}
 
-    for k, v in copies.iteritems():
+    for k, v in copies.items():
         updated[lfutil.splitstandin(k) or k] = lfutil.splitstandin(v) or v
 
     return updated

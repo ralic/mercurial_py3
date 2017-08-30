@@ -5,7 +5,7 @@
 # This software may be used and distributed according to the terms of the
 # GNU General Public License version 2 or any later version.
 
-from __future__ import absolute_import
+
 
 import collections
 
@@ -140,10 +140,10 @@ def _delayopener(opener, target, buf):
         return appender(opener, name, mode, buf)
     return _delay
 
-_changelogrevision = collections.namedtuple(u'changelogrevision',
-                                            (u'manifest', u'user', u'date',
-                                             u'files', u'description',
-                                             u'extra'))
+_changelogrevision = collections.namedtuple('changelogrevision',
+                                            ('manifest', 'user', 'date',
+                                             'files', 'description',
+                                             'extra'))
 
 class changelogrevision(object):
     """Holds results of a parsed changelog revision.
@@ -154,8 +154,8 @@ class changelogrevision(object):
     """
 
     __slots__ = (
-        u'_offsets',
-        u'_text',
+        '_offsets',
+        '_text',
     )
 
     def __new__(cls, text):
@@ -295,7 +295,7 @@ class changelog(revlog.revlog):
 
     def tip(self):
         """filtered version of revlog.tip"""
-        for i in xrange(len(self) -1, -2, -1):
+        for i in range(len(self) -1, -2, -1):
             if i not in self.filteredrevs:
                 return self.node(i)
 
@@ -310,7 +310,7 @@ class changelog(revlog.revlog):
             return revlog.revlog.__iter__(self)
 
         def filterediter():
-            for i in xrange(len(self)):
+            for i in range(len(self)):
                 if i not in self.filteredrevs:
                     yield i
 

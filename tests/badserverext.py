@@ -29,7 +29,7 @@ closeaftersendbytes
    If defined, close the client socket after sending this many bytes.
 """
 
-from __future__ import absolute_import
+
 
 import socket
 

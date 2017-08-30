@@ -71,7 +71,7 @@
 #         - put blocks whose nodes come all from p2 first
 #     - write the tag blocks in the sorted order
 
-from __future__ import absolute_import
+
 
 import operator
 
@@ -96,7 +96,7 @@ def readtagsformerge(ui, repo, lines, fn='', keeplinenums=False):
     '''
     filetags = tagsmod._readtaghist(ui, repo, lines, fn=fn, recode=None,
                                     calcnodelines=True)[1]
-    for tagname, taginfo in filetags.items():
+    for tagname, taginfo in list(filetags.items()):
         if not keeplinenums:
             for el in taginfo:
                 el[1] = None
@@ -146,7 +146,7 @@ def writemergedtags(fcd, mergedtags):
     possible to the first parent's .hgtags file.
     '''
     # group the node-tag pairs that must be written next to each other
-    for tname, taglist in mergedtags.items():
+    for tname, taglist in list(mergedtags.items()):
         mergedtags[tname] = grouptagnodesbyline(taglist)
 
     # convert the grouped merged tags dict into a format that resembles the
@@ -155,7 +155,7 @@ def writemergedtags(fcd, mergedtags):
         return '\n'.join(['%s %s' % (hexnode, tname) for hexnode in tlist])
 
     finaltags = []
-    for tname, tags in mergedtags.items():
+    for tname, tags in list(mergedtags.items()):
         for block in tags:
             block[1] = taglist2string(block[1], tname)
         finaltags += tags
@@ -248,7 +248,7 @@ def merge(repo, fcd, fco, fca):
     conflictedtags = []  # for reporting purposes
     mergedtags = util.sortdict(p1tags)
     # sortdict does not implement iteritems()
-    for tname, p2nodes in p2tags.items():
+    for tname, p2nodes in list(p2tags.items()):
         if tname not in mergedtags:
             mergedtags[tname] = p2nodes
             continue

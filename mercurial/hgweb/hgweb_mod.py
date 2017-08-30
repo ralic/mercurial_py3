@@ -6,7 +6,7 @@
 # This software may be used and distributed according to the terms of the
 # GNU General Public License version 2 or any later version.
 
-from __future__ import absolute_import
+
 
 import contextlib
 import os
@@ -137,7 +137,7 @@ class requestcontext(object):
 
     def archivelist(self, nodeid):
         allowed = self.configlist('web', 'allow_archive')
-        for typ, spec in self.archivespecs.iteritems():
+        for typ, spec in self.archivespecs.items():
             if typ in allowed or self.configbool('web', 'allow%s' % typ):
                 yield {'type': typ, 'extension': spec[2], 'node': nodeid}
 
@@ -405,7 +405,7 @@ class hgweb(object):
 
             if cmd == 'archive':
                 fn = req.form['node'][0]
-                for type_, spec in rctx.archivespecs.iteritems():
+                for type_, spec in rctx.archivespecs.items():
                     ext = spec[2]
                     if fn.endswith(ext):
                         req.form['node'] = [fn[:-len(ext)]]

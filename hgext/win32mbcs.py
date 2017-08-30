@@ -44,7 +44,7 @@ You can specify the encoding by config option::
 
 It is useful for the users who want to commit with UTF-8 log message.
 '''
-from __future__ import absolute_import
+
 
 import os
 import sys
@@ -73,21 +73,21 @@ def decode(arg):
     elif isinstance(arg, tuple):
         return tuple(map(decode, arg))
     elif isinstance(arg, list):
-        return map(decode, arg)
+        return list(map(decode, arg))
     elif isinstance(arg, dict):
-        for k, v in arg.items():
+        for k, v in list(arg.items()):
             arg[k] = decode(v)
     return arg
 
 def encode(arg):
-    if isinstance(arg, unicode):
+    if isinstance(arg, str):
         return arg.encode(_encoding)
     elif isinstance(arg, tuple):
         return tuple(map(encode, arg))
     elif isinstance(arg, list):
-        return map(encode, arg)
+        return list(map(encode, arg))
     elif isinstance(arg, dict):
-        for k, v in arg.items():
+        for k, v in list(arg.items()):
             arg[k] = encode(v)
     return arg
 
@@ -117,7 +117,7 @@ def basewrapper(func, argtype, enc, dec, args, kwds):
                          " %s encoding\n") % (_encoding))
 
 def wrapper(func, args, kwds):
-    return basewrapper(func, unicode, encode, decode, args, kwds)
+    return basewrapper(func, str, encode, decode, args, kwds)
 
 
 def reversewrapper(func, args, kwds):

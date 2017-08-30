@@ -6,7 +6,7 @@
 # This software may be used and distributed according to the terms of the
 # GNU General Public License version 2 or any later version.
 
-from __future__ import absolute_import
+
 
 import errno
 import io
@@ -46,7 +46,7 @@ def encodevalueinheaders(value, header, limit):
     result = []
 
     n = 0
-    for i in xrange(0, len(value), valuelen):
+    for i in range(0, len(value), valuelen):
         n += 1
         result.append((fmt % str(n), value[i:i + valuelen]))
 
@@ -214,7 +214,7 @@ class httppeer(wireproto.wirepeer):
             if not data:
                 data = strargs
             else:
-                if isinstance(data, basestring):
+                if isinstance(data, str):
                     i = io.BytesIO(data)
                     i.length = len(data)
                     data = i

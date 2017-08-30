@@ -1,4 +1,4 @@
-from __future__ import print_function, absolute_import
+
 
 """Fuzz testing for operations against a Mercurial repository
 
@@ -256,7 +256,7 @@ class verifyingstatemachine(RuleBasedStateMachine):
 
     def hg(self, *args):
         extra_flags = []
-        for key, value in self.config.items():
+        for key, value in list(self.config.items()):
             extra_flags.append("--config")
             extra_flags.append("%s=%s" % (key, value))
         self.command("hg", *(tuple(extra_flags) + args))

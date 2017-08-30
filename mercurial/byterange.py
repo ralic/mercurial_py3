@@ -17,7 +17,7 @@
 
 # $Id: byterange.py,v 1.9 2005/02/14 21:55:07 mstenner Exp $
 
-from __future__ import absolute_import
+
 
 import email
 import ftplib
@@ -278,7 +278,7 @@ class FTPRangeHandler(urlreq.ftphandler):
             raise urlerr.urlerror(msg)
         path, attrs = splitattr(req.get_selector())
         dirs = path.split('/')
-        dirs = map(unquote, dirs)
+        dirs = list(map(unquote, dirs))
         dirs, file = dirs[:-1], dirs[-1]
         if dirs and not dirs[0]:
             dirs = dirs[1:]

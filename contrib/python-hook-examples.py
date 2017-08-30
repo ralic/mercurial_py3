@@ -1,7 +1,7 @@
 '''
 Examples of useful python hooks for Mercurial.
 '''
-from __future__ import absolute_import
+
 from mercurial import (
     patch,
     util,

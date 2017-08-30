@@ -67,17 +67,17 @@ class TestFrameParameters(unittest.TestCase):
             zstd.get_frame_parameters(None)
 
         with self.assertRaises(TypeError):
-            zstd.get_frame_parameters(u'foobarbaz')
+            zstd.get_frame_parameters('foobarbaz')
 
     def test_invalid_input_sizes(self):
-        with self.assertRaisesRegexp(zstd.ZstdError, 'not enough data for frame'):
+        with self.assertRaisesRegex(zstd.ZstdError, 'not enough data for frame'):
             zstd.get_frame_parameters(b'')
 
-        with self.assertRaisesRegexp(zstd.ZstdError, 'not enough data for frame'):
+        with self.assertRaisesRegex(zstd.ZstdError, 'not enough data for frame'):
             zstd.get_frame_parameters(zstd.FRAME_HEADER)
 
     def test_invalid_frame(self):
-        with self.assertRaisesRegexp(zstd.ZstdError, 'Unknown frame descriptor'):
+        with self.assertRaisesRegex(zstd.ZstdError, 'Unknown frame descriptor'):
             zstd.get_frame_parameters(b'foobarbaz')
 
     def test_attributes(self):

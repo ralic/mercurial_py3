@@ -34,13 +34,13 @@ def make_cffi(cls):
                                         fn.__defaults__, fn.__closure__)
             new_method = new_fn
         else:
-            globs = dict(fn.__func__.func_globals)
+            globs = dict(fn.__func__.__globals__)
             globs['zstd'] = zstd_cffi
-            new_fn = types.FunctionType(fn.__func__.func_code, globs, name,
-                                        fn.__func__.func_defaults,
-                                        fn.__func__.func_closure)
-            new_method = types.UnboundMethodType(new_fn, fn.im_self,
-                                                 fn.im_class)
+            new_fn = types.FunctionType(fn.__func__.__code__, globs, name,
+                                        fn.__func__.__defaults__,
+                                        fn.__func__.__closure__)
+            new_method = types.UnboundMethodType(new_fn, fn.__self__,
+                                                 fn.__self__.__class__)
 
         setattr(cls, name, new_method)
 

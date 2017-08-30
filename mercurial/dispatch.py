@@ -5,7 +5,7 @@
 # This software may be used and distributed according to the terms of the
 # GNU General Public License version 2 or any later version.
 
-from __future__ import absolute_import, print_function
+
 
 import difflib
 import errno
@@ -390,7 +390,7 @@ def aliasinterpolate(name, args, cmd):
     # tokenize each argument into exactly one word.
     replacemap['"$@"'] = ' '.join(util.shellquote(arg) for arg in args)
     # escape '\$' for regex
-    regex = '|'.join(replacemap.keys()).replace('$', r'\$')
+    regex = '|'.join(list(replacemap.keys())).replace('$', r'\$')
     r = re.compile(regex)
     return r.sub(lambda x: replacemap[x.group()], cmd)
 
@@ -409,7 +409,7 @@ class cmdalias(object):
 
         try:
             aliases, entry = cmdutil.findcmd(self.name, cmdtable)
-            for alias, e in cmdtable.iteritems():
+            for alias, e in cmdtable.items():
                 if e is entry:
                     self.cmd = alias
                     break
@@ -869,7 +869,7 @@ def _dispatch(req):
                     if not func.optionalrepo:
                         if func.inferrepo and args and not path:
                             # try to infer -R from command args
-                            repos = map(cmdutil.findrepo, args)
+                            repos = list(map(cmdutil.findrepo, args))
                             guess = repos[0]
                             if guess and repos.count(guess) == len(repos):
                                 req.args = ['--repository', guess] + fullargs
@@ -921,7 +921,7 @@ def _exceptionwarning(ui):
         for name, mod in extensions.extensions():
             testedwith = getattr(mod, 'testedwith', '')
             if pycompat.ispy3 and isinstance(testedwith, str):
-                testedwith = testedwith.encode(u'utf-8')
+                testedwith = testedwith.encode('utf-8')
             report = getattr(mod, 'buglink', _('the extension author.'))
             if not testedwith.strip():
                 # We found an untested extension. It's likely the culprit.
@@ -957,7 +957,7 @@ def _exceptionwarning(ui):
         warning = (_("** unknown exception encountered, "
                      "please report by visiting\n** ") + bugtracker + '\n')
     if pycompat.ispy3:
-        sysversion = sys.version.encode(u'utf-8')
+        sysversion = sys.version.encode('utf-8')
     else:
         sysversion = sys.version
     sysversion = sysversion.replace('\n', '')

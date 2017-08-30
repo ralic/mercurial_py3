@@ -22,7 +22,7 @@ You can discover Zeroconf-enabled repositories by running
   $ hg paths
   zc-test = http://example.com:8000/test
 '''
-from __future__ import absolute_import
+
 
 import os
 import socket
@@ -161,7 +161,7 @@ def getzcpaths():
     Zeroconf.ServiceBrowser(server, "_hg._tcp.local.", l)
     time.sleep(1)
     server.close()
-    for value in l.found.values():
+    for value in list(l.found.values()):
         name = value.name[:value.name.index('.')]
         url = "http://%s:%s%s" % (socket.inet_ntoa(value.address), value.port,
                                   value.properties.get("path", "/"))

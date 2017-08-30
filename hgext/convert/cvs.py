@@ -4,7 +4,7 @@
 #
 # This software may be used and distributed according to the terms of the
 # GNU General Public License version 2 or any later version.
-from __future__ import absolute_import
+
 
 import errno
 import os
@@ -109,7 +109,7 @@ class convert_cvs(converter_source):
                 self.changeset[id] = c
                 self.files[id] = files
 
-            self.heads = self.lastbranch.values()
+            self.heads = list(self.lastbranch.values())
         finally:
             os.chdir(d)
 
@@ -282,7 +282,7 @@ class convert_cvs(converter_source):
         if full:
             raise error.Abort(_("convert from cvs does not support --full"))
         self._parse()
-        return sorted(self.files[rev].iteritems()), {}, set()
+        return sorted(self.files[rev].items()), {}, set()
 
     def getcommit(self, rev):
         self._parse()

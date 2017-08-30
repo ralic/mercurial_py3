@@ -5,7 +5,7 @@
 # This software may be used and distributed according to the terms of the
 # GNU General Public License version 2 or any later version.
 
-from __future__ import absolute_import
+
 
 import collections
 import contextlib
@@ -41,7 +41,7 @@ from . import (
 urlreq = util.urlreq
 
 # for use with str.translate(None, _keepalnum), to keep just alphanumerics
-_keepalnum = ''.join(c for c in map(pycompat.bytechr, range(256))
+_keepalnum = ''.join(c for c in map(pycompat.bytechr, list(range(256)))
                      if not c.isalnum())
 
 # The config knobs that will be altered (if unset) by ui.tweakdefaults.
@@ -330,7 +330,7 @@ class ui(object):
     def readconfig(self, filename, root=None, trust=False,
                    sections=None, remap=None):
         try:
-            fp = open(filename, u'rb')
+            fp = open(filename, 'rb')
         except IOError:
             if not sections: # ignore unless we were looking for something
                 return
@@ -508,7 +508,7 @@ class ui(object):
                 sub[k[len(prefix):]] = v
 
         if self.debugflag and not untrusted and self._reportuntrusted:
-            for k, v in sub.items():
+            for k, v in list(sub.items()):
                 uvalue = self._ucfg.get(section, '%s:%s' % (name, k))
                 if uvalue is not None and uvalue != v:
                     self.debug('ignoring untrusted configuration option '
@@ -703,7 +703,7 @@ class ui(object):
             for k, v in items:
                 if ':' not in k:
                     newitems[k] = v
-            items = newitems.items()
+            items = list(newitems.items())
         if self.debugflag and not untrusted and self._reportuntrusted:
             for k, v in self._ucfg.items(section):
                 if self._tcfg.get(section, k) != v:
@@ -974,7 +974,7 @@ class ui(object):
             return
 
         pagerenv = {}
-        for name, value in rcutil.defaultpagerenv().items():
+        for name, value in list(rcutil.defaultpagerenv().items()):
             if name not in encoding.environ:
                 pagerenv[name] = value
 
@@ -1104,7 +1104,7 @@ class ui(object):
         }
 
         # Feature-specific interface
-        if feature not in featureinterfaces.keys():
+        if feature not in list(featureinterfaces.keys()):
             # Programming error, not user error
             raise ValueError("Unknown feature requested %s" % feature)
 
@@ -1588,12 +1588,12 @@ class ui(object):
         {(section, name) : value}"""
         backups = {}
         try:
-            for (section, name), value in overrides.items():
+            for (section, name), value in list(overrides.items()):
                 backups[(section, name)] = self.backupconfig(section, name)
                 self.setconfig(section, name, value, source)
             yield
         finally:
-            for __, backup in backups.items():
+            for __, backup in list(backups.items()):
                 self.restoreconfig(backup)
             # just restoring ui.quiet config to the previous value is not enough
             # as it does not update ui.quiet class member
@@ -1739,7 +1739,7 @@ class path(object):
         # Now process the sub-options. If a sub-option is registered, its
         # attribute will always be present. The value will be None if there
         # was no valid sub-option.
-        for suboption, (attr, func) in _pathsuboptions.iteritems():
+        for suboption, (attr, func) in _pathsuboptions.items():
             if suboption not in suboptions:
                 setattr(self, attr, None)
                 continue
@@ -1761,7 +1761,7 @@ class path(object):
         This is intended to be used for presentation purposes.
         """
         d = {}
-        for subopt, (attr, _func) in _pathsuboptions.iteritems():
+        for subopt, (attr, _func) in _pathsuboptions.items():
             value = getattr(self, attr)
             if value is not None:
                 d[subopt] = value

@@ -62,7 +62,7 @@ This extension used to provide a strip command. This command now lives
 in the strip extension.
 '''
 
-from __future__ import absolute_import
+
 
 import errno
 import os
@@ -384,7 +384,7 @@ class patchheader(object):
         the field and a blank line.'''
         if self.message:
             subj = 'subject: ' + self.message[0].lower()
-            for i in xrange(len(self.comments)):
+            for i in range(len(self.comments)):
                 if subj == self.comments[i].lower():
                     del self.comments[i]
                     self.message = self.message[2:]
@@ -677,7 +677,7 @@ class queue(object):
                 fp.write("%s\n" % i)
             fp.close()
         if self.applieddirty:
-            writelist(map(str, self.applied), self.statuspath)
+            writelist(list(map(str, self.applied)), self.statuspath)
             self.applieddirty = False
         if self.seriesdirty:
             writelist(self.fullseries, self.seriespath)
@@ -946,7 +946,7 @@ class queue(object):
                 overwrite = False
                 mergedsubstate = subrepo.submerge(repo, pctx, wctx, wctx,
                     overwrite)
-                files += mergedsubstate.keys()
+                files += list(mergedsubstate.keys())
 
             match = scmutil.matchfiles(repo, files or [])
             oldtip = repo['tip']
@@ -1352,7 +1352,7 @@ class queue(object):
         diffopts = self.diffopts()
         with repo.wlock():
             heads = []
-            for hs in repo.branchmap().itervalues():
+            for hs in repo.branchmap().values():
                 heads.extend(hs)
             if not heads:
                 heads = [nullid]
@@ -1592,7 +1592,7 @@ class queue(object):
                 self.ui.status(_("popping %s\n") % patch.name)
             del self.applied[start:end]
             strip(self.ui, repo, [rev], update=False, backup=False)
-            for s, state in repo['.'].substate.items():
+            for s, state in list(repo['.'].substate.items()):
                 repo['.'].sub(s).get(state)
             if self.applied:
                 self.ui.write(_("now at: %s\n") % self.applied[-1].name)
@@ -1748,7 +1748,7 @@ class queue(object):
                         # we can't copy a file created by the patch itself
                         if dst in copies:
                             del copies[dst]
-                    for src, dsts in copies.iteritems():
+                    for src, dsts in copies.items():
                         for dst in dsts:
                             repo.dirstate.copy(src, dst)
                 else:
@@ -1762,7 +1762,7 @@ class queue(object):
                 # if the patch excludes a modified file, mark that
                 # file with mtime=0 so status can see it.
                 mm = []
-                for i in xrange(len(m) - 1, -1, -1):
+                for i in range(len(m) - 1, -1, -1):
                     if not matchfn(m[i]):
                         mm.append(m[i])
                         del m[i]
@@ -1870,7 +1870,7 @@ class queue(object):
         else:
             start = self.series.index(patch) + 1
         unapplied = []
-        for i in xrange(start, len(self.series)):
+        for i in range(start, len(self.series)):
             pushable, reason = self.pushable(i)
             if pushable:
                 unapplied.append((i, self.series[i]))
@@ -1908,7 +1908,7 @@ class queue(object):
         if not missing:
             if self.ui.verbose:
                 idxwidth = len(str(start + length - 1))
-            for i in xrange(start, start + length):
+            for i in range(start, start + length):
                 patch = self.series[i]
                 if patch in applied:
                     char, state = 'A', 'applied'
@@ -2045,7 +2045,7 @@ class queue(object):
         def nextpatch(start):
             if all_patches or start >= len(self.series):
                 return start
-            for i in xrange(start, len(self.series)):
+            for i in range(start, len(self.series)):
                 p, reason = self.pushable(i)
                 if p:
                     return i
@@ -2823,7 +2823,7 @@ def guard(ui, repo, *args, **opts):
         if args or opts.get('none'):
             raise error.Abort(_('cannot mix -l/--list with options or '
                                'arguments'))
-        for i in xrange(len(q.series)):
+        for i in range(len(q.series)):
             status(i)
         return
     if not args or args[0][0:1] in '-+':
@@ -3122,14 +3122,14 @@ def select(ui, repo, *args, **opts):
     pushable = lambda i: q.pushable(q.applied[i].name)[0]
     if args or opts.get('none'):
         old_unapplied = q.unapplied(repo)
-        old_guarded = [i for i in xrange(len(q.applied)) if not pushable(i)]
+        old_guarded = [i for i in range(len(q.applied)) if not pushable(i)]
         q.setactive(args)
         q.savedirty()
         if not args:
             ui.status(_('guards deactivated\n'))
         if not opts.get('pop') and not opts.get('reapply'):
             unapplied = q.unapplied(repo)
-            guarded = [i for i in xrange(len(q.applied)) if not pushable(i)]
+            guarded = [i for i in range(len(q.applied)) if not pushable(i)]
             if len(unapplied) != len(old_unapplied):
                 ui.status(_('number of unguarded, unapplied patches has '
                             'changed from %d to %d\n') %
@@ -3149,7 +3149,7 @@ def select(ui, repo, *args, **opts):
                 guards[g] += 1
         if ui.verbose:
             guards['NONE'] = noguards
-        guards = guards.items()
+        guards = list(guards.items())
         guards.sort(key=lambda x: x[0][1:])
         if guards:
             ui.note(_('guards in series file:\n'))
@@ -3168,7 +3168,7 @@ def select(ui, repo, *args, **opts):
     reapply = opts.get('reapply') and q.applied and q.applied[-1].name
     popped = False
     if opts.get('pop') or opts.get('reapply'):
-        for i in xrange(len(q.applied)):
+        for i in range(len(q.applied)):
             if not pushable(i):
                 ui.status(_('popping guarded patches\n'))
                 popped = True
@@ -3587,7 +3587,7 @@ def extsetup(ui):
     entry[1].extend(mqopt)
 
     def dotable(cmdtable):
-        for cmd, entry in cmdtable.iteritems():
+        for cmd, entry in cmdtable.items():
             cmd = cmdutil.parsealiases(cmd)[0]
             func = entry[0]
             if func.norepo:

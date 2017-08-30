@@ -1,6 +1,6 @@
 # this is hack to make sure no escape characters are inserted into the output
 
-from __future__ import absolute_import
+
 
 import doctest
 import os

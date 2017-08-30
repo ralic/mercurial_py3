@@ -11,7 +11,7 @@ This provides efficient delta storage with O(1) retrieve and append
 and O(changes) merge between branches.
 """
 
-from __future__ import absolute_import
+
 
 import binascii
 import collections
@@ -398,7 +398,7 @@ class revlog(object):
     def __len__(self):
         return len(self.index) - 1
     def __iter__(self):
-        return iter(xrange(len(self)))
+        return iter(range(len(self)))
     def revs(self, start=0, stop=None):
         """iterate over all rev in this revlog (from start to stop)"""
         step = 1
@@ -408,7 +408,7 @@ class revlog(object):
             stop += step
         else:
             stop = len(self)
-        return xrange(start, stop, step)
+        return range(start, stop, step)
 
     @util.propertycache
     def nodemap(self):
@@ -451,7 +451,7 @@ class revlog(object):
             p = self._nodepos
             if p is None:
                 p = len(i) - 2
-            for r in xrange(p, -1, -1):
+            for r in range(p, -1, -1):
                 v = i[r][7]
                 n[v] = r
                 if v == node:
@@ -917,7 +917,7 @@ class revlog(object):
                     # But, obviously its parents aren't.
                     for p in self.parents(n):
                         heads.pop(p, None)
-        heads = [head for head, flag in heads.iteritems() if flag]
+        heads = [head for head, flag in heads.items() if flag]
         roots = list(roots)
         assert orderedout
         assert roots
@@ -1030,7 +1030,7 @@ class revlog(object):
             ancs = ancestor.ancestors(self.parentrevs, a, b)
         if ancs:
             # choose a consistent winner when there's a tie
-            return min(map(self.node, ancs))
+            return min(list(map(self.node, ancs)))
         return nullid
 
     def _match(self, id):
@@ -2055,7 +2055,7 @@ class revlog(object):
         self._cache = None
         self._chaininfocache = {}
         self._chunkclear()
-        for x in xrange(rev, len(self)):
+        for x in range(rev, len(self)):
             del self.nodemap[self.node(x)]
 
         del self.index[rev:-1]

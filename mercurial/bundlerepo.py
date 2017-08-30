@@ -11,7 +11,7 @@ This provides a read-only repository interface to bundles as if they
 were part of the actual repository.
 """
 
-from __future__ import absolute_import
+
 
 import os
 import shutil

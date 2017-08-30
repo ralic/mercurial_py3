@@ -291,7 +291,7 @@ All the above add a comment to the Bugzilla bug record of the form::
     Changeset commit comment. Bug 1234.
 '''
 
-from __future__ import absolute_import
+
 
 import json
 import re
@@ -496,9 +496,9 @@ class bzmysql(bzaccess):
     def filter_real_bug_ids(self, bugs):
         '''filter not-existing bugs from set.'''
         self.run('select bug_id from bugs where bug_id in %s' %
-                 bzmysql.sql_buglist(bugs.keys()))
+                 bzmysql.sql_buglist(list(bugs.keys())))
         existing = [id for (id,) in self.cursor.fetchall()]
-        for id in bugs.keys():
+        for id in list(bugs.keys()):
             if id not in existing:
                 self.ui.status(_('bug %d does not exist\n') % id)
                 del bugs[id]
@@ -507,7 +507,7 @@ class bzmysql(bzaccess):
         '''filter bug ids that already refer to this changeset from set.'''
         self.run('''select bug_id from longdescs where
                     bug_id in %s and thetext like "%%%s%%"''' %
-                 (bzmysql.sql_buglist(bugs.keys()), short(node)))
+                 (bzmysql.sql_buglist(list(bugs.keys())), short(node)))
         for (id,) in self.cursor.fetchall():
             self.ui.status(_('bug %d already knows about changeset %s\n') %
                            (id, short(node)))
@@ -517,7 +517,7 @@ class bzmysql(bzaccess):
         '''tell bugzilla to send mail.'''
         self.ui.status(_('telling bugzilla to send mail:\n'))
         (user, userid) = self.get_bugzilla_user(committer)
-        for id in bugs.keys():
+        for id in list(bugs.keys()):
             self.ui.status(_('  bug %s\n') % id)
             cmdfmt = self.ui.config('bugzilla', 'notify', self.default_notify)
             bzdir = self.ui.config('bugzilla', 'bzdir')
@@ -936,7 +936,7 @@ class bzrestapi(bzaccess):
     def filter_cset_known_bug_ids(self, node, bugs):
         '''remove bug IDs where node occurs in comment text from bugs.'''
         sn = short(node)
-        for bugid in bugs.keys():
+        for bugid in list(bugs.keys()):
             burl = self.apiurl(('bug', bugid, 'comment'), include_fields='text')
             result = self._fetch(burl)
             comments = result['bugs'][str(bugid)]['comments']

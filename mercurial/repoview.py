@@ -6,7 +6,7 @@
 # This software may be used and distributed according to the terms of the
 # GNU General Public License version 2 or any later version.
 
-from __future__ import absolute_import
+
 
 import copy
 
@@ -35,13 +35,13 @@ def pinnedrevs(repo):
     cl = repo.changelog
     pinned = set()
     pinned.update([par.rev() for par in repo[None].parents()])
-    pinned.update([cl.rev(bm) for bm in repo._bookmarks.values()])
+    pinned.update([cl.rev(bm) for bm in list(repo._bookmarks.values())])
 
     tags = {}
     tagsmod.readlocaltags(repo.ui, repo, tags, {})
     if tags:
         rev, nodemap = cl.rev, cl.nodemap
-        pinned.update(rev(t[0]) for t in tags.values() if t[0] in nodemap)
+        pinned.update(rev(t[0]) for t in list(tags.values()) if t[0] in nodemap)
     return pinned
 
 
@@ -133,7 +133,7 @@ def computeimpactable(repo):
             firstmutable = min(firstmutable, min(cl.rev(r) for r in roots))
     # protect from nullrev root
     firstmutable = max(0, firstmutable)
-    return frozenset(xrange(firstmutable, len(cl)))
+    return frozenset(range(firstmutable, len(cl)))
 
 # function to compute filtered set
 #

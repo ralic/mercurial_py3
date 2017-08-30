@@ -7,7 +7,7 @@
 
 '''adds a new flag extras to commit (ADVANCED)'''
 
-from __future__ import absolute_import
+
 
 import re
 

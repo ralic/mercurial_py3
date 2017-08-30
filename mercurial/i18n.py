@@ -5,7 +5,7 @@
 # This software may be used and distributed according to the terms of the
 # GNU General Public License version 2 or any later version.
 
-from __future__ import absolute_import
+
 
 import gettext as gettextmod
 import locale
@@ -24,9 +24,9 @@ else:
     module = pycompat.fsencode(__file__)
 
 try:
-    unicode
+    str
 except NameError:
-    unicode = str
+    str = str
 
 _languages = None
 if (pycompat.osname == 'nt'
@@ -75,14 +75,14 @@ def gettext(message):
         return message
 
     if message not in _msgcache:
-        if type(message) is unicode:
+        if type(message) is str:
             # goofy unicode docstrings in test
-            paragraphs = message.split(u'\n\n')
+            paragraphs = message.split('\n\n')
         else:
             paragraphs = [p.decode("ascii") for p in message.split('\n\n')]
         # Be careful not to translate the empty string -- it holds the
         # meta data of the .po file.
-        u = u'\n\n'.join([p and _ugettext(p) or u'' for p in paragraphs])
+        u = '\n\n'.join([p and _ugettext(p) or '' for p in paragraphs])
         try:
             # encoding.tolocal cannot be used since it will first try to
             # decode the Unicode string. Calling u.decode(enc) really

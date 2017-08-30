@@ -14,7 +14,7 @@ For more information:
 https://mercurial-scm.org/wiki/RebaseExtension
 '''
 
-from __future__ import absolute_import
+
 
 import errno
 import os
@@ -183,7 +183,7 @@ class rebaseruntime(object):
         f.write('%d\n' % int(self.keepf))
         f.write('%d\n' % int(self.keepbranchesf))
         f.write('%s\n' % (self.activebookmark or ''))
-        for d, v in self.state.iteritems():
+        for d, v in self.state.items():
             oldrev = repo[d].hex()
             if v >= 0:
                 newrev = repo[v].hex()
@@ -367,7 +367,7 @@ class rebaseruntime(object):
         self.storestatus()
 
         sortedrevs = repo.revs('sort(%ld, -topo)', self.state)
-        cands = [k for k, v in self.state.iteritems() if v == revtodo]
+        cands = [k for k, v in self.state.items() if v == revtodo]
         total = len(cands)
         pos = 0
         for rev in sortedrevs:
@@ -463,7 +463,7 @@ class rebaseruntime(object):
                                        date=self.date)
             if newnode is not None:
                 newrev = repo[newnode].rev()
-                for oldrev in self.state.iterkeys():
+                for oldrev in self.state.keys():
                     self.state[oldrev] = newrev
 
         if 'qtip' in repo.tags():
@@ -752,7 +752,7 @@ def _definesets(ui, repo, destf=None, srcf=None, basef=None, revf=None,
             # emulate the old behavior, showing "nothing to rebase" (a better
             # behavior may be abort with "cannot find branching point" error)
             bpbase.clear()
-        for bp, bs in bpbase.iteritems(): # calculate roots
+        for bp, bs in bpbase.items(): # calculate roots
             roots += list(repo.revs('children(%d) & ancestors(%ld)', bp, bs))
 
         rebaseset = repo.revs('%ld::', roots)
@@ -915,7 +915,7 @@ def adjustdest(repo, rev, dest, state):
         A           A
     """
     # pick already rebased revs from state
-    source = [s for s, d in state.items() if d > 0]
+    source = [s for s, d in list(state.items()) if d > 0]
 
     result = []
     for prev in repo.changelog.parentrevs(rev):
@@ -1104,7 +1104,7 @@ def defineparents(repo, rev, dest, state):
             # If those revisions are covered by rebaseset, the result is good.
             # A merge in rebaseset would be considered to cover its ancestors.
             if siderevs:
-                rebaseset = [r for r, d in state.items() if d > 0]
+                rebaseset = [r for r, d in list(state.items()) if d > 0]
                 merges = [r for r in rebaseset
                           if cl.parentrevs(r)[1] != nullrev]
                 unwanted[i] = list(repo.revs('%ld - (::%ld) - %ld',
@@ -1162,7 +1162,7 @@ def updatemq(repo, state, skipped, **opts):
             skippedpatches.add(p.name)
 
     if mqrebase:
-        mq.finish(repo, mqrebase.keys())
+        mq.finish(repo, list(mqrebase.keys()))
 
         # We must start import from the newest revision
         for rev in sorted(mqrebase, reverse=True):
@@ -1231,7 +1231,7 @@ def needupdate(repo, state):
         return False
 
     # We should be standing on the first as-of-yet unrebased commit.
-    firstunrebased = min([old for old, new in state.iteritems()
+    firstunrebased = min([old for old, new in state.items()
                           if new == nullrev])
     if firstunrebased in parents:
         return True
@@ -1248,7 +1248,7 @@ def abort(repo, originalwd, dest, state, activebookmark=None):
         # If the first commits in the rebased set get skipped during the rebase,
         # their values within the state mapping will be the dest rev id. The
         # dstates list must must not contain the dest rev (issue4896)
-        dstates = [s for s in state.values() if s >= 0 and s != dest]
+        dstates = [s for s in list(state.values()) if s >= 0 and s != dest]
         immutable = [d for d in dstates if not repo[d].mutable()]
         cleanup = True
         if immutable:
@@ -1267,7 +1267,7 @@ def abort(repo, originalwd, dest, state, activebookmark=None):
 
         if cleanup:
             shouldupdate = False
-            rebased = filter(lambda x: x >= 0 and x != dest, state.values())
+            rebased = [x for x in list(state.values()) if x >= 0 and x != dest]
             if rebased:
                 strippoints = [
                         c.node() for c in repo.set('roots(%ld)', rebased)]
@@ -1506,7 +1506,7 @@ def _computeobsoletenotrebased(repo, rebaseobsrevs, dest):
             if s in ancs:
                 obsoletenotrebased[allsuccessors[s]] = s
             elif (s == allsuccessors[s] and
-                  allsuccessors.values().count(s) == 1):
+                  list(allsuccessors.values()).count(s) == 1):
                 # plain prune
                 obsoletenotrebased[s] = None
 
@@ -1524,7 +1524,7 @@ def summaryhook(ui, repo):
         msg = _('rebase: (use "hg rebase --abort" to clear broken state)\n')
         ui.write(msg)
         return
-    numrebased = len([i for i in state.itervalues() if i >= 0])
+    numrebased = len([i for i in state.values() if i >= 0])
     # i18n: column positioning for "hg summary"
     ui.write(_('rebase: %s, %s (rebase --continue)\n') %
              (ui.label(_('%d rebased'), 'rebase.rebased') % numrebased,

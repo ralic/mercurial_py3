@@ -179,7 +179,7 @@ unexpectedly::
 
 """
 
-from __future__ import absolute_import
+
 
 import errno
 import os
@@ -357,7 +357,7 @@ class histeditstate(object):
         rules = []
         rulelen = int(lines[index])
         index += 1
-        for i in xrange(rulelen):
+        for i in range(rulelen):
             ruleaction = lines[index]
             index += 1
             rule = lines[index]
@@ -368,7 +368,7 @@ class histeditstate(object):
         replacements = []
         replacementlen = int(lines[index])
         index += 1
-        for i in xrange(replacementlen):
+        for i in range(replacementlen):
             replacement = lines[index]
             original = node.bin(replacement[:40])
             succ = [node.bin(replacement[i:i + 40]) for i in
@@ -1147,7 +1147,7 @@ def _finishhistedit(ui, repo, state):
 
     mapping, tmpnodes, created, ntm = processreplacement(state)
     if mapping:
-        for prec, succs in mapping.iteritems():
+        for prec, succs in mapping.items():
             if not succs:
                 ui.debug('histedit: %s is dropped\n' % node.short(prec))
             else:
@@ -1170,7 +1170,7 @@ def _finishhistedit(ui, repo, state):
 
     # remove entries about unknown nodes
     nodemap = repo.unfiltered().changelog.nodemap
-    mapping = {k: v for k, v in mapping.items()
+    mapping = {k: v for k, v in list(mapping.items())
                if k in nodemap and all(n in nodemap for n in v)}
     scmutil.cleanupnodes(repo, mapping, 'histedit')
 
@@ -1349,7 +1349,7 @@ def ruleeditor(repo, ui, actions, editcomment=""):
                     tsum = summary[len(fword) + 1:].lstrip()
                     # safe but slow: reverse iterate over the actions so we
                     # don't clash on two commits having the same summary
-                    for na, l in reversed(list(newact.iteritems())):
+                    for na, l in reversed(list(newact.items())):
                         actx = repo[na.node]
                         asum = _getsummary(actx)
                         if asum == tsum:
@@ -1362,7 +1362,7 @@ def ruleeditor(repo, ui, actions, editcomment=""):
 
         # copy over and flatten the new list
         actions = []
-        for na, l in newact.iteritems():
+        for na, l in newact.items():
             actions.append(na)
             actions += l
 
@@ -1524,7 +1524,7 @@ def processreplacement(state):
     # we expect all changes involved in final to exist in the repo
     # turn `final` into list (topologically sorted)
     nm = state.repo.changelog.nodemap
-    for prec, succs in final.items():
+    for prec, succs in list(final.items()):
         final[prec] = sorted(succs, key=nm.get)
 
     # computed topmost element (necessary for bookmark)

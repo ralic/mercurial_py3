@@ -71,7 +71,7 @@ certain files::
   tools/tests/**
 """
 
-from __future__ import absolute_import
+
 
 from mercurial.i18n import _
 from mercurial import (
@@ -327,10 +327,10 @@ def debugsparse(ui, repo, *pats, **opts):
     if refresh:
         try:
             wlock = repo.wlock()
-            fcounts = map(
+            fcounts = list(map(
                 len,
                 sparse.refreshwdir(repo, repo.status(), sparse.matcher(repo),
-                                   force=force))
+                                   force=force)))
             sparse.printchanges(ui, opts, added=fcounts[0], dropped=fcounts[1],
                                 conflicting=fcounts[2])
         finally:

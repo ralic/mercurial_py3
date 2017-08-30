@@ -101,7 +101,7 @@ bar
 baz: foo, bar
 """
 
-from __future__ import absolute_import
+
 
 import collections
 import contextlib
@@ -194,12 +194,12 @@ class baseformatter(object):
         '''do default text output while assigning data to item'''
         fieldkeys = fields.split()
         assert len(fieldkeys) == len(fielddata)
-        self._item.update(zip(fieldkeys, fielddata))
+        self._item.update(list(zip(fieldkeys, fielddata)))
     def condwrite(self, cond, fields, deftext, *fielddata, **opts):
         '''do conditional write (primarily for plain formatter)'''
         fieldkeys = fields.split()
         assert len(fieldkeys) == len(fielddata)
-        self._item.update(zip(fieldkeys, fielddata))
+        self._item.update(list(zip(fieldkeys, fielddata)))
     def plain(self, text, **opts):
         '''show raw text for non-templated mode'''
         pass
@@ -230,7 +230,7 @@ class _nestedformatter(baseformatter):
 def _iteritems(data):
     '''iterate key-value pairs in stable order'''
     if isinstance(data, dict):
-        return sorted(data.iteritems())
+        return sorted(data.items())
     return data
 
 class _plainconverter(object):

@@ -1,6 +1,6 @@
 # Dummy extension to define a namespace containing revision names
 
-from __future__ import absolute_import
+
 
 from mercurial import (
     namespaces,
@@ -13,6 +13,6 @@ def reposetup(ui, repo):
 
     ns = namespaces.namespace('revnames', templatename='revname',
                               logname='revname',
-                              listnames=lambda r: names.keys(),
+                              listnames=lambda r: list(names.keys()),
                               namemap=namemap, nodemap=nodemap)
     repo.names.addnamespace(ns)

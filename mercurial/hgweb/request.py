@@ -6,7 +6,7 @@
 # This software may be used and distributed according to the terms of the
 # GNU General Public License version 2 or any later version.
 
-from __future__ import absolute_import
+
 
 import cgi
 import errno
@@ -39,7 +39,7 @@ shortcuts = {
 
 def normalize(form):
     # first expand the shortcuts
-    for k in shortcuts.iterkeys():
+    for k in shortcuts.keys():
         if k in form:
             for name, value in shortcuts[k]:
                 if value is None:
@@ -47,7 +47,7 @@ def normalize(form):
                 form[name] = value
             del form[k]
     # And strip the values
-    for k, v in form.iteritems():
+    for k, v in form.items():
         form[k] = [i.strip() for i in v]
     return form
 

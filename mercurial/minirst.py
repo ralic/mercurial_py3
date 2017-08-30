@@ -18,7 +18,7 @@ Remember to update https://mercurial-scm.org/wiki/HelpStyleGuide
 when adding support for new constructs.
 """
 
-from __future__ import absolute_import
+
 
 import cgi
 import re
@@ -314,7 +314,7 @@ def findtables(blocks):
 
             # column markers are ASCII so we can calculate column
             # position in bytes
-            columns = [x for x in xrange(len(div))
+            columns = [x for x in range(len(div))
                        if div[x:x + 1] == '=' and (x == 0 or
                                                    div[x - 1:x] == ' ')]
             rows = []
@@ -419,7 +419,7 @@ def findadmonitions(blocks, admonitions=None):
     Makes the type of the block an admonition block if
     the first line is an admonition directive
     """
-    admonitions = admonitions or _admonitiontitles.keys()
+    admonitions = admonitions or list(_admonitiontitles.keys())
 
     admonitionre = re.compile(br'\.\. (%s)::' % '|'.join(sorted(admonitions)),
                               flags=re.IGNORECASE)
@@ -681,7 +681,7 @@ def format(text, width=80, indent=0, keep=None, style='plain', section=None):
                     if llen and llen != plen:
                         collapse = False
                     s = []
-                    for j in xrange(3, plen - 1):
+                    for j in range(3, plen - 1):
                         parent = parents[j]
                         if (j >= llen or
                             lastparents[j] != parent):

@@ -16,7 +16,7 @@
 # an action is a tree node name, a tree label, and an optional match
 # __call__(program) parses program into a labeled tree
 
-from __future__ import absolute_import
+
 
 from .i18n import _
 from . import (
@@ -593,7 +593,7 @@ class basealiasrules(object):
             raise error.ParseError(_('invalid number of arguments: %d')
                                    % len(l))
         l = [cls._expand(aliases, t, [], cache) for t in l]
-        return cls._expandargs(result, dict(zip(a.args, l)))
+        return cls._expandargs(result, dict(list(zip(a.args, l))))
 
     @classmethod
     def expand(cls, aliases, tree):

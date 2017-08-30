@@ -5,7 +5,7 @@
 # This software may be used and distributed according to the terms of the
 # GNU General Public License version 2 or any later version.
 
-from __future__ import absolute_import
+
 
 import hashlib
 import os
@@ -111,7 +111,7 @@ class remoteiterbatcher(peer.iterbatcher):
 
         for command, args, opts, finalfuture in self.calls:
             mtd = getattr(self._remote, command)
-            batchable = mtd.batchable(mtd.im_self, *args, **opts)
+            batchable = mtd.batchable(mtd.__self__, *args, **opts)
 
             commandargs, fremote = next(batchable)
             assert fremote
@@ -152,7 +152,7 @@ future = peer.future
 
 def decodelist(l, sep=' '):
     if l:
-        return map(bin, l.split(sep))
+        return list(map(bin, l.split(sep)))
     return []
 
 def encodelist(l, sep=' '):
@@ -187,7 +187,7 @@ def encodebatchcmds(req):
         assert all(escapearg(k) == k for k in argsdict)
 
         args = ','.join('%s=%s' % (escapearg(k), escapearg(v))
-                        for k, v in argsdict.iteritems())
+                        for k, v in argsdict.items())
         cmds.append('%s %s' % (op, args))
 
     return ';'.join(cmds)
@@ -317,7 +317,7 @@ class wirepeer(repository.legacypeer):
             kwargs['bundlecaps'] = sorted(bundlecaps)
         else:
             bundlecaps = () # kwargs could have it to None
-        for key, value in kwargs.iteritems():
+        for key, value in kwargs.items():
             if value is None:
                 continue
             keytype = gboptsmap.get(key)
@@ -395,7 +395,7 @@ class wirepeer(repository.legacypeer):
     def between(self, pairs):
         batch = 8 # avoid giant requests
         r = []
-        for i in xrange(0, len(pairs), batch):
+        for i in range(0, len(pairs), batch):
             n = " ".join([encodelist(p, '-') for p in pairs[i:i + batch]])
             d = self._call("between", pairs=n)
             try:
@@ -684,7 +684,7 @@ def batch(repo, proto, cmds, others):
             for k in keys:
                 if k == '*':
                     star = {}
-                    for key in vals.keys():
+                    for key in list(vals.keys()):
                         if key not in keys:
                             star[key] = vals[key]
                     data['*'] = star
@@ -710,7 +710,7 @@ def between(repo, proto, pairs):
 def branchmap(repo, proto):
     branchmap = repo.branchmap()
     heads = []
-    for branch, nodes in branchmap.iteritems():
+    for branch, nodes in branchmap.items():
         branchname = urlreq.quote(encoding.fromlocal(branch))
         branchnodes = encodelist(nodes)
         heads.append('%s %s' % (branchname, branchnodes))
@@ -811,8 +811,8 @@ def debugwireargs(repo, proto, one, two, others):
 
 @wireprotocommand('getbundle', '*')
 def getbundle(repo, proto, others):
-    opts = options('getbundle', gboptsmap.keys(), others)
-    for k, v in opts.iteritems():
+    opts = options('getbundle', list(gboptsmap.keys()), others)
+    for k, v in opts.items():
         keytype = gboptsmap[k]
         if keytype == 'nodes':
             opts[k] = decodelist(v)
@@ -886,7 +886,7 @@ def hello(repo, proto):
 
 @wireprotocommand('listkeys', 'namespace')
 def listkeys(repo, proto, namespace):
-    d = repo.listkeys(encoding.tolocal(namespace)).items()
+    d = list(repo.listkeys(encoding.tolocal(namespace)).items())
     return pushkeymod.encodekeys(d)
 
 @wireprotocommand('lookup', 'key')

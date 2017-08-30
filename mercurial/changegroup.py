@@ -5,7 +5,7 @@
 # This software may be used and distributed according to the terms of the
 # GNU General Public License version 2 or any later version.
 
-from __future__ import absolute_import
+
 
 import os
 import struct
@@ -315,11 +315,11 @@ class cg1unpacker(object):
                 cl = repo.changelog
                 ml = repo.manifestlog
                 # validate incoming csets have their manifests
-                for cset in xrange(clstart, clend):
+                for cset in range(clstart, clend):
                     mfnode = cl.changelogrevision(cset).manifest
                     mfest = ml[mfnode].readdelta()
                     # store file cgnodes we must see
-                    for f, n in mfest.iteritems():
+                    for f, n in mfest.items():
                         needfiles.setdefault(f, set()).add(n)
 
             # process the files
@@ -357,7 +357,7 @@ class cg1unpacker(object):
                 repo.hook('pretxnchangegroup',
                           throw=True, **pycompat.strkwargs(hookargs))
 
-            added = [cl.node(r) for r in xrange(clstart, clend)]
+            added = [cl.node(r) for r in range(clstart, clend)]
             phaseall = None
             if srctype in ('push', 'serve'):
                 # Old servers can not push the boundary themselves.
@@ -545,7 +545,7 @@ class cg1packer(object):
         # build deltas
         total = len(revs) - 1
         msgbundling = _('bundling')
-        for r in xrange(len(revs) - 1):
+        for r in range(len(revs) - 1):
             if units is not None:
                 self._progress(msgbundling, r + 1, unit=units, total=total)
             prev, curr = revs[r], revs[r + 1]
@@ -987,7 +987,7 @@ def _addchangegroupfiles(repo, source, revmap, trp, expectedfiles, needfiles):
         revisions += len(fl) - o
         if f in needfiles:
             needs = needfiles[f]
-            for new in xrange(o, len(fl)):
+            for new in range(o, len(fl)):
                 n = fl.node(new)
                 if n in needs:
                     needs.remove(n)
@@ -998,7 +998,7 @@ def _addchangegroupfiles(repo, source, revmap, trp, expectedfiles, needfiles):
                 del needfiles[f]
     repo.ui.progress(_('files'), None)
 
-    for f, needs in needfiles.iteritems():
+    for f, needs in needfiles.items():
         fl = repo.file(f)
         for n in needs:
             try:

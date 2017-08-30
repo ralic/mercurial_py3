@@ -1,4 +1,4 @@
-from __future__ import absolute_import
+
 
 from .i18n import _
 from . import (
@@ -28,7 +28,7 @@ class namespaces(object):
 
         # we need current mercurial named objects (bookmarks, tags, and
         # branches) to be initialized somewhere, so that place is here
-        bmknames = lambda repo: repo._bookmarks.keys()
+        bmknames = lambda repo: list(repo._bookmarks.keys())
         bmknamemap = lambda repo, name: tolist(repo._bookmarks.get(name))
         bmknodemap = lambda repo, node: repo.nodebookmarks(node)
         n = namespace("bookmarks", templatename="bookmark",
@@ -51,7 +51,7 @@ class namespaces(object):
                       builtin=True)
         self.addnamespace(n)
 
-        bnames = lambda repo: repo.branchmap().keys()
+        bnames = lambda repo: list(repo.branchmap().keys())
         bnamemap = lambda repo, name: tolist(repo.branchtip(name, True))
         bnodemap = lambda repo, node: [repo[node].branch()]
         n = namespace("branches", templatename="branch",
@@ -70,7 +70,7 @@ class namespaces(object):
         return self._names.__iter__()
 
     def items(self):
-        return self._names.iteritems()
+        return iter(self._names.items())
 
     iteritems = items
 
@@ -102,7 +102,7 @@ class namespaces(object):
 
         Raises a KeyError if there is no such node.
         """
-        for ns, v in self._names.iteritems():
+        for ns, v in self._names.items():
             n = v.namemap(repo, name)
             if n:
                 # return max revision number

@@ -8,7 +8,7 @@
 # The original module was split in an interface and an implementation
 # file to defer pygments loading and speedup extension setup.
 
-from __future__ import absolute_import
+
 
 from mercurial import demandimport
 demandimport.ignore.extend(['pkgutil', 'pkg_resources', '__main__'])

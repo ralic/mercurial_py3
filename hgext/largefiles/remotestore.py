@@ -5,7 +5,7 @@
 # GNU General Public License version 2 or any later version.
 
 '''remote largefile store; the base class for wirestore'''
-from __future__ import absolute_import
+
 
 from mercurial.i18n import _
 
@@ -40,7 +40,7 @@ class remotestore(basestore.basestore):
 
     def exists(self, hashes):
         return dict((h, s == 0) for (h, s) in # dict-from-generator
-                    self._stat(hashes).iteritems())
+                    self._stat(hashes).items())
 
     def sendfile(self, filename, hash):
         self.ui.debug('remotestore: sendfile(%s, %s)\n' % (filename, hash))

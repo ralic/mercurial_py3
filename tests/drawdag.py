@@ -80,7 +80,7 @@ Some special comments could have side effects:
       # split: A -> B, C           # 1 to many
       # prune: A, B, C             # many to nothing
 """
-from __future__ import absolute_import, print_function
+
 
 import collections
 import itertools
@@ -101,7 +101,7 @@ cmdtable = {}
 command = registrar.command(cmdtable)
 
 _pipechars = '\\/+-|'
-_nonpipechars = ''.join(chr(i) for i in xrange(33, 127)
+_nonpipechars = ''.join(chr(i) for i in range(33, 127)
                         if chr(i) not in _pipechars)
 
 def _isname(ch):
@@ -259,20 +259,20 @@ def _walkgraph(edges):
     """yield node, parents in topologically order"""
     visible = set(edges.keys())
     remaining = {}  # {str: [str]}
-    for k, vs in edges.iteritems():
+    for k, vs in edges.items():
         for v in vs:
             if v not in remaining:
                 remaining[v] = []
         remaining[k] = vs[:]
     while remaining:
-        leafs = [k for k, v in remaining.items() if not v]
+        leafs = [k for k, v in list(remaining.items()) if not v]
         if not leafs:
             raise error.Abort(_('the graph has cycles'))
         for leaf in sorted(leafs):
             if leaf in visible:
                 yield leaf, edges[leaf]
             del remaining[leaf]
-            for k, v in remaining.iteritems():
+            for k, v in remaining.items():
                 if leaf in v:
                     v.remove(leaf)
 
@@ -303,7 +303,7 @@ def debugdrawdag(ui, repo, **opts):
 
     # parse the graph and make sure len(parents) <= 2 for each node
     edges = _parseasciigraph(text)
-    for k, v in edges.iteritems():
+    for k, v in edges.items():
         if len(v) > 2:
             raise error.Abort(_('%s: too many parents: %s')
                               % (k, ' '.join(v)))
@@ -318,7 +318,7 @@ def debugdrawdag(ui, repo, **opts):
     committed = {None: node.nullid}  # {name: node}
 
     # for leaf nodes, try to find existing nodes in repo
-    for name, parents in edges.iteritems():
+    for name, parents in edges.items():
         if len(parents) == 0:
             try:
                 committed[name] = scmutil.revsingle(repo, name)
@@ -341,7 +341,7 @@ def debugdrawdag(ui, repo, **opts):
             # If it's not a merge, add a single file
             added[name] = name
         # add extra file contents in comments
-        for path, content in files.get(name, {}).items():
+        for path, content in list(files.get(name, {}).items()):
             added[path] = content
         ctx = simplecommitctx(repo, name, pctxs, added)
         n = ctx.commit()

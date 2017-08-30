@@ -7,7 +7,7 @@
 
 # This module is for handling 'bzr', that was formerly known as Bazaar-NG;
 # it cannot access 'bar' repositories, but they were never used very much
-from __future__ import absolute_import
+
 
 import os
 
@@ -166,7 +166,7 @@ class bzr_source(common.converter_source):
             parents = self._filterghosts(rev.parent_ids)
             self._parentids[version] = parents
 
-        branch = self.recode(rev.properties.get('branch-nick', u'default'))
+        branch = self.recode(rev.properties.get('branch-nick', 'default'))
         if branch == 'trunk':
             branch = 'default'
         return common.commit(parents=parents,
@@ -182,7 +182,7 @@ class bzr_source(common.converter_source):
             if not branch.supports_tags():
                 return {}
             tagdict = branch.tags.get_tag_dict()
-            for name, rev in tagdict.iteritems():
+            for name, rev in tagdict.items():
                 bytetags[self.recode(name)] = rev
         return bytetags
 
@@ -212,7 +212,7 @@ class bzr_source(common.converter_source):
         for (fileid, paths, changed_content, versioned, parent, name,
             kind, executable) in curchanges:
 
-            if paths[0] == u'' or paths[1] == u'':
+            if paths[0] == '' or paths[1] == '':
                 # ignore changes to tree root
                 continue
 

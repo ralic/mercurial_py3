@@ -12,7 +12,7 @@
 #   - [output] is the name of the output file (default: use sys.stdout)
 #              the file will be opened in append mode.
 #
-from __future__ import absolute_import
+
 import os
 import sys
 
@@ -35,7 +35,7 @@ if len(sys.argv) > 2:
 
 # variables with empty values may not exist on all platforms, filter
 # them now for portability sake.
-env = [(k, v) for k, v in os.environ.iteritems()
+env = [(k, v) for k, v in os.environ.items()
        if k.startswith("HG_") and v]
 env.sort()
 
@@ -44,7 +44,7 @@ if os.name == 'nt':
     filter = lambda x: x.replace('\\', '/')
 else:
     filter = lambda x: x
-vars = ["%s=%s" % (k, filter(v)) for k, v in env]
+vars = ["%s=%s" % (k, list(filter(v))) for k, v in env]
 out.write(" ".join(vars))
 out.write("\n")
 out.close()

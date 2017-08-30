@@ -100,7 +100,7 @@ Note: old client behave as a publishing server with draft only content
 
 """
 
-from __future__ import absolute_import
+
 
 import errno
 
@@ -119,7 +119,7 @@ from . import (
     util,
 )
 
-allphases = public, draft, secret = range(3)
+allphases = public, draft, secret = list(range(3))
 trackedphases = allphases[1:]
 phasenames = ['public', 'draft', 'secret']
 
@@ -217,7 +217,7 @@ class phasecache(object):
         repo = repo.unfiltered()
         nativeroots = []
         for phase in trackedphases:
-            nativeroots.append(map(repo.changelog.rev, self.phaseroots[phase]))
+            nativeroots.append(list(map(repo.changelog.rev, self.phaseroots[phase])))
         return repo.changelog.computephases(nativeroots)
 
     def _computephaserevspure(self, repo):
@@ -252,7 +252,7 @@ class phasecache(object):
         cl = repo.changelog
         phaserevs = self._phaserevs
         for phase in trackedphases:
-            roots = map(cl.rev, self.phaseroots[phase])
+            roots = list(map(cl.rev, self.phaseroots[phase]))
             for root in roots:
                 phaserevs[root] = phase
 
@@ -322,7 +322,7 @@ class phasecache(object):
         repo = repo.unfiltered()
 
         delroots = [] # set of root deleted by this path
-        for phase in xrange(targetphase + 1, len(allphases)):
+        for phase in range(targetphase + 1, len(allphases)):
             # filter nodes that are not in a compatible phase already
             nodes = [n for n in nodes
                      if self.phase(repo, repo[n].rev()) >= phase]
@@ -363,7 +363,7 @@ class phasecache(object):
             affected = set(repo.revs('(%ln::) - (%ln::)', new, old))
 
             # find the phase of the affected revision
-            for phase in xrange(targetphase, -1, -1):
+            for phase in range(targetphase, -1, -1):
                 if phase:
                     roots = oldroots[phase]
                     revs = set(repo.revs('%ln::%ld', roots, affected))
@@ -545,7 +545,7 @@ def analyzeremotephases(repo, subset, roots):
     # build list from dictionary
     draftroots = []
     nodemap = repo.changelog.nodemap # to filter unknown nodes
-    for nhex, phase in roots.iteritems():
+    for nhex, phase in roots.items():
         if nhex == 'publishing': # ignore data related to publish option
             continue
         node = bin(nhex)

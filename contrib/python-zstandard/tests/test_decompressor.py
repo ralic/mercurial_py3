@@ -19,7 +19,7 @@ from .common import (
 if sys.version_info[0] >= 3:
     next = lambda it: it.__next__()
 else:
-    next = lambda it: it.next()
+    next = lambda it: it.__next__()
 
 
 @make_cffi
@@ -27,13 +27,13 @@ class TestDecompressor_decompress(unittest.TestCase):
     def test_empty_input(self):
         dctx = zstd.ZstdDecompressor()
 
-        with self.assertRaisesRegexp(zstd.ZstdError, 'input data invalid'):
+        with self.assertRaisesRegex(zstd.ZstdError, 'input data invalid'):
             dctx.decompress(b'')
 
     def test_invalid_input(self):
         dctx = zstd.ZstdDecompressor()
 
-        with self.assertRaisesRegexp(zstd.ZstdError, 'input data invalid'):
+        with self.assertRaisesRegex(zstd.ZstdError, 'input data invalid'):
             dctx.decompress(b'foobar')
 
     def test_no_content_size_in_frame(self):
@@ -41,7 +41,7 @@ class TestDecompressor_decompress(unittest.TestCase):
         compressed = cctx.compress(b'foobar')
 
         dctx = zstd.ZstdDecompressor()
-        with self.assertRaisesRegexp(zstd.ZstdError, 'input data invalid'):
+        with self.assertRaisesRegex(zstd.ZstdError, 'input data invalid'):
             dctx.decompress(compressed)
 
     def test_content_size_present(self):
@@ -63,7 +63,7 @@ class TestDecompressor_decompress(unittest.TestCase):
         self.assertEqual(decompressed, source)
 
         # Input size - 1 fails
-        with self.assertRaisesRegexp(zstd.ZstdError, 'Destination buffer is too small'):
+        with self.assertRaisesRegex(zstd.ZstdError, 'Destination buffer is too small'):
             dctx.decompress(compressed, max_output_size=len(source) - 1)
 
         # Input size + 1 works
@@ -201,7 +201,7 @@ class TestDecompressor_decompressobj(unittest.TestCase):
         dobj = dctx.decompressobj()
         dobj.decompress(data)
 
-        with self.assertRaisesRegexp(zstd.ZstdError, 'cannot use a decompressobj'):
+        with self.assertRaisesRegex(zstd.ZstdError, 'cannot use a decompressobj'):
             dobj.decompress(data)
 
 
@@ -308,7 +308,7 @@ class TestDecompressor_read_from(unittest.TestCase):
         # Buffer protocol works.
         dctx.read_from(b'foobar')
 
-        with self.assertRaisesRegexp(ValueError, 'must pass an object with a read'):
+        with self.assertRaisesRegex(ValueError, 'must pass an object with a read'):
             b''.join(dctx.read_from(True))
 
     def test_empty_input(self):
@@ -329,11 +329,11 @@ class TestDecompressor_read_from(unittest.TestCase):
 
         source = io.BytesIO(b'foobar')
         it = dctx.read_from(source)
-        with self.assertRaisesRegexp(zstd.ZstdError, 'Unknown frame descriptor'):
+        with self.assertRaisesRegex(zstd.ZstdError, 'Unknown frame descriptor'):
             next(it)
 
         it = dctx.read_from(b'foobar')
-        with self.assertRaisesRegexp(zstd.ZstdError, 'Unknown frame descriptor'):
+        with self.assertRaisesRegex(zstd.ZstdError, 'Unknown frame descriptor'):
             next(it)
 
     def test_empty_roundtrip(self):
@@ -357,10 +357,10 @@ class TestDecompressor_read_from(unittest.TestCase):
     def test_skip_bytes_too_large(self):
         dctx = zstd.ZstdDecompressor()
 
-        with self.assertRaisesRegexp(ValueError, 'skip_bytes must be smaller than read_size'):
+        with self.assertRaisesRegex(ValueError, 'skip_bytes must be smaller than read_size'):
             b''.join(dctx.read_from(b'', skip_bytes=1, read_size=1))
 
-        with self.assertRaisesRegexp(ValueError, 'skip_bytes larger than first input chunk'):
+        with self.assertRaisesRegex(ValueError, 'skip_bytes larger than first input chunk'):
             b''.join(dctx.read_from(b'foobar', skip_bytes=10))
 
     def test_skip_bytes(self):
@@ -496,30 +496,30 @@ class TestDecompressor_content_dict_chain(unittest.TestCase):
         with self.assertRaises(TypeError):
             dctx.decompress_content_dict_chain((b'foo', b'bar'))
 
-        with self.assertRaisesRegexp(ValueError, 'empty input chain'):
+        with self.assertRaisesRegex(ValueError, 'empty input chain'):
             dctx.decompress_content_dict_chain([])
 
-        with self.assertRaisesRegexp(ValueError, 'chunk 0 must be bytes'):
-            dctx.decompress_content_dict_chain([u'foo'])
+        with self.assertRaisesRegex(ValueError, 'chunk 0 must be bytes'):
+            dctx.decompress_content_dict_chain(['foo'])
 
-        with self.assertRaisesRegexp(ValueError, 'chunk 0 must be bytes'):
+        with self.assertRaisesRegex(ValueError, 'chunk 0 must be bytes'):
             dctx.decompress_content_dict_chain([True])
 
-        with self.assertRaisesRegexp(ValueError, 'chunk 0 is too small to contain a zstd frame'):
+        with self.assertRaisesRegex(ValueError, 'chunk 0 is too small to contain a zstd frame'):
             dctx.decompress_content_dict_chain([zstd.FRAME_HEADER])
 
-        with self.assertRaisesRegexp(ValueError, 'chunk 0 is not a valid zstd frame'):
+        with self.assertRaisesRegex(ValueError, 'chunk 0 is not a valid zstd frame'):
             dctx.decompress_content_dict_chain([b'foo' * 8])
 
         no_size = zstd.ZstdCompressor().compress(b'foo' * 64)
 
-        with self.assertRaisesRegexp(ValueError, 'chunk 0 missing content size in frame'):
+        with self.assertRaisesRegex(ValueError, 'chunk 0 missing content size in frame'):
             dctx.decompress_content_dict_chain([no_size])
 
         # Corrupt first frame.
         frame = zstd.ZstdCompressor(write_content_size=True).compress(b'foo' * 64)
         frame = frame[0:12] + frame[15:]
-        with self.assertRaisesRegexp(zstd.ZstdError, 'could not decompress chunk 0'):
+        with self.assertRaisesRegex(zstd.ZstdError, 'could not decompress chunk 0'):
             dctx.decompress_content_dict_chain([frame])
 
     def test_bad_subsequent_input(self):
@@ -527,21 +527,21 @@ class TestDecompressor_content_dict_chain(unittest.TestCase):
 
         dctx = zstd.ZstdDecompressor()
 
-        with self.assertRaisesRegexp(ValueError, 'chunk 1 must be bytes'):
-            dctx.decompress_content_dict_chain([initial, u'foo'])
+        with self.assertRaisesRegex(ValueError, 'chunk 1 must be bytes'):
+            dctx.decompress_content_dict_chain([initial, 'foo'])
 
-        with self.assertRaisesRegexp(ValueError, 'chunk 1 must be bytes'):
+        with self.assertRaisesRegex(ValueError, 'chunk 1 must be bytes'):
             dctx.decompress_content_dict_chain([initial, None])
 
-        with self.assertRaisesRegexp(ValueError, 'chunk 1 is too small to contain a zstd frame'):
+        with self.assertRaisesRegex(ValueError, 'chunk 1 is too small to contain a zstd frame'):
             dctx.decompress_content_dict_chain([initial, zstd.FRAME_HEADER])
 
-        with self.assertRaisesRegexp(ValueError, 'chunk 1 is not a valid zstd frame'):
+        with self.assertRaisesRegex(ValueError, 'chunk 1 is not a valid zstd frame'):
             dctx.decompress_content_dict_chain([initial, b'foo' * 8])
 
         no_size = zstd.ZstdCompressor().compress(b'foo' * 64)
 
-        with self.assertRaisesRegexp(ValueError, 'chunk 1 missing content size in frame'):
+        with self.assertRaisesRegex(ValueError, 'chunk 1 missing content size in frame'):
             dctx.decompress_content_dict_chain([initial, no_size])
 
         # Corrupt second frame.
@@ -549,7 +549,7 @@ class TestDecompressor_content_dict_chain(unittest.TestCase):
         frame = cctx.compress(b'bar' * 64)
         frame = frame[0:12] + frame[15:]
 
-        with self.assertRaisesRegexp(zstd.ZstdError, 'could not decompress chunk 1'):
+        with self.assertRaisesRegex(zstd.ZstdError, 'could not decompress chunk 1'):
             dctx.decompress_content_dict_chain([initial, frame])
 
     def test_simple(self):
@@ -587,10 +587,10 @@ class TestDecompressor_multi_decompress_to_buffer(unittest.TestCase):
         with self.assertRaises(TypeError):
             dctx.multi_decompress_to_buffer((1, 2))
 
-        with self.assertRaisesRegexp(TypeError, 'item 0 not a bytes like object'):
-            dctx.multi_decompress_to_buffer([u'foo'])
+        with self.assertRaisesRegex(TypeError, 'item 0 not a bytes like object'):
+            dctx.multi_decompress_to_buffer(['foo'])
 
-        with self.assertRaisesRegexp(ValueError, 'could not determine decompressed size of item 0'):
+        with self.assertRaisesRegex(ValueError, 'could not determine decompressed size of item 0'):
             dctx.multi_decompress_to_buffer([b'foobarbaz'])
 
     def test_list_input(self):
@@ -618,7 +618,7 @@ class TestDecompressor_multi_decompress_to_buffer(unittest.TestCase):
 
         original = [b'foo' * 4, b'bar' * 6, b'baz' * 8]
         frames = [cctx.compress(d) for d in original]
-        sizes = struct.pack('=' + 'Q' * len(original), *map(len, original))
+        sizes = struct.pack('=' + 'Q' * len(original), *list(map(len, original)))
 
         dctx = zstd.ZstdDecompressor()
         result = dctx.multi_decompress_to_buffer(frames, decompressed_sizes=sizes)
@@ -652,7 +652,7 @@ class TestDecompressor_multi_decompress_to_buffer(unittest.TestCase):
         cctx = zstd.ZstdCompressor(write_content_size=False)
         original = [b'foo' * 4, b'bar' * 6, b'baz' * 8]
         frames = [cctx.compress(d) for d in original]
-        sizes = struct.pack('=' + 'Q' * len(original), *map(len, original))
+        sizes = struct.pack('=' + 'Q' * len(original), *list(map(len, original)))
 
         segments = struct.pack('=QQQQQQ', 0, len(frames[0]),
                                len(frames[0]), len(frames[1]),
@@ -734,8 +734,8 @@ class TestDecompressor_multi_decompress_to_buffer(unittest.TestCase):
 
         dctx = zstd.ZstdDecompressor()
 
-        with self.assertRaisesRegexp(zstd.ZstdError, 'error decompressing item 1: Src size incorrect'):
+        with self.assertRaisesRegex(zstd.ZstdError, 'error decompressing item 1: Src size incorrect'):
             dctx.multi_decompress_to_buffer(frames)
 
-        with self.assertRaisesRegexp(zstd.ZstdError, 'error decompressing item 1: Src size incorrect'):
+        with self.assertRaisesRegex(zstd.ZstdError, 'error decompressing item 1: Src size incorrect'):
             dctx.multi_decompress_to_buffer(frames, threads=2)

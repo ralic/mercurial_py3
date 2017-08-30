@@ -41,7 +41,7 @@ A unix-like system keeps an index of the DESCRIPTIONs, which is accesable
 by the command whatis or apropos.
 
 """
-from __future__ import absolute_import
+
 
 __docformat__ = 'reStructuredText'
 
@@ -263,7 +263,7 @@ class Translator(nodes.NodeVisitor):
             # ensure we get a ".TH" as viewers require it.
             self.head.append(self.header())
         # filter body
-        for i in xrange(len(self.body) - 1, 0, -1):
+        for i in range(len(self.body) - 1, 0, -1):
             # remove superfluous vertical gaps.
             if self.body[i] == '.sp\n':
                 if self.body[i - 1][:4] in ('.BI ','.IP '):
@@ -280,18 +280,18 @@ class Translator(nodes.NodeVisitor):
         return ''.join(self.head + self.body + self.foot)
 
     def deunicode(self, text):
-        text = text.replace(u'\xa0', '\\ ')
-        text = text.replace(u'\u2020', '\\(dg')
+        text = text.replace('\xa0', '\\ ')
+        text = text.replace('\u2020', '\\(dg')
         return text
 
     def visit_Text(self, node):
         text = node.astext()
         text = text.replace('\\','\\e')
         replace_pairs = [
-            (u'-', u'\\-'),
-            (u"'", u'\\(aq'),
-            (u'´', u"\\'"),
-            (u'`', u'\\(ga'),
+            ('-', '\\-'),
+            ("'", '\\(aq'),
+            ('´', "\\'"),
+            ('`', '\\(ga'),
             ]
         for (in_char, out_markup) in replace_pairs:
             text = text.replace(in_char, out_markup)
@@ -335,7 +335,7 @@ class Translator(nodes.NodeVisitor):
                 elif style.endswith('roman'):
                     self._indent = 5
 
-            def next(self):
+            def __next__(self):
                 if self._style == 'bullet':
                     return self.enum_style[self._style]
                 elif self._style == 'emdash':

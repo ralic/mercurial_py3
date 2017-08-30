@@ -1,6 +1,6 @@
 # A dummy extension that installs an hgweb command that throws an Exception.
 
-from __future__ import absolute_import
+
 
 from mercurial.hgweb import (
     webcommands,

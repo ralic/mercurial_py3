@@ -5,7 +5,7 @@
 # This software may be used and distributed according to the terms of the
 # GNU General Public License version 2 or any later version.
 
-from __future__ import absolute_import
+
 
 import struct
 import zlib
@@ -157,7 +157,7 @@ def pack_dirstate(dmap, copymap, pl, now):
     cs = stringio()
     write = cs.write
     write("".join(pl))
-    for f, e in dmap.iteritems():
+    for f, e in dmap.items():
         if e[0] == 'n' and e[3] == now:
             # The file was last modified "simultaneously" with the current
             # write to dirstate (i.e. within the same second for file-

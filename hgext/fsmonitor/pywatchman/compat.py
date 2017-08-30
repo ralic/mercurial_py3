@@ -26,9 +26,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+
+
+
 # no unicode literals
 
 '''Compatibility module across Python 2 and 3.'''
@@ -62,4 +62,4 @@ def reraise(tp, value, tb=None):
 if PYTHON3:
     UNICODE = str
 else:
-    UNICODE = unicode
+    UNICODE = str

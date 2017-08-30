@@ -132,7 +132,7 @@ web.baseurl
   references. See also ``notify.strip``.
 
 '''
-from __future__ import absolute_import
+
 
 import email
 import fnmatch
@@ -343,7 +343,7 @@ class notifier(object):
         if not msg.is_multipart():
             # create fresh mime message from scratch
             # (multipart templates must take care of this themselves)
-            headers = msg.items()
+            headers = list(msg.items())
             payload = msg.get_payload()
             # for notification prefer readability over data precision
             msg = mail.mimeencode(self.ui, payload, self.charsets, self.test)
@@ -443,7 +443,7 @@ def hook(ui, repo, hooktype, node=None, source=None, **kwargs):
     author = ''
     if hooktype == 'changegroup' or hooktype == 'outgoing':
         start, end = ctx.rev(), len(repo)
-        for rev in xrange(start, end):
+        for rev in range(start, end):
             if n.node(repo[rev]):
                 count += 1
                 if not author:

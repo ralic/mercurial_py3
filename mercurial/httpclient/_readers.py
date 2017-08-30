@@ -31,11 +31,11 @@
 This module is package-private. It is not expected that these will
 have any clients outside of httpplus.
 """
-from __future__ import absolute_import
+
 
 try:
-    import httplib
-    httplib.HTTPException
+    import http.client
+    http.client.HTTPException
 except ImportError:
     import http.client as httplib
 
@@ -48,7 +48,7 @@ class ReadNotReady(Exception):
     """Raised when read() is attempted but not enough data is loaded."""
 
 
-class HTTPRemoteClosedError(httplib.HTTPException):
+class HTTPRemoteClosedError(http.client.HTTPException):
     """The server closed the remote socket in the middle of a response."""
 
 

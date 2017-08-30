@@ -5,7 +5,7 @@
 # This software may be used and distributed according to the terms of the
 # GNU General Public License version 2 or any later version.
 
-from __future__ import absolute_import
+
 
 import os
 import tempfile
@@ -46,7 +46,7 @@ def runservice(opts, parentfn=None, initfn=None, runfn=None, logfile=None,
             runargs.append('--daemon-postexec=unlink:%s' % lockpath)
             # Don't pass --cwd to the child process, because we've already
             # changed directory.
-            for i in xrange(1, len(runargs)):
+            for i in range(1, len(runargs)):
                 if runargs[i].startswith('--cwd='):
                     del runargs[i]
                     break

@@ -6,7 +6,7 @@
 # It compares the nonnormal file to a nonnormalset built from the map of all
 # the files in the dirstate to check that they contain the same files.
 
-from __future__ import absolute_import
+
 
 from mercurial import (
     dirstate,
@@ -16,7 +16,7 @@ from mercurial import (
 def nonnormalentries(dmap):
     """Compute nonnormal entries from dirstate's dmap"""
     res = set()
-    for f, e in dmap.iteritems():
+    for f, e in dmap.items():
         if e[0] != 'n' or e[3] == -1:
             res.add(f)
     return res

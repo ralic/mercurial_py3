@@ -38,7 +38,7 @@ Config
   skiphash = False
 """
 
-from __future__ import absolute_import
+
 
 import hashlib
 import inspect
@@ -101,7 +101,7 @@ def _confighash(ui):
     for section in _configsections:
         sectionitems.append(ui.configitems(section))
     sectionhash = _hashlist(sectionitems)
-    envitems = [(k, v) for k, v in encoding.environ.iteritems()
+    envitems = [(k, v) for k, v in encoding.environ.items()
                 if _envre.match(k)]
     envhash = _hashlist(sorted(envitems))
     return sectionhash[:6] + envhash[:6]
@@ -152,7 +152,7 @@ def _mtimehash(paths):
         except OSError:
             # could be ENOENT, EPERM etc. not fatal in any case
             pass
-    return _hashlist(map(trystat, paths))[:12]
+    return _hashlist(list(map(trystat, paths)))[:12]
 
 class hashstate(object):
     """a structure storing confighash, mtimehash, paths used for mtimehash"""
@@ -254,7 +254,7 @@ class channeledsystem(object):
 
     def __call__(self, cmd, environ, cwd=None, type='system', cmdtable=None):
         args = [type, util.quotecommand(cmd), os.path.abspath(cwd or '.')]
-        args.extend('%s=%s' % (k, v) for k, v in environ.iteritems())
+        args.extend('%s=%s' % (k, v) for k, v in environ.items())
         data = '\0'.join(args)
         self.out.write(struct.pack('>cI', self.channel, len(data)))
         self.out.write(data)

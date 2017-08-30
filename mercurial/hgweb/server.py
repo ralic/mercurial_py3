@@ -6,7 +6,7 @@
 # This software may be used and distributed according to the terms of the
 # GNU General Public License version 2 or any later version.
 
-from __future__ import absolute_import
+
 
 import errno
 import os
@@ -21,6 +21,7 @@ from .. import (
     pycompat,
     util,
 )
+import imp
 
 httpservermod = util.httpserver
 socketserver = util.socketserver
@@ -82,7 +83,7 @@ class _httprequesthandler(httpservermod.basehttprequesthandler):
     def log_request(self, code='-', size='-'):
         xheaders = []
         if util.safehasattr(self, 'headers'):
-            xheaders = [h for h in self.headers.items()
+            xheaders = [h for h in list(self.headers.items())
                         if h[0].startswith('x-')]
         self.log_message('"%s" %s %s%s',
                          self.requestline, str(code), str(size),
@@ -132,7 +133,7 @@ class _httprequesthandler(httpservermod.basehttprequesthandler):
         length = self.headers.getheader('content-length')
         if length:
             env['CONTENT_LENGTH'] = length
-        for header in [h for h in self.headers.keys()
+        for header in [h for h in list(self.headers.keys())
                        if h not in ('content-type', 'content-length')]:
             hkey = 'HTTP_' + header.replace('-', '_').upper()
             hval = self.headers.getheader(header)
@@ -320,7 +321,7 @@ def create_server(ui, app):
         # codec is hardcoded as ascii.
 
         sys.argv # unwrap demand-loader so that reload() works
-        reload(sys) # resurrect sys.setdefaultencoding()
+        imp.reload(sys) # resurrect sys.setdefaultencoding()
         oldenc = sys.getdefaultencoding()
         sys.setdefaultencoding("latin1") # or any full 8-bit encoding
         mimetypes.init()

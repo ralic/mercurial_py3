@@ -1,4 +1,4 @@
-from __future__ import absolute_import, print_function
+
 
 import _lsprof
 import sys
@@ -95,7 +95,7 @@ def label(code):
     try:
         mname = _fn2mod[code.co_filename]
     except KeyError:
-        for k, v in list(sys.modules.iteritems()):
+        for k, v in list(sys.modules.items()):
             if v is None:
                 continue
             if not isinstance(getattr(v, '__file__', None), str):

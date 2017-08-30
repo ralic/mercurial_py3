@@ -1,4 +1,4 @@
-from __future__ import absolute_import
+
 
 import os
 from mercurial import (
@@ -32,7 +32,7 @@ paths = {'t/a/': '%s/a' % webdir,
 config = os.path.join(webdir, 'hgwebdir.conf')
 configfile = open(config, 'w')
 configfile.write('[paths]\n')
-for k, v in paths.items():
+for k, v in list(paths.items()):
     configfile.write('%s = %s\n' % (k, v))
 configfile.close()
 

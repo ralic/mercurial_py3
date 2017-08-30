@@ -5,7 +5,7 @@
 # This software may be used and distributed according to the terms of the
 # GNU General Public License version 2 or any later version.
 
-from __future__ import absolute_import
+
 
 import copy
 import os
@@ -1010,7 +1010,7 @@ def readpatternfile(filepath, warn, sourceinfo=False):
             continue
 
         linesyntax = syntax
-        for s, rels in syntaxes.iteritems():
+        for s, rels in syntaxes.items():
             if line.startswith(rels):
                 linesyntax = rels
                 line = line[len(rels):]

@@ -5,7 +5,7 @@
 # This software may be used and distributed according to the terms of the
 # GNU General Public License version 2 or any later version.
 
-from __future__ import absolute_import
+
 
 import ctypes
 import errno
@@ -544,7 +544,7 @@ def unlink(f):
     # callers to recreate f immediately while having other readers do their
     # implicit zombie filename blocking on a temporary name.
 
-    for tries in xrange(10):
+    for tries in range(10):
         temp = '%s-%08x' % (f, random.randint(0, 0xffffffff))
         try:
             os.rename(f, temp)  # raises OSError EEXIST if temp exists

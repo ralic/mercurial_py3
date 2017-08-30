@@ -6,7 +6,7 @@
 # This software may be used and distributed according to the terms of the
 # GNU General Public License version 2 or any later version.
 
-from __future__ import absolute_import
+
 
 import errno
 import hashlib
@@ -631,7 +631,7 @@ def clone(ui, peeropts, source, dest=None, pull=False, rev=None,
                                   streamclonerequested=stream)
             elif srcrepo:
                 exchange.push(srcrepo, destpeer, revs=revs,
-                              bookmarks=srcrepo._bookmarks.keys())
+                              bookmarks=list(srcrepo._bookmarks.keys()))
             else:
                 raise error.Abort(_("clone from remote to remote not supported")
                                  )

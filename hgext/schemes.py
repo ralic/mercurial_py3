@@ -39,7 +39,7 @@ For convenience, the extension adds these schemes by default::
 You can override a predefined scheme by defining a new scheme with the
 same name.
 """
-from __future__ import absolute_import
+
 
 import os
 import re
@@ -71,7 +71,7 @@ class ShortRepository(object):
         self.templater = templater
         self.url = url
         try:
-            self.parts = max(map(int, _partre.findall(self.url)))
+            self.parts = max(list(map(int, _partre.findall(self.url))))
         except ValueError:
             self.parts = 0
 
@@ -115,7 +115,7 @@ schemes = {
 def extsetup(ui):
     schemes.update(dict(ui.configitems('schemes')))
     t = templater.engine(lambda x: x)
-    for scheme, url in schemes.items():
+    for scheme, url in list(schemes.items()):
         if (pycompat.osname == 'nt' and len(scheme) == 1 and scheme.isalpha()
             and os.path.exists('%s:\\' % scheme)):
             raise error.Abort(_('custom scheme %s:// conflicts with drive '

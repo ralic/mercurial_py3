@@ -16,7 +16,7 @@
 #   identifier to be stored in the converted revision. This will cause
 #   the converted revision to have a different identity than the
 #   source.
-from __future__ import absolute_import
+
 
 import os
 import re
@@ -129,7 +129,7 @@ class mercurial_sink(common.converter_sink):
 
         if missings:
             self.after()
-            for pbranch, heads in sorted(missings.iteritems()):
+            for pbranch, heads in sorted(missings.items()):
                 pbranchpath = os.path.join(self.path, pbranch)
                 prepo = hg.peer(self.ui, {}, pbranchpath)
                 self.ui.note(_('pulling from %s into %s\n') % (pbranch, branch))
@@ -209,7 +209,7 @@ class mercurial_sink(common.converter_sink):
             False, # followcopies
         )
 
-        for file, (action, info, msg) in actions.iteritems():
+        for file, (action, info, msg) in actions.items():
             if source.targetfilebelongstosource(file):
                 # If the file belongs to the source repo, ignore the p2
                 # since it will be covered by the existing fileset.
@@ -370,7 +370,7 @@ class mercurial_sink(common.converter_sink):
             tagparent = nodemod.nullid
 
         oldlines = set()
-        for branch, heads in self.repo.branchmap().iteritems():
+        for branch, heads in self.repo.branchmap().items():
             for h in heads:
                 if '.hgtags' in self.repo[h]:
                     oldlines.update(
@@ -520,7 +520,7 @@ class mercurial_source(common.converter_source):
         maappend = ma.append
         rappend = r.append
         d = ctx1.manifest().diff(ctx2.manifest())
-        for f, ((node1, flag1), (node2, flag2)) in d.iteritems():
+        for f, ((node1, flag1), (node2, flag2)) in d.items():
             if node2 is None:
                 rappend(f)
             else:
@@ -546,7 +546,7 @@ class mercurial_source(common.converter_source):
         cleanp2 = set()
         if len(parents) == 2:
             d = parents[1].manifest().diff(ctx.manifest(), clean=True)
-            for f, value in d.iteritems():
+            for f, value in d.items():
                 if value is None:
                     cleanp2.add(f)
         changes = [(f, rev) for f in files if f not in self.ignored]
@@ -612,7 +612,7 @@ class mercurial_source(common.converter_source):
         parents = self._parents(ctx)
         if not parents and i is None:
             i = 0
-            ma, r = ctx.manifest().keys(), []
+            ma, r = list(ctx.manifest().keys()), []
         else:
             i = i or 0
             ma, r = self._changedfiles(parents[i], ctx)

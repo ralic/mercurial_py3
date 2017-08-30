@@ -18,7 +18,7 @@
 # - make perf command for recent feature work correctly with early
 #   Mercurial
 
-from __future__ import absolute_import
+
 import functools
 import gc
 import os
@@ -183,7 +183,7 @@ def gettimer(ui, opts=None):
                     self.hexfunc = node.hex
                 else:
                     self.hexfunc = node.short
-            def __nonzero__(self):
+            def __bool__(self):
                 return False
             __bool__ = __nonzero__
             def startitem(self):
@@ -675,7 +675,7 @@ def perfparents(ui, repo, **opts):
     if len(repo.changelog) < count:
         raise error.Abort("repo needs %d commits for this test" % count)
     repo = repo.unfiltered()
-    nl = [repo.changelog.node(i) for i in xrange(count)]
+    nl = [repo.changelog.node(i) for i in range(count)]
     def d():
         for n in nl:
             repo.changelog.parents(n)
@@ -747,7 +747,7 @@ def perfmoonwalk(ui, repo, **opts):
     """
     timer, fm = gettimer(ui, opts)
     def moonwalk():
-        for i in xrange(len(repo), -1, -1):
+        for i in range(len(repo), -1, -1):
             ctx = repo[i]
             ctx.branch() # read changelog data (in addition to the index)
     timer(moonwalk)
@@ -847,7 +847,7 @@ def perfbdiff(ui, repo, file_, rev=None, count=None, **opts):
             # Load filelog revisions by iterating manifest delta.
             man = ctx.manifest()
             pman = ctx.p1().manifest()
-            for filename, change in pman.diff(man).items():
+            for filename, change in list(pman.diff(man).items()):
                 fctx = repo.file(filename)
                 f1 = fctx.revision(change[0][0] or -1)
                 f2 = fctx.revision(change[1][0] or -1)
@@ -916,7 +916,7 @@ def perfrevlogindex(ui, repo, file_=None, **opts):
     node75 = rl.node(rllen // 4 * 3)
     node100 = rl.node(rllen - 1)
 
-    allrevs = range(rllen)
+    allrevs = list(range(rllen))
     allrevsrev = list(reversed(allrevs))
     allnodes = [rl.node(rev) for rev in range(rllen)]
     allnodesrev = list(reversed(allnodes))
@@ -1028,7 +1028,7 @@ def perfrevlogrevisions(ui, repo, file_=None, startrev=0, reverse=False,
             beginrev, endrev = endrev, beginrev
             dist = -1 * dist
 
-        for x in xrange(beginrev, endrev, dist):
+        for x in range(beginrev, endrev, dist):
             # Old revisions don't support passing int.
             n = rl.node(x)
             rl.revision(n)
@@ -1405,17 +1405,17 @@ def perfloadmarkers(ui, repo):
 def perflrucache(ui, size=4, gets=10000, sets=10000, mixed=10000,
                  mixedgetfreq=50, **opts):
     def doinit():
-        for i in xrange(10000):
+        for i in range(10000):
             util.lrucachedict(size)
 
     values = []
-    for i in xrange(size):
-        values.append(random.randint(0, sys.maxint))
+    for i in range(size):
+        values.append(random.randint(0, sys.maxsize))
 
     # Get mode fills the cache and tests raw lookup performance with no
     # eviction.
     getseq = []
-    for i in xrange(gets):
+    for i in range(gets):
         getseq.append(random.choice(values))
 
     def dogets():
@@ -1428,8 +1428,8 @@ def perflrucache(ui, size=4, gets=10000, sets=10000, mixed=10000,
 
     # Set mode tests insertion speed with cache eviction.
     setseq = []
-    for i in xrange(sets):
-        setseq.append(random.randint(0, sys.maxint))
+    for i in range(sets):
+        setseq.append(random.randint(0, sys.maxsize))
 
     def dosets():
         d = util.lrucachedict(size)
@@ -1438,7 +1438,7 @@ def perflrucache(ui, size=4, gets=10000, sets=10000, mixed=10000,
 
     # Mixed mode randomly performs gets and sets with eviction.
     mixedops = []
-    for i in xrange(mixed):
+    for i in range(mixed):
         r = random.randint(0, 100)
         if r < mixedgetfreq:
             op = 0

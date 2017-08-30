@@ -11,7 +11,7 @@ Suitable for fixing files bdist_mpkg output:
 *.mpkg/Contents/Packages/*.pkg/Contents/Archive.pax.gz
 """
 
-from __future__ import absolute_import, print_function
+
 import gzip
 import os
 import sys

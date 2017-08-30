@@ -6,7 +6,7 @@
 # This software may be used and distributed according to the terms of the
 # GNU General Public License version 2 or any later version.
 
-from __future__ import absolute_import
+
 
 import os
 import re
@@ -156,7 +156,7 @@ class hgwebdir(object):
         elif isinstance(self.conf, (list, tuple)):
             paths = self.conf
         elif isinstance(self.conf, dict):
-            paths = self.conf.items()
+            paths = list(self.conf.items())
 
         repos = findrepos(paths)
         for prefix, root in u.configitems('collections'):
@@ -315,7 +315,7 @@ class hgwebdir(object):
         def archivelist(ui, nodeid, url):
             allowed = ui.configlist("web", "allow_archive", untrusted=True)
             archives = []
-            for typ, spec in hgweb_mod.archivespecs.iteritems():
+            for typ, spec in hgweb_mod.archivespecs.items():
                 if typ in allowed or ui.configbool("web", "allow" + typ,
                                                     untrusted=True):
                     archives.append({"type" : typ, "extension": spec[2],

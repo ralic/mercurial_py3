@@ -14,7 +14,7 @@ from . common import (
 if sys.version_info[0] >= 3:
     int_type = int
 else:
-    int_type = long
+    int_type = int
 
 
 @make_cffi
@@ -25,10 +25,10 @@ class TestTrainDictionary(unittest.TestCase):
 
     def test_bad_args(self):
         with self.assertRaises(TypeError):
-            zstd.train_dictionary(8192, u'foo')
+            zstd.train_dictionary(8192, 'foo')
 
         with self.assertRaises(ValueError):
-            zstd.train_dictionary(8192, [u'foo'])
+            zstd.train_dictionary(8192, ['foo'])
 
     def test_basic(self):
         samples = []
@@ -67,10 +67,10 @@ class TestTrainCoverDictionary(unittest.TestCase):
 
     def test_bad_args(self):
         with self.assertRaises(TypeError):
-            zstd.train_cover_dictionary(8192, u'foo')
+            zstd.train_cover_dictionary(8192, 'foo')
 
         with self.assertRaises(ValueError):
-            zstd.train_cover_dictionary(8192, [u'foo'])
+            zstd.train_cover_dictionary(8192, ['foo'])
 
     def test_basic(self):
         samples = []

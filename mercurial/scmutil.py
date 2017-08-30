@@ -5,7 +5,7 @@
 # This software may be used and distributed according to the terms of the
 # GNU General Public License version 2 or any later version.
 
-from __future__ import absolute_import
+
 
 import errno
 import glob
@@ -112,7 +112,7 @@ def itersubrepos(ctx1, ctx2):
             del subpaths[subpath]
             missing.add(subpath)
 
-    for subpath, ctx in sorted(subpaths.iteritems()):
+    for subpath, ctx in sorted(subpaths.items()):
         yield subpath, ctx.sub(subpath)
 
     # Yield an empty subrepo based on ctx1 for anything only in ctx2.  That way,
@@ -180,7 +180,7 @@ def callcatch(ui, func):
             ui.warn(_("(%s)\n") % inst.hint)
     except error.ResponseError as inst:
         ui.warn(_("abort: %s") % inst.args[0])
-        if not isinstance(inst.args[1], basestring):
+        if not isinstance(inst.args[1], str):
             ui.warn(" %r\n" % (inst.args[1],))
         elif not inst.args[1]:
             ui.warn(_(" empty string\n"))
@@ -217,7 +217,7 @@ def callcatch(ui, func):
             except (AttributeError, IndexError):
                 # it might be anything, for example a string
                 reason = inst.reason
-            if isinstance(reason, unicode):
+            if isinstance(reason, str):
                 # SSLError of Python 2.7.9 contains a unicode
                 reason = encoding.unitolocal(reason)
             ui.warn(_("abort: error: %s\n") % reason)
@@ -592,8 +592,8 @@ def cleanupnodes(repo, mapping, operation):
         # Move bookmarks
         bmarks = repo._bookmarks
         bmarkchanges = []
-        allnewnodes = [n for ns in mapping.values() for n in ns]
-        for oldnode, newnodes in mapping.items():
+        allnewnodes = [n for ns in list(mapping.values()) for n in ns]
+        for oldnode, newnodes in list(mapping.items()):
             oldbmarks = repo.nodebookmarks(oldnode)
             if not oldbmarks:
                 continue
@@ -639,7 +639,7 @@ def cleanupnodes(repo, mapping, operation):
             torev = unfi.changelog.rev
             sortfunc = lambda ns: torev(ns[0])
             rels = [(unfi[n], tuple(unfi[m] for m in s))
-                    for n, s in sorted(mapping.items(), key=sortfunc)
+                    for n, s in sorted(list(mapping.items()), key=sortfunc)
                     if s or not isobs(n)]
             obsolete.createmarkers(repo, rels, operation=operation)
         else:
@@ -744,7 +744,7 @@ def _interestingfiles(repo, matcher):
     dirstate = repo.dirstate
     walkresults = dirstate.walk(matcher, sorted(ctx.substate), True, False,
                                 full=False)
-    for abs, st in walkresults.iteritems():
+    for abs, st in walkresults.items():
         dstate = dirstate[abs]
         if dstate == '?' and audit_path.check(abs):
             unknown.append(abs)
@@ -782,7 +782,7 @@ def _markchanges(repo, unknown, deleted, renames):
     with repo.wlock():
         wctx.forget(deleted)
         wctx.add(unknown)
-        for new, old in renames.iteritems():
+        for new, old in renames.items():
             wctx.copy(old, new)
 
 def dirstatecopy(ui, repo, wctx, src, dst, dryrun=False, cwd=None):
@@ -1063,7 +1063,7 @@ class simplekeyvaluefile(object):
         if firstline is not None:
             lines.append('%s\n' % firstline)
 
-        for k, v in data.items():
+        for k, v in list(data.items()):
             if k == self.firstlinekey:
                 e = "key name '%s' is reserved" % self.firstlinekey
                 raise error.ProgrammingError(e)

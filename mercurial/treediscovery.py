@@ -5,7 +5,7 @@
 # This software may be used and distributed according to the terms of the
 # GNU General Public License version 2 or any later version.
 
-from __future__ import absolute_import
+
 
 import collections
 
@@ -106,7 +106,7 @@ def findcommonincoming(repo, remote, heads=None, force=False):
             repo.ui.progress(_('searching'), reqcnt, unit=_('queries'))
             repo.ui.debug("request %d: %s\n" %
                         (reqcnt, " ".join(map(short, r))))
-            for p in xrange(0, len(r), 10):
+            for p in range(0, len(r), 10):
                 for b in remote.branches(r[p:p + 10]):
                     repo.ui.debug("received %s:%s\n" %
                                   (short(b[0]), short(b[1])))

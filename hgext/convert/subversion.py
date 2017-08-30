@@ -1,7 +1,7 @@
 # Subversion 1.4/1.5 Python API backend
 #
 # Copyright(C) 2007 Daniel Holth et al
-from __future__ import absolute_import
+
 
 import os
 import re
@@ -129,7 +129,7 @@ def get_log_child(fp, url, paths, start, end, limit=0,
     def receiver(orig_paths, revnum, author, date, message, pool):
         paths = {}
         if orig_paths is not None:
-            for k, v in orig_paths.iteritems():
+            for k, v in orig_paths.items():
                 paths[k] = changedpath(v)
         pickle.dump((paths, revnum, author, date, message),
                     fp, protocol)
@@ -201,7 +201,7 @@ class directlogstream(list):
         def receiver(orig_paths, revnum, author, date, message, pool):
             paths = {}
             if orig_paths is not None:
-                for k, v in orig_paths.iteritems():
+                for k, v in orig_paths.items():
                     paths[k] = changedpath(v)
             self.append((paths, revnum, author, date, message))
 
@@ -382,7 +382,7 @@ class svn_source(converter_source):
 
     def setrevmap(self, revmap):
         lastrevs = {}
-        for revid in revmap.iterkeys():
+        for revid in revmap.keys():
             uuid, module, revnum = revsplit(revid)
             lastrevnum = lastrevs.setdefault(module, revnum)
             if revnum > lastrevnum:
@@ -479,12 +479,12 @@ class svn_source(converter_source):
             uuid, module, revnum = revsplit(rev)
             entries = svn.client.ls(self.baseurl + quote(module),
                                     optrev(revnum), True, self.ctx)
-            files = [n for n, e in entries.iteritems()
+            files = [n for n, e in entries.items()
                      if e.kind == svn.core.svn_node_file]
             self.removed = set()
 
         files.sort()
-        files = zip(files, [rev] * len(files))
+        files = list(zip(files, [rev] * len(files)))
         return (files, copies)
 
     def getchanges(self, rev, full):
@@ -562,7 +562,7 @@ class svn_source(converter_source):
                 if not origpaths:
                     origpaths = []
                 copies = [(e.copyfrom_path, e.copyfrom_rev, p) for p, e
-                          in origpaths.iteritems() if e.copyfrom_path]
+                          in origpaths.items() if e.copyfrom_path]
                 # Apply moves/copies from more specific to general
                 copies.sort(reverse=True)
 
@@ -590,7 +590,7 @@ class svn_source(converter_source):
                 # It happens with tools like cvs2svn. Such tags cannot
                 # be represented in mercurial.
                 addeds = dict((p, e.copyfrom_path) for p, e
-                              in origpaths.iteritems()
+                              in origpaths.items()
                               if e.action == 'A' and e.copyfrom_path)
                 badroots = set()
                 for destroot in addeds:
@@ -858,7 +858,7 @@ class svn_source(converter_source):
             parents = []
             # check whether this revision is the start of a branch or part
             # of a branch renaming
-            orig_paths = sorted(orig_paths.iteritems())
+            orig_paths = sorted(orig_paths.items())
             root_paths = [(p, e) for p, e in orig_paths
                           if self.module.startswith(p)]
             if root_paths:
@@ -1012,7 +1012,7 @@ class svn_source(converter_source):
         entries = svn.client.ls(rpath, optrev(revnum), True, self.ctx, pool)
         if path:
             path += '/'
-        return ((path + p) for p, e in entries.iteritems()
+        return ((path + p) for p, e in entries.items()
                 if e.kind == svn.core.svn_node_file)
 
     def getrelpath(self, path, module=None):
@@ -1262,7 +1262,7 @@ class svn_sink(converter_sink, commandline):
         self.childmap[parent] = child
 
     def revid(self, rev):
-        return u"svn:%s@%s" % (self.uuid, rev)
+        return "svn:%s@%s" % (self.uuid, rev)
 
     def putcommit(self, files, copies, parents, commit, source, revmap, full,
                   cleanp2):

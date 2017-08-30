@@ -21,7 +21,7 @@ takes precedence over ignore options and defaults::
   [pager]
   attend-cat = false
 '''
-from __future__ import absolute_import
+
 
 from mercurial import (
     cmdutil,

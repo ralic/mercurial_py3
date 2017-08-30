@@ -3,7 +3,7 @@
 #
 # This software may be used and distributed according to the terms of the
 # GNU General Public License version 2 or any later version.
-from __future__ import absolute_import
+
 
 import posixpath
 import shlex
@@ -112,7 +112,7 @@ class filemapper(object):
         repo belong to the source repo and what parts don't."""
         if self.targetprefixes is None:
             self.targetprefixes = set()
-            for before, after in self.rename.iteritems():
+            for before, after in self.rename.items():
                 self.targetprefixes.add(after)
 
         # If "." is a target, then all target files are considered from the

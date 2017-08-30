@@ -4,7 +4,7 @@
 #
 # This software may be used and distributed according to the terms of the
 # GNU General Public License version 2 or any later version.
-from __future__ import absolute_import
+
 
 import os
 import shlex
@@ -52,7 +52,7 @@ svn_source = subversion.svn_source
 orig_encoding = 'ascii'
 
 def recode(s):
-    if isinstance(s, unicode):
+    if isinstance(s, str):
         return s.encode(orig_encoding, 'replace')
     else:
         return s.decode('utf-8').encode(orig_encoding, 'replace')
@@ -449,7 +449,7 @@ class converter(object):
         commit = self.commitcache[rev]
         full = self.opts.get('full')
         changes = self.source.getchanges(rev, full)
-        if isinstance(changes, basestring):
+        if isinstance(changes, str):
             if changes == SKIPREV:
                 dest = SKIPREV
             else:
@@ -535,7 +535,7 @@ class converter(object):
                     if nrev and tagsparent:
                         # write another hash correspondence to override the
                         # previous one so we don't end up with extra tag heads
-                        tagsparents = [e for e in self.map.iteritems()
+                        tagsparents = [e for e in self.map.items()
                                        if e[1] == tagsparent]
                         if tagsparents:
                             self.map[tagsparents[0][0]] = nrev

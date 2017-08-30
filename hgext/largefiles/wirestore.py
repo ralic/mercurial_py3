@@ -4,7 +4,7 @@
 # GNU General Public License version 2 or any later version.
 
 '''largefile store working over Mercurial's wire protocol'''
-from __future__ import absolute_import
+
 
 from . import (
     lfutil,
@@ -36,4 +36,4 @@ class wirestore(remotestore.remotestore):
         for hash in hashes:
             batch.statlfile(hash)
         batch.submit()
-        return dict(zip(hashes, batch.results()))
+        return dict(list(zip(hashes, batch.results())))

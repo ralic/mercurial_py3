@@ -36,7 +36,7 @@ httplib, but has several additional features:
   * notices when the server responds early to a request
   * implements ssl inline instead of in a different class
 """
-from __future__ import absolute_import
+
 
 # Many functions in this file have too many arguments.
 # pylint: disable=R0913
@@ -51,14 +51,14 @@ import ssl
 import sys
 
 try:
-    import cStringIO as io
+    import io as io
     io.StringIO
 except ImportError:
     import io
 
 try:
-    import httplib
-    httplib.HTTPException
+    import http.client
+    http.client.HTTPException
 except ImportError:
     import http.client as httplib
 
@@ -96,7 +96,7 @@ TIMEOUT_DEFAULT = None
 if sys.version_info > (3, 0):
     _unicode = str
 else:
-    _unicode = unicode
+    _unicode = str
 
 def _ensurebytes(data):
     if not isinstance(data, (_unicode, bytes)):
@@ -195,10 +195,10 @@ class HTTPResponse(object):
 
     def getheaders(self):
         if sys.version_info < (3, 0):
-            return [(k.lower(), v) for k, v in self.headers.items()]
+            return [(k.lower(), v) for k, v in list(self.headers.items())]
         # Starting in Python 3, headers aren't lowercased before being
         # returned here.
-        return self.headers.items()
+        return list(self.headers.items())
 
     def readline(self):
         """Read a single line from the response body.
@@ -361,7 +361,7 @@ def _foldheaders(headers):
     >>> _foldheaders({'Accept-Encoding': 'wat'})
     {'accept-encoding': ('Accept-Encoding', 'wat')}
     """
-    return dict((k.lower(), (k, v)) for k, v in headers.items())
+    return dict((k.lower(), (k, v)) for k, v in list(headers.items()))
 
 try:
     inspect.signature
@@ -586,7 +586,7 @@ class HTTPConnection(object):
         headers[b'host'] = (b'Host', hdrhost)
         headers[HDR_ACCEPT_ENCODING] = (HDR_ACCEPT_ENCODING, 'identity')
         for hdr, val in sorted((_ensurebytes(h), _ensurebytes(v))
-                               for h, v in headers.values()):
+                               for h, v in list(headers.values())):
             outgoing.append(b'%s: %s%s' % (hdr, val, EOL))
         outgoing.append(EOL)
         return b''.join(outgoing)
@@ -647,7 +647,7 @@ class HTTPConnection(object):
         method = _ensurebytes(method)
         path = _ensurebytes(path)
         if self.busy():
-            raise httplib.CannotSendRequest(
+            raise http.client.CannotSendRequest(
                 'Can not send another request before '
                 'current response is read!')
         self._current_response_taken = False
@@ -873,7 +873,7 @@ class HTTPConnection(object):
     def getresponse(self):
         """Returns the response to the most recent request."""
         if self._current_response is None:
-            raise httplib.ResponseNotReady()
+            raise http.client.ResponseNotReady()
         r = self._current_response
         while r.headers is None:
             # We're a friend of the response class, so let us use the
@@ -891,19 +891,19 @@ class HTTPConnection(object):
         return r
 
 
-class HTTPTimeoutException(httplib.HTTPException):
+class HTTPTimeoutException(http.client.HTTPException):
     """A timeout occurred while waiting on the server."""
 
 
-class BadRequestData(httplib.HTTPException):
+class BadRequestData(http.client.HTTPException):
     """Request body object has neither __len__ nor read."""
 
 
-class HTTPProxyConnectFailedException(httplib.HTTPException):
+class HTTPProxyConnectFailedException(http.client.HTTPException):
     """Connecting to the HTTP proxy failed."""
 
 
-class HTTPStateError(httplib.HTTPException):
+class HTTPStateError(http.client.HTTPException):
     """Invalid internal state encountered."""
 
 # Forward this exception type from _readers since it needs to be part

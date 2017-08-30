@@ -5,7 +5,7 @@
 # This software may be used and distributed according to the terms of the
 # GNU General Public License version 2 or any later version.
 
-from __future__ import absolute_import
+
 
 import heapq
 import itertools
@@ -117,7 +117,7 @@ class lazymanifestiter(object):
     def __iter__(self):
         return self
 
-    def next(self):
+    def __next__(self):
         try:
             data, pos = self.lm._get(self.pos)
         except IndexError:
@@ -139,7 +139,7 @@ class lazymanifestiterentries(object):
     def __iter__(self):
         return self
 
-    def next(self):
+    def __next__(self):
         try:
             data, pos = self.lm._get(self.pos)
         except IndexError:
@@ -431,7 +431,7 @@ class manifestdict(object):
     def __len__(self):
         return len(self._lm)
 
-    def __nonzero__(self):
+    def __bool__(self):
         # nonzero is covered by the __len__ function, but implementing it here
         # makes it easier for extensions to override.
         return len(self._lm) != 0
@@ -451,10 +451,10 @@ class manifestdict(object):
         return self._lm.__iter__()
 
     def iterkeys(self):
-        return self._lm.iterkeys()
+        return iter(self._lm.keys())
 
     def keys(self):
-        return list(self.iterkeys())
+        return list(self.keys())
 
     def filesnotin(self, m2, match=None):
         '''Set of files in this manifest that are not in the other'''
@@ -464,7 +464,7 @@ class manifestdict(object):
             return m1.filesnotin(m2)
         diff = self.diff(m2)
         files = set(filepath
-                    for filepath, hashflags in diff.iteritems()
+                    for filepath, hashflags in diff.items()
                     if hashflags[1][0] is None)
         return files
 
@@ -749,14 +749,14 @@ class treemanifest(object):
     def __len__(self):
         self._load()
         size = len(self._files)
-        for m in self._dirs.values():
+        for m in list(self._dirs.values()):
             size += m.__len__()
         return size
 
     def _isempty(self):
         self._load() # for consistency; already loaded by all callers
         return (not self._files and (not self._dirs or
-                all(m._isempty() for m in self._dirs.values())))
+                all(m._isempty() for m in list(self._dirs.values()))))
 
     def __repr__(self):
         return ('<treemanifest dir=%s, node=%s, loaded=%s, dirty=%s at 0x%x>' %
@@ -782,8 +782,8 @@ class treemanifest(object):
 
     def iterentries(self):
         self._load()
-        for p, n in sorted(itertools.chain(self._dirs.items(),
-                                           self._files.items())):
+        for p, n in sorted(itertools.chain(list(self._dirs.items()),
+                                           list(self._files.items()))):
             if p in self._files:
                 yield self._subpath(p), n, self._flags.get(p, '')
             else:
@@ -792,12 +792,12 @@ class treemanifest(object):
 
     def items(self):
         self._load()
-        for p, n in sorted(itertools.chain(self._dirs.items(),
-                                           self._files.items())):
+        for p, n in sorted(itertools.chain(list(self._dirs.items()),
+                                           list(self._files.items()))):
             if p in self._files:
                 yield self._subpath(p), n
             else:
-                for f, sn in n.iteritems():
+                for f, sn in n.items():
                     yield f, sn
 
     iteritems = items
@@ -808,14 +808,14 @@ class treemanifest(object):
             if p in self._files:
                 yield self._subpath(p)
             else:
-                for f in self._dirs[p].iterkeys():
+                for f in self._dirs[p].keys():
                     yield f
 
     def keys(self):
-        return list(self.iterkeys())
+        return list(self.keys())
 
     def __iter__(self):
-        return self.iterkeys()
+        return iter(self.keys())
 
     def __contains__(self, f):
         if f is None:
@@ -945,14 +945,14 @@ class treemanifest(object):
                 return
             t1._load()
             t2._load()
-            for d, m1 in t1._dirs.iteritems():
+            for d, m1 in t1._dirs.items():
                 if d in t2._dirs:
                     m2 = t2._dirs[d]
                     _filesnotin(m1, m2)
                 else:
-                    files.update(m1.iterkeys())
+                    files.update(iter(m1.keys()))
 
-            for fn in t1._files.iterkeys():
+            for fn in t1._files.keys():
                 if fn not in t2._files:
                     files.add(t1._subpath(fn))
 
@@ -1011,7 +1011,7 @@ class treemanifest(object):
 
         # yield this dir's files and walk its submanifests
         self._load()
-        for p in sorted(self._dirs.keys() + self._files.keys()):
+        for p in sorted(list(self._dirs.keys()) + list(self._files.keys())):
             if p in self._files:
                 fullp = self._subpath(p)
                 if match(fullp):
@@ -1047,7 +1047,7 @@ class treemanifest(object):
             if fn in self._flags:
                 ret._flags[fn] = self._flags[fn]
 
-        for dir, subm in self._dirs.iteritems():
+        for dir, subm in self._dirs.items():
             m = subm._matches(match)
             if not m._isempty():
                 ret._dirs[dir] = m
@@ -1082,15 +1082,15 @@ class treemanifest(object):
                 return
             t1._load()
             t2._load()
-            for d, m1 in t1._dirs.iteritems():
+            for d, m1 in t1._dirs.items():
                 m2 = t2._dirs.get(d, emptytree)
                 _diff(m1, m2)
 
-            for d, m2 in t2._dirs.iteritems():
+            for d, m2 in t2._dirs.items():
                 if d not in t1._dirs:
                     _diff(emptytree, m2)
 
-            for fn, n1 in t1._files.iteritems():
+            for fn, n1 in t1._files.items():
                 fl1 = t1._flags.get(fn, '')
                 n2 = t2._files.get(fn, None)
                 fl2 = t2._flags.get(fn, '')
@@ -1099,7 +1099,7 @@ class treemanifest(object):
                 elif clean:
                     result[t1._subpath(fn)] = None
 
-            for fn, n2 in t2._files.iteritems():
+            for fn, n2 in t2._files.items():
                 if fn not in t1._files:
                     fl2 = t2._flags.get(fn, '')
                     result[t2._subpath(fn)] = ((None, ''), (n2, fl2))
@@ -1156,7 +1156,7 @@ class treemanifest(object):
         m1._load()
         m2._load()
         emptytree = treemanifest()
-        for d, subm in self._dirs.iteritems():
+        for d, subm in self._dirs.items():
             subp1 = m1._dirs.get(d, emptytree)._node
             subp2 = m2._dirs.get(d, emptytree)._node
             if subp1 == revlog.nullid:
@@ -1175,7 +1175,7 @@ class treemanifest(object):
             yield self
 
         self._load()
-        for d, subm in self._dirs.iteritems():
+        for d, subm in self._dirs.items():
             for subtree in subm.walksubtrees(matcher=matcher):
                 yield subtree
 
@@ -1490,7 +1490,7 @@ class manifestctx(object):
             m0 = self._manifestlog[revlog.node(r0)].read()
             m1 = self.read()
             md = manifestdict()
-            for f, ((n0, fl0), (n1, fl1)) in m0.diff(m1).iteritems():
+            for f, ((n0, fl0), (n1, fl1)) in m0.diff(m1).items():
                 if n1:
                     md[f] = n1
                     if fl1:
@@ -1609,7 +1609,7 @@ class treemanifestctx(object):
             m0 = self._manifestlog.get(self._dir, revlog.node(r0)).read()
             m1 = self.read()
             md = treemanifest(dir=self._dir)
-            for f, ((n0, fl0), (n1, fl1)) in m0.diff(m1).iteritems():
+            for f, ((n0, fl0), (n1, fl1)) in m0.diff(m1).items():
                 if n1:
                     md[f] = n1
                     if fl1:

@@ -5,7 +5,7 @@
 # This software may be used and distributed according to the terms of the
 # GNU General Public License version 2 or any later version.
 
-from __future__ import absolute_import
+
 
 import functools
 
@@ -208,7 +208,7 @@ def _headssummary(pushop):
 
     # A. register remote heads
     remotebranches = set()
-    for branch, heads in remote.branchmap().iteritems():
+    for branch, heads in remote.branchmap().items():
         remotebranches.add(branch)
         known = []
         unsynced = []
@@ -235,12 +235,12 @@ def _headssummary(pushop):
     # D. Update newmap with outgoing changes.
     # This will possibly add new heads and remove existing ones.
     newmap = branchmap.branchcache((branch, heads[1])
-                                 for branch, heads in headssum.iteritems()
+                                 for branch, heads in headssum.items()
                                  if heads[0] is not None)
     newmap.update(repo, (ctx.rev() for ctx in missingctx))
-    for branch, newheads in newmap.iteritems():
+    for branch, newheads in newmap.items():
         headssum[branch][1][:] = newheads
-    for branch, items in headssum.iteritems():
+    for branch, items in headssum.items():
         for l in items:
             if l is not None:
                 l.sort()
@@ -252,7 +252,7 @@ def _headssummary(pushop):
         futureheads = set(torev(h) for h in outgoing.missingheads)
         futureheads |= set(torev(h) for h in outgoing.commonheads)
         allfuturecommon = repo.changelog.ancestors(futureheads, inclusive=True)
-        for branch, heads in sorted(headssum.iteritems()):
+        for branch, heads in sorted(headssum.items()):
             remoteheads, newheads, unsyncedheads, placeholder = heads
             result = _postprocessobsolete(pushop, allfuturecommon, newheads)
             headssum[branch] = (remoteheads, sorted(result[0]), unsyncedheads,
@@ -333,7 +333,7 @@ def checkheads(pushop):
     else:
         headssum = _oldheadssummary(repo, remoteheads, outgoing, inc)
     pushop.pushbranchmap = headssum
-    newbranches = [branch for branch, heads in headssum.iteritems()
+    newbranches = [branch for branch, heads in headssum.items()
                    if heads[0] is None]
     # 1. Check for new branches on the remote.
     if newbranches and not newbranch:  # new branch requires --new-branch
@@ -350,7 +350,7 @@ def checkheads(pushop):
     # If there are more heads after the push than before, a suitable
     # error message, depending on unsynced status, is displayed.
     errormsg = None
-    for branch, heads in sorted(headssum.iteritems()):
+    for branch, heads in sorted(headssum.items()):
         remoteheads, newheads, unsyncedheads, discardedheads = heads
         # add unsynced data
         if remoteheads is None:

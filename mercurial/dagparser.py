@@ -5,7 +5,7 @@
 # This software may be used and distributed according to the terms of the
 # GNU General Public License version 2 or any later version.
 
-from __future__ import absolute_import
+
 
 import re
 import string
@@ -216,7 +216,7 @@ def parsedag(desc):
         elif c == '+':
             c, digs = nextrun(nextch(), string.digits)
             n = int(digs)
-            for i in xrange(0, n):
+            for i in range(0, n):
                 yield 'n', (r, [p1])
                 p1 = r
                 r += 1

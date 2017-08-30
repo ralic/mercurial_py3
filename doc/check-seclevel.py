@@ -2,7 +2,7 @@
 #
 # checkseclevel - checking section title levels in each online help document
 
-from __future__ import absolute_import
+
 
 import optparse
 import os
@@ -27,7 +27,7 @@ level2mark = [b'"', b'=', b'-', b'.', b'#']
 reservedmarks = [b'"']
 
 mark2level = {}
-for m, l in zip(level2mark, range(len(level2mark))):
+for m, l in zip(level2mark, list(range(len(level2mark)))):
     if m not in reservedmarks:
         mark2level[m] = l
 
@@ -74,7 +74,7 @@ def checkseclevel(ui, doc, name, initlevel):
 
 def checkcmdtable(ui, cmdtable, namefmt, initlevel):
     errorcnt = 0
-    for k, entry in cmdtable.items():
+    for k, entry in list(cmdtable.items()):
         name = k.split(b"|")[0].lstrip(b"^")
         if not entry[0].__doc__:
             ui.note(('skip checking %s: no help document\n') %

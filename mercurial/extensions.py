@@ -5,7 +5,7 @@
 # This software may be used and distributed according to the terms of the
 # GNU General Public License version 2 or any later version.
 
-from __future__ import absolute_import
+
 
 import imp
 import inspect
@@ -59,7 +59,7 @@ def find(name):
     try:
         mod = _extensions[name]
     except KeyError:
-        for k, v in _extensions.iteritems():
+        for k, v in _extensions.items():
             if k.endswith('.' + name) or k.endswith('/' + name):
                 mod = v
                 break
@@ -126,7 +126,7 @@ _cmdfuncattrs = ('norepo', 'optionalrepo', 'inferrepo')
 
 def _validatecmdtable(ui, cmdtable):
     """Check if extension commands have required attributes"""
-    for c, e in cmdtable.iteritems():
+    for c, e in cmdtable.items():
         f = e[0]
         if getattr(f, '_deprecatedregistrar', False):
             ui.deprecwarn("cmdutil.command is deprecated, use "
@@ -361,7 +361,7 @@ def wrapcommand(table, command, wrapper, synopsis=None, docstring=None):
     '''
     assert callable(wrapper)
     aliases, entry = cmdutil.findcmd(command, table)
-    for alias, e in table.iteritems():
+    for alias, e in table.items():
         if e is entry:
             key = alias
             break
@@ -503,7 +503,7 @@ def _disabledpaths(strip_init=False):
         if name in exts or name in _order or name == '__init__':
             continue
         exts[name] = path
-    for name, path in _disabledextensions.iteritems():
+    for name, path in _disabledextensions.items():
         # If no path was provided for a disabled extension (e.g. "color=!"),
         # don't replace the path we already found by the scan above.
         if path:
@@ -562,7 +562,7 @@ def disabled():
     try:
         from hgext import __index__
         return dict((name, gettext(desc))
-                    for name, desc in __index__.docs.iteritems()
+                    for name, desc in __index__.docs.items()
                     if name not in _order)
     except (ImportError, AttributeError):
         pass
@@ -572,7 +572,7 @@ def disabled():
         return {}
 
     exts = {}
-    for name, path in paths.iteritems():
+    for name, path in paths.items():
         doc = _disabledhelp(path)
         if doc:
             exts[name] = doc.splitlines()[0]
@@ -631,7 +631,7 @@ def disabledcmd(ui, cmd, strict=False):
         ext = findcmd(cmd, cmd, path)
     if not ext:
         # otherwise, interrogate each extension until there's a match
-        for name, path in paths.iteritems():
+        for name, path in paths.items():
             ext = findcmd(cmd, name, path)
             if ext:
                 break
@@ -653,7 +653,7 @@ def enabled(shortname=True):
 
 def notloaded():
     '''return short names of extensions that failed to load'''
-    return [name for name, mod in _extensions.iteritems() if mod is None]
+    return [name for name, mod in _extensions.items() if mod is None]
 
 def moduleversion(module):
     '''return version information from given module as a string'''

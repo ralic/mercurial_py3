@@ -5,7 +5,7 @@
 # This software may be used and distributed according to the terms of the
 # GNU General Public License version 2 or any later version.
 
-from __future__ import absolute_import
+
 
 import errno
 import hashlib
@@ -734,7 +734,7 @@ class localrepository(object):
         if isinstance(changeid, slice):
             # wdirrev isn't contiguous so the slice shouldn't include it
             return [context.changectx(self, i)
-                    for i in xrange(*changeid.indices(len(self)))
+                    for i in range(*changeid.indices(len(self)))
                     if i not in self.changelog.filteredrevs]
         try:
             return context.changectx(self, changeid)
@@ -752,7 +752,7 @@ class localrepository(object):
         except error.RepoLookupError:
             return False
 
-    def __nonzero__(self):
+    def __bool__(self):
         return True
 
     __bool__ = __nonzero__
@@ -849,7 +849,7 @@ class localrepository(object):
             tags, tt = self._findtags()
         else:
             tags = self._tagscache.tags
-        for k, v in tags.iteritems():
+        for k, v in tags.items():
             try:
                 # ignore tags to unknown nodes
                 self.changelog.rev(v)
@@ -885,12 +885,12 @@ class localrepository(object):
         # writing to the cache), but the rest of Mercurial wants them in
         # local encoding.
         tags = {}
-        for (name, (node, hist)) in alltags.iteritems():
+        for (name, (node, hist)) in alltags.items():
             if node != nullid:
                 tags[encoding.tolocal(name)] = node
         tags['tip'] = self.changelog.tip()
         tagtypes = dict([(encoding.tolocal(name), value)
-                         for (name, value) in tagtypes.iteritems()])
+                         for (name, value) in tagtypes.items()])
         return (tags, tagtypes)
 
     def tagtype(self, tagname):
@@ -908,7 +908,7 @@ class localrepository(object):
         '''return a list of tags ordered by revision'''
         if not self._tagscache.tagslist:
             l = []
-            for t, n in self.tags().iteritems():
+            for t, n in self.tags().items():
                 l.append((self.changelog.rev(n), t, n))
             self._tagscache.tagslist = [(t, n) for r, t, n in sorted(l)]
 
@@ -918,9 +918,9 @@ class localrepository(object):
         '''return the tags associated with a node'''
         if not self._tagscache.nodetagscache:
             nodetagscache = {}
-            for t, n in self._tagscache.tags.iteritems():
+            for t, n in self._tagscache.tags.items():
                 nodetagscache.setdefault(n, []).append(t)
-            for tags in nodetagscache.itervalues():
+            for tags in nodetagscache.values():
                 tags.sort()
             self._tagscache.nodetagscache = nodetagscache
         return self._tagscache.nodetagscache.get(node, [])
@@ -928,7 +928,7 @@ class localrepository(object):
     def nodebookmarks(self, node):
         """return the list of bookmarks pointing to the specified node"""
         marks = []
-        for bookmark, n in self._bookmarks.iteritems():
+        for bookmark, n in self._bookmarks.items():
             if n == node:
                 marks.append(bookmark)
         return sorted(marks)
@@ -1053,7 +1053,7 @@ class localrepository(object):
                 mf = matchmod.match(self.root, '', [pat])
                 fn = None
                 params = cmd
-                for name, filterfn in self._datafilters.iteritems():
+                for name, filterfn in self._datafilters.items():
                     if cmd.startswith(name):
                         fn = filterfn
                         params = cmd[len(name):].lstrip()
@@ -1522,7 +1522,7 @@ class localrepository(object):
     @unfilteredmethod
     def _refreshfilecachestats(self, tr):
         """Reload stats of cached files so that they are flagged as valid"""
-        for k, ce in self._filecache.items():
+        for k, ce in list(self._filecache.items()):
             if k == 'dirstate' or k not in self.__dict__:
                 continue
             ce.refresh()

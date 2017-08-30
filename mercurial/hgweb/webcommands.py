@@ -5,7 +5,7 @@
 # This software may be used and distributed according to the terms of the
 # GNU General Public License version 2 or any later version.
 
-from __future__ import absolute_import
+
 
 import cgi
 import copy
@@ -199,7 +199,7 @@ def _search(web, req, tmpl):
 
         def revgen():
             cl = web.repo.changelog
-            for i in xrange(len(web.repo) - 1, 0, -100):
+            for i in range(len(web.repo) - 1, 0, -100):
                 l = []
                 for j in cl.revs(max(0, i - 99), i):
                     ctx = web.repo[j]
@@ -501,7 +501,7 @@ def manifest(web, req, tmpl):
     l = len(path)
     abspath = "/" + path
 
-    for full, n in mf.iteritems():
+    for full, n in mf.items():
         # the virtual path (working copy path) used for the full
         # (repository) path
         f = decodepath(full)
@@ -543,7 +543,7 @@ def manifest(web, req, tmpl):
             emptydirs = []
             h = dirs[d]
             while isinstance(h, dict) and len(h) == 1:
-                k, v = h.items()[0]
+                k, v = list(h.items())[0]
                 if v:
                     emptydirs.append(k)
                 h = v
@@ -609,7 +609,7 @@ def bookmarks(web, req, tmpl):
 
     The ``bookmarks`` template is rendered.
     """
-    i = [b for b in web.repo._bookmarks.items() if b[1] in web.repo]
+    i = [b for b in list(web.repo._bookmarks.items()) if b[1] in web.repo]
     sortkey = lambda b: (web.repo[b[1]].rev(), b[0])
     i = sorted(i, key=sortkey, reverse=True)
     parity = paritygen(web.stripecount)
@@ -688,7 +688,7 @@ def summary(web, req, tmpl):
 
     def bookmarks(**map):
         parity = paritygen(web.stripecount)
-        marks = [b for b in web.repo._bookmarks.items() if b[1] in web.repo]
+        marks = [b for b in list(web.repo._bookmarks.items()) if b[1] in web.repo]
         sortkey = lambda b: (web.repo[b[1]].rev(), b[0])
         marks = sorted(marks, key=sortkey, reverse=True)
         for k, n in marks[:10]:  # limit to 10 bookmarks
@@ -1117,7 +1117,7 @@ def archive(web, req, tmpl):
         pats = ['path:' + file[0]]
         matchfn = scmutil.match(ctx, pats, default='path')
         if pats:
-            files = [f for f in ctx.manifest().keys() if matchfn(f)]
+            files = [f for f in list(ctx.manifest().keys()) if matchfn(f)]
             if not files:
                 raise ErrorResponse(HTTP_NOT_FOUND,
                     'file(s) not found: %s' % file[0])
@@ -1324,7 +1324,7 @@ def help(web, req, tmpl):
 
         early, other = [], []
         primary = lambda s: s.partition('|')[0]
-        for c, e in commands.table.iteritems():
+        for c, e in commands.table.items():
             doc = _getdoc(e)
             if 'DEPRECATED' in doc or c.startswith('debug'):
                 continue
@@ -1382,4 +1382,4 @@ def help(web, req, tmpl):
     return tmpl('help', topic=topicname, doc=doc)
 
 # tell hggettext to extract docstrings from these functions:
-i18nfunctions = commands.values()
+i18nfunctions = list(commands.values())

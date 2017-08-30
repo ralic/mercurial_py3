@@ -7,7 +7,7 @@
 # GNU General Public License version 2 or any later version.
 
 '''High-level command function for lfconvert, plus the cmdtable.'''
-from __future__ import absolute_import
+
 
 import errno
 import hashlib
@@ -126,7 +126,7 @@ def lfconvert(ui, src, dest, *pats, **opts):
             if rdst.wvfs.exists(lfutil.shortname):
                 rdst.wvfs.rmtree(lfutil.shortname)
 
-            for f in lfiletohash.keys():
+            for f in list(lfiletohash.keys()):
                 if rdst.wvfs.isfile(f):
                     rdst.wvfs.unlink(f)
                 try:
@@ -362,7 +362,7 @@ def uploadlfiles(ui, rsrc, rdst, files):
     at = 0
     ui.debug("sending statlfile command for %d largefiles\n" % len(files))
     retval = store.exists(files)
-    files = filter(lambda h: not retval[h], files)
+    files = [h for h in files if not retval[h]]
     ui.debug("%d largefiles need to be uploaded\n" % len(files))
 
     for hash in files:

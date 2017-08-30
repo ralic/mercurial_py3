@@ -5,7 +5,7 @@
 # This software may be used and distributed according to the terms of the
 # GNU General Public License version 2 or any later version.
 
-from __future__ import absolute_import
+
 
 import difflib
 import errno
@@ -159,7 +159,7 @@ def debugbuilddag(ui, repo, text=None,
     if mergeable_file:
         linesperrev = 2
         # make a file with k lines per rev
-        initialmergedlines = [str(i) for i in xrange(0, total * linesperrev)]
+        initialmergedlines = [str(i) for i in range(0, total * linesperrev)]
         initialmergedlines.append("")
 
     tags = []
@@ -403,7 +403,7 @@ def debugcolor(ui, repo, **opts):
 def _debugdisplaycolor(ui):
     ui = ui.copy()
     ui._styles.clear()
-    for effect in color._activeeffects(ui).keys():
+    for effect in list(color._activeeffects(ui).keys()):
         ui._styles[effect] = effect
     if ui._terminfoparams:
         for k, v in ui.configitems('color'):
@@ -413,7 +413,7 @@ def _debugdisplaycolor(ui):
                 ui._styles[k] = k[9:]
     ui.write(_('available colors:\n'))
     # sort label with a '_' after the other to group '_background' entry.
-    items = sorted(ui._styles.items(),
+    items = sorted(list(ui._styles.items()),
                    key=lambda i: ('_' in i[0], i[0], i[1]))
     for colorname, label in items:
         ui.write(('%s\n') % colorname, label=label)
@@ -481,7 +481,7 @@ def debugdag(ui, repo, file_=None, *revs, **opts):
         branches = opts.get(r'branches')
         if tags:
             labels = {}
-            for l, n in repo.tags().items():
+            for l, n in list(repo.tags().items()):
                 labels.setdefault(cl.rev(n), []).append(l)
         def events():
             b = "default"
@@ -660,7 +660,7 @@ def debugstate(ui, repo, **opts):
         keyfunc = lambda x: (x[1][3], x[0]) # sort by mtime, then by filename
     else:
         keyfunc = None # sort by filename
-    for file_, ent in sorted(repo.dirstate._map.iteritems(), key=keyfunc):
+    for file_, ent in sorted(iter(repo.dirstate._map.items()), key=keyfunc):
         if ent[3] == -1:
             timestr = 'unset               '
         elif nodates:
@@ -1052,7 +1052,7 @@ def debuginstall(ui, **opts):
             problems += 1
         fm.condwrite(err, 'extensionserror', " %s\n", err)
 
-    compengines = util.compengines._engines.values()
+    compengines = list(util.compengines._engines.values())
     fm.write('compengines', _('checking registered compression engines (%s)\n'),
              fm.formatlist(sorted(e.name() for e in compengines),
                            name='compengine', fmt='%s', sep=', '))
@@ -1331,7 +1331,7 @@ def debugnamecomplete(ui, repo, *args):
     names = set()
     # since we previously only listed open branches, we will handle that
     # specially (after this for loop)
-    for name, ns in repo.names.iteritems():
+    for name, ns in repo.names.items():
         if name != 'branches':
             names.update(ns.listnames(repo))
     names.update(tag for (tag, heads, tip, closed)
@@ -1491,7 +1491,7 @@ def debugpathcomplete(ui, repo, *specs, **opts):
         fullpaths = opts[r'full']
         files, dirs = set(), set()
         adddir, addfile = dirs.add, files.add
-        for f, st in dirstate.iteritems():
+        for f, st in dirstate.items():
             if f.startswith(spec) and st[0] in acceptable:
                 if fixpaths:
                     f = f.replace('/', pycompat.ossep)
@@ -1621,7 +1621,7 @@ def debugpushkey(ui, repopath, namespace, *keyinfo, **opts):
         ui.status(str(r) + '\n')
         return not r
     else:
-        for k, v in sorted(target.listkeys(namespace).iteritems()):
+        for k, v in sorted(target.listkeys(namespace).items()):
             ui.write("%s\t%s\n" % (util.escapestr(k),
                                    util.escapestr(v)))
 
@@ -1723,7 +1723,7 @@ def debugrevlog(ui, repo, file_=None, **opts):
         ts = 0
         heads = set()
 
-        for rev in xrange(numrevs):
+        for rev in range(numrevs):
             dbase = r.deltaparent(rev)
             if dbase == -1:
                 dbase = rev
@@ -1784,7 +1784,7 @@ def debugrevlog(ui, repo, file_=None, **opts):
         l[2] += size
 
     numrevs = len(r)
-    for rev in xrange(numrevs):
+    for rev in range(numrevs):
         p1, p2 = r.parentrevs(rev)
         delta = r.deltaparent(rev)
         if format > 0:
@@ -2300,7 +2300,7 @@ def debugwireargs(ui, repopath, *vals, **opts):
     for opt in cmdutil.remoteopts:
         del opts[opt[1]]
     args = {}
-    for k, v in opts.iteritems():
+    for k, v in opts.items():
         if v:
             args[k] = v
     # run twice to check that we don't mess up the stream for the next command

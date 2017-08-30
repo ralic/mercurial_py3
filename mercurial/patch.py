@@ -6,7 +6,7 @@
 # This software may be used and distributed according to the terms of the
 # GNU General Public License version 2 or any later version.
 
-from __future__ import absolute_import
+
 
 import collections
 import copy
@@ -145,7 +145,7 @@ def split(stream):
         def __iter__(self):
             return self
 
-        def next(self):
+        def __next__(self):
             l = self.fp.readline()
             if not l:
                 raise StopIteration
@@ -220,7 +220,7 @@ def extract(ui, fileobj):
         data['user'] = msg['From'] and mail.headdecode(msg['From'])
         if not subject and not data['user']:
             # Not an email, restore parsed headers if any
-            subject = '\n'.join(': '.join(h) for h in msg.items()) + '\n'
+            subject = '\n'.join(': '.join(h) for h in list(msg.items())) + '\n'
 
         # should try to parse msg['Date']
         parents = []
@@ -803,7 +803,7 @@ class patchfile(object):
         for x, s in enumerate(self.lines):
             self.hash.setdefault(s, []).append(x)
 
-        for fuzzlen in xrange(self.ui.configint("patch", "fuzz") + 1):
+        for fuzzlen in range(self.ui.configint("patch", "fuzz") + 1):
             for toponly in [True, False]:
                 old, oldstart, new, newstart = h.fuzzit(fuzzlen, toponly)
                 oldstart = oldstart + self.offset + self.skew
@@ -1185,7 +1185,7 @@ the hunk is left unchanged.
                         applied[newhunk.filename()].append(newhunk)
             else:
                 fixoffset += chunk.removed - chunk.added
-    return (sum([h for h in applied.itervalues()
+    return (sum([h for h in applied.values()
                if h[0].special() or len(h) > 1], []), {})
 class hunk(object):
     def __init__(self, desc, num, lr, context):
@@ -1265,7 +1265,7 @@ class hunk(object):
         self.lena = int(aend) - self.starta
         if self.starta:
             self.lena += 1
-        for x in xrange(self.lena):
+        for x in range(self.lena):
             l = lr.readline()
             if l.startswith('---'):
                 # lines addition, old block is empty
@@ -1299,7 +1299,7 @@ class hunk(object):
         if self.startb:
             self.lenb += 1
         hunki = 1
-        for x in xrange(self.lenb):
+        for x in range(self.lenb):
             l = lr.readline()
             if l.startswith('\ '):
                 # XXX: the only way to hit this is with an invalid line range.
@@ -1375,14 +1375,14 @@ class hunk(object):
             top = 0
             bot = 0
             hlen = len(self.hunk)
-            for x in xrange(hlen - 1):
+            for x in range(hlen - 1):
                 # the hunk starts with the @@ line, so use x+1
                 if self.hunk[x + 1][0] == ' ':
                     top += 1
                 else:
                     break
             if not toponly:
-                for x in xrange(hlen - 1):
+                for x in range(hlen - 1):
                     if self.hunk[hlen - bot - 1][0] == ' ':
                         bot += 1
                     else:
@@ -2396,7 +2396,7 @@ def diffhunks(repo, node1=None, node2=None, match=None, changes=None,
             removed = filterrel(removed)
             relfiltered = True
         # filter out copies where either side isn't inside the relative root
-        copy = dict(((dst, src) for (dst, src) in copy.iteritems()
+        copy = dict(((dst, src) for (dst, src) in copy.items()
                      if dst.startswith(relroot)
                      and src.startswith(relroot)))
 
@@ -2417,7 +2417,7 @@ def diffhunks(repo, node1=None, node2=None, match=None, changes=None,
     modified = sorted(modifiedset)
     added = sorted(addedset)
     removed = sorted(removedset)
-    for dst, src in copy.items():
+    for dst, src in list(copy.items()):
         if src not in ctx1:
             # Files merged in during a merge and then copied/renamed are
             # reported as copies. We want to show them in the diff as additions.
@@ -2503,7 +2503,7 @@ def _filepairs(modified, added, removed, copy, opts):
     or 'rename' (the latter two only if opts.git is set).'''
     gone = set()
 
-    copyto = dict([(v, k) for k, v in copy.items()])
+    copyto = dict([(v, k) for k, v in list(copy.items())])
 
     addedset, removedset = set(added), set(removed)
 

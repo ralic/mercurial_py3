@@ -5,7 +5,7 @@
 # This software may be used and distributed according to the terms of the
 # GNU General Public License version 2 or any later version.
 
-from __future__ import absolute_import
+
 
 from . import (
     error,
@@ -37,7 +37,7 @@ def _formatsetrepr(r):
 
 class abstractsmartset(object):
 
-    def __nonzero__(self):
+    def __bool__(self):
         """True if the smartset is not empty"""
         raise NotImplementedError()
 
@@ -167,11 +167,11 @@ class abstractsmartset(object):
         # but start > stop is allowed, which should be an empty set.
         ys = []
         it = iter(self)
-        for x in xrange(start):
+        for x in range(start):
             y = next(it, None)
             if y is None:
                 break
-        for x in xrange(stop - start):
+        for x in range(stop - start):
             y = next(it, None)
             if y is None:
                 break
@@ -289,7 +289,7 @@ class baseset(abstractsmartset):
     def __contains__(self):
         return self._set.__contains__
 
-    def __nonzero__(self):
+    def __bool__(self):
         return bool(len(self))
 
     __bool__ = __nonzero__
@@ -439,7 +439,7 @@ class filteredset(abstractsmartset):
             return None
         return lambda: self._iterfilter(it())
 
-    def __nonzero__(self):
+    def __bool__(self):
         fast = None
         candidates = [self.fastasc if self.isascending() else None,
                       self.fastdesc if self.isdescending() else None,
@@ -630,7 +630,7 @@ class addset(abstractsmartset):
     def __len__(self):
         return len(self._list)
 
-    def __nonzero__(self):
+    def __bool__(self):
         return bool(self._r1) or bool(self._r2)
 
     __bool__ = __nonzero__
@@ -790,7 +790,7 @@ class generatorset(abstractsmartset):
                 self.fastdesc = self._iterator
                 self.__contains__ = self._desccontains
 
-    def __nonzero__(self):
+    def __bool__(self):
         # Do not use 'for r in self' because it will enforce the iteration
         # order (default ascending), possibly unrolling a whole descending
         # iterator.
@@ -1005,13 +1005,13 @@ class _spanset(abstractsmartset):
             return self.fastdesc()
 
     def fastasc(self):
-        iterrange = xrange(self._start, self._end)
+        iterrange = range(self._start, self._end)
         if self._hiddenrevs:
             return self._iterfilter(iterrange)
         return iter(iterrange)
 
     def fastdesc(self):
-        iterrange = xrange(self._end - 1, self._start - 1, -1)
+        iterrange = range(self._end - 1, self._start - 1, -1)
         if self._hiddenrevs:
             return self._iterfilter(iterrange)
         return iter(iterrange)
@@ -1021,7 +1021,7 @@ class _spanset(abstractsmartset):
         return ((self._start <= rev < self._end)
                 and not (hidden and rev in hidden))
 
-    def __nonzero__(self):
+    def __bool__(self):
         for r in self:
             return True
         return False

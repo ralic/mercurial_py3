@@ -5,7 +5,7 @@
 # This software may be used and distributed according to the terms of the
 # GNU General Public License version 2 or any later version.
 
-from __future__ import absolute_import
+
 
 import re
 import struct
@@ -31,7 +31,7 @@ def parsemeta(text):
     return meta, (s + 2)
 
 def packmeta(meta, text):
-    keys = sorted(meta.iterkeys())
+    keys = sorted(meta.keys())
     metatext = "".join("%s: %s\n" % (k, meta[k]) for k in keys)
     return "\1\n%s\1\n%s" % (metatext, text)
 

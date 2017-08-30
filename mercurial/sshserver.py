@@ -6,7 +6,7 @@
 # This software may be used and distributed according to the terms of the
 # GNU General Public License version 2 or any later version.
 
-from __future__ import absolute_import
+
 
 import sys
 
@@ -38,14 +38,14 @@ class sshserver(wireproto.abstractserverproto):
     def getargs(self, args):
         data = {}
         keys = args.split()
-        for n in xrange(len(keys)):
+        for n in range(len(keys)):
             argline = self.fin.readline()[:-1]
             arg, l = argline.split()
             if arg not in keys:
                 raise error.Abort(_("unexpected parameter %r") % arg)
             if arg == '*':
                 star = {}
-                for k in xrange(int(l)):
+                for k in range(int(l)):
                     argline = self.fin.readline()[:-1]
                     arg, l = argline.split()
                     val = self.fin.read(int(l))

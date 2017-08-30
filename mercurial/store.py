@@ -5,7 +5,7 @@
 # This software may be used and distributed according to the terms of the
 # GNU General Public License version 2 or any later version.
 
-from __future__ import absolute_import
+
 
 import errno
 import hashlib
@@ -68,7 +68,7 @@ def _reserved():
 
     these characters will be escaped by encodefunctions
     '''
-    winreserved = [ord(x) for x in u'\\:*?"<>|']
+    winreserved = [ord(x) for x in '\\:*?"<>|']
     for x in range(32):
         yield x
     for x in range(126, 256):
@@ -102,7 +102,7 @@ def _buildencodefun():
     '''
     e = '_'
     xchr = pycompat.bytechr
-    asciistr = list(map(xchr, range(127)))
+    asciistr = list(map(xchr, list(range(127))))
     capitals = list(range(ord("A"), ord("Z") + 1))
 
     cmap = dict((x, x) for x in asciistr)
@@ -112,12 +112,12 @@ def _buildencodefun():
         cmap[xchr(x)] = e + xchr(x).lower()
 
     dmap = {}
-    for k, v in cmap.iteritems():
+    for k, v in cmap.items():
         dmap[v] = k
     def decode(s):
         i = 0
         while i < len(s):
-            for l in xrange(1, 4):
+            for l in range(1, 4):
                 try:
                     yield dmap[s[i:i + l]]
                     i += l
@@ -126,7 +126,7 @@ def _buildencodefun():
                     pass
             else:
                 raise KeyError
-    return (lambda s: ''.join([cmap[s[c:c + 1]] for c in xrange(len(s))]),
+    return (lambda s: ''.join([cmap[s[c:c + 1]] for c in range(len(s))]),
             lambda s: ''.join(list(decode(s))))
 
 _encodefname, _decodefname = _buildencodefun()
@@ -157,7 +157,7 @@ def _buildlowerencodefun():
     >>> f('the\x07quick\xADshot')
     'the~07quick~adshot'
     '''
-    cmap = dict([(chr(x), chr(x)) for x in xrange(127)])
+    cmap = dict([(chr(x), chr(x)) for x in range(127)])
     for x in _reserved():
         cmap[chr(x)] = "~%02x" % x
     for x in range(ord("A"), ord("Z") + 1):

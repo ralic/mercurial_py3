@@ -1,4 +1,4 @@
-from __future__ import absolute_import, print_function
+
 import os
 from mercurial import (
     commands,
@@ -11,7 +11,7 @@ ignore = {b'highlight', b'win32text', b'factotum'}
 if os.name != 'nt':
     ignore.add(b'win32mbcs')
 
-disabled = [ext for ext in extensions.disabled().keys() if ext not in ignore]
+disabled = [ext for ext in list(extensions.disabled().keys()) if ext not in ignore]
 
 hgrc = open(os.environ["HGRCPATH"], 'wb')
 hgrc.write(b'[extensions]\n')
@@ -30,7 +30,7 @@ for option in commands.globalopts:
     option[0] and globalshort.add(option[0])
     option[1] and globallong.add(option[1])
 
-for cmd, entry in commands.table.items():
+for cmd, entry in list(commands.table.items()):
     seenshort = globalshort.copy()
     seenlong = globallong.copy()
     for option in entry[1]:

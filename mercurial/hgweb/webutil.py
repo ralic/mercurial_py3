@@ -6,7 +6,7 @@
 # This software may be used and distributed according to the terms of the
 # GNU General Public License version 2 or any later version.
 
-from __future__ import absolute_import
+
 
 import copy
 import difflib
@@ -70,7 +70,7 @@ class revnav(object):
         # used for hex generation
         self._revlog = repo.changelog
 
-    def __nonzero__(self):
+    def __bool__(self):
         """return True if any revision to navigate over"""
         return self._first() is not None
 
@@ -327,7 +327,7 @@ def linerange(req):
         raise ErrorResponse(HTTP_BAD_REQUEST,
                             'redundant linerange parameter')
     try:
-        fromline, toline = map(int, linerange[0].split(':', 1))
+        fromline, toline = list(map(int, linerange[0].split(':', 1)))
     except ValueError:
         raise ErrorResponse(HTTP_BAD_REQUEST,
                             'invalid linerange parameter')
@@ -502,21 +502,21 @@ def compare(tmpl, context, leftlines, rightlines):
             len1 = lhi - llo
             len2 = rhi - rlo
             count = min(len1, len2)
-            for i in xrange(count):
+            for i in range(count):
                 yield compline(type=type,
                                leftlineno=llo + i + 1,
                                leftline=leftlines[llo + i],
                                rightlineno=rlo + i + 1,
                                rightline=rightlines[rlo + i])
             if len1 > len2:
-                for i in xrange(llo + count, lhi):
+                for i in range(llo + count, lhi):
                     yield compline(type=type,
                                    leftlineno=i + 1,
                                    leftline=leftlines[i],
                                    rightlineno=None,
                                    rightline=None)
             elif len2 > len1:
-                for i in xrange(rlo + count, rhi):
+                for i in range(rlo + count, rhi):
                     yield compline(type=type,
                                    leftlineno=None,
                                    leftline=None,
@@ -577,7 +577,7 @@ class sessionvars(object):
         return sessionvars(copy.copy(self.vars), self.start)
     def __iter__(self):
         separator = self.start
-        for key, value in sorted(self.vars.iteritems()):
+        for key, value in sorted(self.vars.items()):
             yield {'name': key, 'value': str(value), 'separator': separator}
             separator = '&'
 

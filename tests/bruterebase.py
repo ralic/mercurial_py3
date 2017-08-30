@@ -5,7 +5,7 @@
 # This software may be used and distributed according to the terms of the
 # GNU General Public License version 2 or any later version.
 
-from __future__ import absolute_import
+
 
 from mercurial import (
     error,
@@ -36,7 +36,7 @@ def debugbruterebase(ui, repo, source, dest):
                 result += "'"
             return result
 
-        for i in xrange(1, 2 ** len(srevs)):
+        for i in range(1, 2 ** len(srevs)):
             subset = [rev for j, rev in enumerate(srevs) if i & (1 << j) != 0]
             spec = revsetlang.formatspec('%ld', subset)
             tr = repo.transaction('rebase')
@@ -53,7 +53,7 @@ def debugbruterebase(ui, repo, source, dest):
                 # short summary about new nodes
                 cl = repo.changelog
                 descs = []
-                for rev in xrange(repolen, len(repo)):
+                for rev in range(repolen, len(repo)):
                     desc = '%s:' % getdesc(rev)
                     for prev in cl.parentrevs(rev):
                         if prev > -1:

@@ -32,7 +32,7 @@ not ensure that they exit cleanly.
 
 """
 
-from __future__ import absolute_import
+
 
 import itertools
 import os
@@ -118,8 +118,8 @@ def uisetup(ui):
                 # keyword arguments get prefixed with OPT_ and uppercased
                 optpairs = (
                     ('OPT_{0}'.format(key.upper()), str(value))
-                    for key, value in opts.iteritems())
-                env = dict(itertools.chain(encoding.environ.items(),
+                    for key, value in opts.items())
+                env = dict(itertools.chain(list(encoding.environ.items()),
                                            msgpairs, optpairs),
                            EVENT=event, HGPID=str(os.getpid()))
                 # Connect stdin to /dev/null to prevent child processes messing

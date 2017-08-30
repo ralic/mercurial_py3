@@ -16,7 +16,7 @@
 # mbp: "you know that thing where cvs gives you conflict markers?"
 # s: "i hate that."
 
-from __future__ import absolute_import
+
 
 from .i18n import _
 from . import (
@@ -56,7 +56,7 @@ def compare_range(a, astart, aend, b, bstart, bend):
     """
     if (aend - astart) != (bend - bstart):
         return False
-    for ia, ib in zip(xrange(astart, aend), xrange(bstart, bend)):
+    for ia, ib in zip(range(astart, aend), range(bstart, bend)):
         if a[ia] != b[ib]:
             return False
     else:

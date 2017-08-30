@@ -82,7 +82,7 @@ EXTRA ATTRIBUTES AND METHODS
 
 # $Id: keepalive.py,v 1.14 2006/04/04 21:00:32 mstenner Exp $
 
-from __future__ import absolute_import, print_function
+
 
 import errno
 import hashlib
@@ -171,7 +171,7 @@ class KeepAliveHandler(object):
     def open_connections(self):
         """return a list of connected hosts and the number of connections
         to each.  [('foo.com:80', 2), ('bar.org', 1)]"""
-        return [(host, len(li)) for (host, li) in self._cm.get_all().items()]
+        return [(host, len(li)) for (host, li) in list(self._cm.get_all().items())]
 
     def close_connection(self, host):
         """close connection(s) to <host>
@@ -183,7 +183,7 @@ class KeepAliveHandler(object):
 
     def close_all(self):
         """close all open connections"""
-        for host, conns in self._cm.get_all().iteritems():
+        for host, conns in self._cm.get_all().items():
             for h in conns:
                 self._cm.remove(h)
                 h.close()
@@ -303,7 +303,7 @@ class KeepAliveHandler(object):
         headers = util.sortdict(self.parent.addheaders)
         headers.update(sorted(req.headers.items()))
         headers.update(sorted(req.unredirected_hdrs.items()))
-        headers = util.sortdict((n.lower(), v) for n, v in headers.items())
+        headers = util.sortdict((n.lower(), v) for n, v in list(headers.items()))
         skipheaders = {}
         for n in ('host', 'accept-encoding'):
             if n in headers:
@@ -323,7 +323,7 @@ class KeepAliveHandler(object):
                     req.get_method(), req.get_selector(), **skipheaders)
         except socket.error as err:
             raise urlerr.urlerror(err)
-        for k, v in headers.items():
+        for k, v in list(headers.items()):
             h.putheader(k, v)
         h.endheaders()
         if req.has_data():

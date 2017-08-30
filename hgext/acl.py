@@ -191,7 +191,7 @@ In the examples below, we will:
 
 '''
 
-from __future__ import absolute_import
+
 
 import getpass
 
@@ -318,7 +318,7 @@ def hook(ui, repo, hooktype, node=None, source=None, **kwargs):
     allow = buildmatch(ui, repo, user, 'acl.allow')
     deny = buildmatch(ui, repo, user, 'acl.deny')
 
-    for rev in xrange(repo[node], len(repo)):
+    for rev in range(repo[node], len(repo)):
         ctx = repo[rev]
         branch = ctx.branch()
         if denybranches and denybranches(branch):

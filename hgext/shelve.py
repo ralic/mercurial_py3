@@ -20,7 +20,7 @@ You can have more than one shelved change outstanding at a time; each
 shelved change has a distinct name. For details, see the help for "hg
 shelve".
 """
-from __future__ import absolute_import
+
 
 import collections
 import errno
@@ -740,7 +740,7 @@ def _rebaserestoredcommit(ui, repo, opts, tr, oldtiprev, basename, pctx,
         tr.close()
 
         nodestoremove = [repo.changelog.node(rev)
-                         for rev in xrange(oldtiprev, len(repo))]
+                         for rev in range(oldtiprev, len(repo))]
         shelvedstate.save(repo, basename, pctx, tmpwctx, nodestoremove,
                           branchtorestore, opts.get('keep'), activebookmark)
 

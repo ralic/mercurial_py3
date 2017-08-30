@@ -5,7 +5,7 @@
 # This software may be used and distributed according to the terms of the
 # GNU General Public License version 2 or any later version.
 
-from __future__ import absolute_import
+
 
 import collections
 import heapq
@@ -174,7 +174,7 @@ class incrementalmissingancestors(object):
             # no revs to consider
             return
 
-        for curr in xrange(start, min(revs) - 1, -1):
+        for curr in range(start, min(revs) - 1, -1):
             if curr not in bases:
                 continue
             revs.discard(curr)
@@ -215,7 +215,7 @@ class incrementalmissingancestors(object):
         # exit.
 
         missing = []
-        for curr in xrange(start, nullrev, -1):
+        for curr in range(start, nullrev, -1):
             if not revsvisit:
                 break
 
@@ -288,7 +288,7 @@ class lazyancestors(object):
         else:
             self._containsseen = set()
 
-    def __nonzero__(self):
+    def __bool__(self):
         """False if the set is empty, True otherwise."""
         try:
             next(iter(self))

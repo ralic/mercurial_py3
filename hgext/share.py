@@ -37,7 +37,7 @@ The following ``share.`` config options influence this feature:
     The default naming mode is "identity."
 '''
 
-from __future__ import absolute_import
+
 
 import errno
 from mercurial.i18n import _

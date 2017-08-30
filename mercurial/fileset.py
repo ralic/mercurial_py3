@@ -5,7 +5,7 @@
 # This software may be used and distributed according to the terms of the
 # GNU General Public License version 2 or any later version.
 
-from __future__ import absolute_import
+
 
 import re
 
@@ -236,7 +236,7 @@ def func(mctx, a, b):
 
     keep = lambda fn: getattr(fn, '__doc__', None) is not None
 
-    syms = [s for (s, fn) in symbols.items() if keep(fn)]
+    syms = [s for (s, fn) in list(symbols.items()) if keep(fn)]
     raise error.UnknownIdentifier(a[1], syms)
 
 def getlist(x):
@@ -618,7 +618,7 @@ def prettyformat(tree):
 def loadpredicate(ui, extname, registrarobj):
     """Load fileset predicates from specified registrarobj
     """
-    for name, func in registrarobj._table.iteritems():
+    for name, func in registrarobj._table.items():
         symbols[name] = func
         if func._callstatus:
             _statuscallers.add(name)
@@ -629,4 +629,4 @@ def loadpredicate(ui, extname, registrarobj):
 loadpredicate(None, None, predicate)
 
 # tell hggettext to extract docstrings from these functions:
-i18nfunctions = symbols.values()
+i18nfunctions = list(symbols.values())

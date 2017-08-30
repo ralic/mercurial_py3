@@ -5,7 +5,7 @@
 # This software may be used and distributed according to the terms of the
 # GNU General Public License version 2 or any later version.
 
-from __future__ import absolute_import
+
 
 import filecmp
 import os
@@ -190,8 +190,8 @@ def _picktool(repo, ui, path, binary, symlink, changedelete):
             tools[t] = int(_toolstr(ui, t, "priority", "0"))
         if _toolbool(ui, t, "disabled", False):
             disabled.add(t)
-    names = tools.keys()
-    tools = sorted([(-p, tool) for tool, p in tools.items()
+    names = list(tools.keys())
+    tools = sorted([(-p, tool) for tool, p in list(tools.items())
                     if tool not in disabled])
     uimerge = ui.config("ui", "merge")
     if uimerge:
@@ -737,7 +737,7 @@ def filemerge(repo, mynode, orig, fcd, fco, fca, labels=None):
 def loadinternalmerge(ui, extname, registrarobj):
     """Load internal merge tool from specified registrarobj
     """
-    for name, func in registrarobj._table.iteritems():
+    for name, func in registrarobj._table.items():
         fullname = ':' + name
         internals[fullname] = func
         internals['internal:' + name] = func
@@ -747,4 +747,4 @@ def loadinternalmerge(ui, extname, registrarobj):
 loadinternalmerge(None, None, internaltool)
 
 # tell hggettext to extract docstrings from these functions:
-i18nfunctions = internals.values()
+i18nfunctions = list(internals.values())

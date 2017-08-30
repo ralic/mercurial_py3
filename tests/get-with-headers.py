@@ -3,7 +3,7 @@
 """This does HTTP GET requests given a host:port and path and returns
 a subset of the headers plus the body of the result."""
 
-from __future__ import absolute_import, print_function
+
 
 import json
 import os

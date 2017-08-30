@@ -1,6 +1,6 @@
 # Randomized torture test generation for bdiff
 
-from __future__ import absolute_import, print_function
+
 import random
 import sys
 
@@ -64,7 +64,7 @@ def test(a, b):
 def rndtest(size, noise):
     a = []
     src = "                aaaaaaaabbbbccd"
-    for x in xrange(size):
+    for x in range(size):
         a.append(src[random.randint(0, len(src) - 1)])
 
     while True:

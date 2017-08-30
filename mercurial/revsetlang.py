@@ -5,7 +5,7 @@
 # This software may be used and distributed according to the terms of the
 # GNU General Public License version 2 or any later version.
 
-from __future__ import absolute_import
+
 
 import string
 
@@ -56,7 +56,7 @@ _simpleopletters = set(pycompat.iterbytestr("()[]#:=,-|&+!~^%"))
 _syminitletters = set(pycompat.iterbytestr(
     string.ascii_letters.encode('ascii') +
     string.digits.encode('ascii') +
-    '._@')) | set(map(pycompat.bytechr, xrange(128, 256)))
+    '._@')) | set(map(pycompat.bytechr, range(128, 256)))
 
 # default set of valid characters for non-initial letters of symbols
 _symletters = _syminitletters | set(pycompat.iterbytestr('-/'))
@@ -502,7 +502,7 @@ def _optimize(x, small):
         order = x[4]
         return w, (op, t, x[2], x[3], order)
     elif op == 'list':
-        ws, ts = zip(*(_optimize(y, small) for y in x[1:]))
+        ws, ts = list(zip(*(_optimize(y, small) for y in x[1:])))
         return sum(ws), (op,) + ts
     elif op == 'keyvalue':
         w, t = _optimize(x[2], small)
@@ -587,7 +587,7 @@ def expandaliases(tree, aliases, warn=None):
     tree = _aliasrules.expand(aliases, tree)
     # warn about problematic (but not referred) aliases
     if warn is not None:
-        for name, alias in sorted(aliases.iteritems()):
+        for name, alias in sorted(aliases.items()):
             if alias.error and not alias.warned:
                 warn(_('warning: %s\n') % (alias.error))
                 alias.warned = True
@@ -729,7 +729,7 @@ def prettyformat(tree):
 
 def depth(tree):
     if isinstance(tree, tuple):
-        return max(map(depth, tree)) + 1
+        return max(list(map(depth, tree))) + 1
     else:
         return 0
 

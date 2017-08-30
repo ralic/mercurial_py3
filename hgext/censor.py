@@ -25,7 +25,7 @@ function in a meaningful way. Such commands only tolerate censored file
 revisions if they are allowed by the "censor.policy=ignore" config option.
 """
 
-from __future__ import absolute_import
+
 
 from mercurial.i18n import _
 from mercurial.node import short
@@ -167,7 +167,7 @@ def _docensor(ui, repo, path, rev='', tombstone='', **opts):
     offset += rewrite(crev, offset, tombstone + pad, revlog.REVIDX_ISCENSORED)
 
     # Rewrite all following filelog revisions fixing up offsets and deltas.
-    for srev in xrange(crev + 1, len(flog)):
+    for srev in range(crev + 1, len(flog)):
         if crev in flog.parentrevs(srev):
             # Immediate children of censored node must be re-added as fulltext.
             try:

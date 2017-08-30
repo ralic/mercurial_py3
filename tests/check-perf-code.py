@@ -2,7 +2,7 @@
 #
 # check-perf-code - (historical) portability checker for contrib/perf.py
 
-from __future__ import absolute_import
+
 
 import os
 import sys
@@ -39,7 +39,7 @@ def modulewhitelist(names):
 
     # list up module names, which appear multiple times
     whitelist = []
-    for name, count in modules.items():
+    for name, count in list(modules.items()):
         if count > 1:
             whitelist.append(name)
 

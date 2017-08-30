@@ -5,7 +5,7 @@
 # This software may be used and distributed according to the terms of the
 # GNU General Public License version 2 or any later version.
 
-from __future__ import absolute_import
+
 
 import functools
 
@@ -15,7 +15,7 @@ from . import (
 
 def loadconfigtable(ui, extname, configtable):
     """update config item known to the ui with the extension ones"""
-    for section, items in configtable.items():
+    for section, items in list(configtable.items()):
         knownitems = ui._knownconfig.setdefault(section, {})
         knownkeys = set(knownitems)
         newkeys = set(items)

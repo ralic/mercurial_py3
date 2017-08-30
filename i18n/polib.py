@@ -13,7 +13,7 @@ modify entries, comments or metadata, etc. or create new po files from scratch.
 :func:`~polib.mofile` convenience functions.
 """
 
-from __future__ import absolute_import
+
 
 __author__    = 'David Jean Louis <izimobil@gmail.com>'
 __version__   = '0.6.4'
@@ -256,15 +256,15 @@ class _BaseFile(list):
             ret.append(entry.__unicode__(self.wrapwidth))
         ret = '\n'.join(ret)
 
-        if type(ret) != types.UnicodeType:
-            return unicode(ret, self.encoding)
+        if type(ret) != str:
+            return str(ret, self.encoding)
         return ret
 
     def __str__(self):
         """
         Returns the string representation of the file.
         """
-        return unicode(self).encode(self.encoding)
+        return str(self).encode(self.encoding)
 
     def __contains__(self, entry):
         """
@@ -281,7 +281,7 @@ class _BaseFile(list):
         return self.find(entry.msgid, by='msgid') is not None
 
     def __eq__(self, other):
-        return unicode(self) == unicode(other)
+        return str(self) == str(other)
 
     def append(self, entry):
         """
@@ -355,7 +355,7 @@ class _BaseFile(list):
             fhandle = open(fpath, 'wb')
         else:
             fhandle = codecs.open(fpath, 'w', self.encoding)
-            if type(contents) != types.UnicodeType:
+            if type(contents) != str:
                 contents = contents.decode(self.encoding)
         fhandle.write(contents)
         fhandle.close()
@@ -423,7 +423,7 @@ class _BaseFile(list):
                 pass
         # the rest of the metadata will be alphabetically ordered since there
         # are no specs for this AFAIK
-        keys = metadata.keys()
+        keys = list(metadata.keys())
         keys.sort()
         for data in keys:
             value = metadata[data]
@@ -470,7 +470,7 @@ class _BaseFile(list):
                 # context, a <EOT> byte, and the original string
                 msgid = self._encode(e.msgctxt + '\4')
             if e.msgid_plural:
-                indexes = e.msgstr_plural.keys()
+                indexes = list(e.msgstr_plural.keys())
                 indexes.sort()
                 msgstr = []
                 for index in indexes:
@@ -522,7 +522,7 @@ class _BaseFile(list):
         Encodes the given ``mixed`` argument with the file encoding if and
         only if it's an unicode string and returns the encoded string.
         """
-        if type(mixed) == types.UnicodeType:
+        if type(mixed) == str:
             return mixed.encode(self.encoding)
         return mixed
 
@@ -547,8 +547,8 @@ class POFile(_BaseFile):
             else:
                 ret += '# %s\n' % header
 
-        if type(ret) != types.UnicodeType:
-            ret = unicode(ret, self.encoding)
+        if type(ret) != str:
+            ret = str(ret, self.encoding)
 
         return ret + _BaseFile.__unicode__(self)
 
@@ -774,18 +774,18 @@ class _BaseEntry(object):
         ret.append('')
         ret = '\n'.join(ret)
 
-        if type(ret) != types.UnicodeType:
-            return unicode(ret, self.encoding)
+        if type(ret) != str:
+            return str(ret, self.encoding)
         return ret
 
     def __str__(self):
         """
         Returns the string representation of the entry.
         """
-        return unicode(self).encode(self.encoding)
+        return str(self).encode(self.encoding)
 
     def __eq__(self, other):
-        return unicode(self) == unicode(other)
+        return str(self) == str(other)
 
     def _str_field(self, fieldname, delflag, plural_index, field, wrapwidth=78):
         lines = field.splitlines(True)
@@ -927,8 +927,8 @@ class POEntry(_BaseEntry):
         ret.append(_BaseEntry.__unicode__(self, wrapwidth))
         ret = '\n'.join(ret)
 
-        if type(ret) != types.UnicodeType:
-            return unicode(ret, self.encoding)
+        if type(ret) != str:
+            return str(ret, self.encoding)
         return ret
 
     def __cmp__(self, other):

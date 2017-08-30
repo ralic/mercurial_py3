@@ -2,7 +2,7 @@
 #
 # This extension can be used to test race conditions between lock acquisition.
 
-from __future__ import absolute_import
+
 
 import os
 import time

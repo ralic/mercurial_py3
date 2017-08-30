@@ -5,7 +5,7 @@
 # This software may be used and distributed according to the terms of the
 # GNU General Public License version 2 or any later version.
 
-from __future__ import absolute_import
+
 
 import errno
 
@@ -187,7 +187,7 @@ class bmstore(dict):
         self._aclean = True
 
     def _write(self, fp):
-        for name, node in self.iteritems():
+        for name, node in self.items():
             fp.write("%s %s\n" % (hex(node), encoding.fromlocal(name)))
         self._clean = True
         self._repo.invalidatevolatilesets()
@@ -351,7 +351,7 @@ def headsforactive(repo):
             'headsforactive() only makes sense with an active bookmark')
     name = repo._activebookmark.split('@', 1)[0]
     heads = []
-    for mark, n in repo._bookmarks.iteritems():
+    for mark, n in repo._bookmarks.items():
         if mark.split('@', 1)[0] == name:
             heads.append(n)
     return heads
@@ -406,7 +406,7 @@ def listbinbookmarks(repo):
     marks = getattr(repo, '_bookmarks', {})
 
     hasnode = repo.changelog.hasnode
-    for k, v in marks.iteritems():
+    for k, v in marks.items():
         # don't expose local divergent bookmarks
         if hasnode(v) and ('@' not in k or k.endswith('@')):
             yield k, v
@@ -546,7 +546,7 @@ def _diverge(ui, b, path, localmarks, remotenode):
 
 def unhexlifybookmarks(marks):
     binremotemarks = {}
-    for name, node in marks.items():
+    for name, node in list(marks.items()):
         binremotemarks[name] = bin(node)
     return binremotemarks
 
@@ -818,7 +818,7 @@ def _printbookmarks(ui, repo, bmarks, **opts):
     hexfn = fm.hexfunc
     if len(bmarks) == 0 and fm.isplain():
         ui.status(_("no bookmarks set\n"))
-    for bmark, (n, prefix, label) in sorted(bmarks.iteritems()):
+    for bmark, (n, prefix, label) in sorted(bmarks.items()):
         fm.startitem()
         if not ui.quiet:
             fm.plain(' %s ' % prefix, label=label)
@@ -837,7 +837,7 @@ def printbookmarks(ui, repo, **opts):
     """
     marks = repo._bookmarks
     bmarks = {}
-    for bmark, n in sorted(marks.iteritems()):
+    for bmark, n in sorted(marks.items()):
         active = repo._activebookmark
         if bmark == active:
             prefix, label = '*', activebookmarklabel

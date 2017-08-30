@@ -4,7 +4,7 @@
 where DOC is the name of a document
 """
 
-from __future__ import absolute_import
+
 
 import os
 import sys
@@ -166,11 +166,11 @@ def helpprinter(ui, helptable, sectionfunc, include=[], exclude=[]):
 
 def commandprinter(ui, cmdtable, sectionfunc):
     h = {}
-    for c, attr in cmdtable.items():
+    for c, attr in list(cmdtable.items()):
         f = c.split("|")[0]
         f = f.lstrip("^")
         h[f] = c
-    cmds = h.keys()
+    cmds = list(h.keys())
     cmds.sort()
 
     for f in cmds:
@@ -214,7 +214,7 @@ def commandprinter(ui, cmdtable, sectionfunc):
 
 
 def allextensionnames():
-    return extensions.enabled().keys() + extensions.disabled().keys()
+    return list(extensions.enabled().keys()) + list(extensions.disabled().keys())
 
 if __name__ == "__main__":
     doc = 'hg.1.gendoc'

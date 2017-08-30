@@ -8,7 +8,7 @@
 # This software may be used and distributed according to the terms of the
 # GNU General Public License version 2 or any later version.
 
-from __future__ import absolute_import
+
 
 import logging
 import os
@@ -86,7 +86,7 @@ def readauthforuri(ui, uri, user):
     bestuser = None
     bestlen = 0
     bestauth = None
-    for group, auth in groups.iteritems():
+    for group, auth in groups.items():
         if user and user != auth.get('username', user):
             # If a username was set in the URI, the entry username
             # must either match it or be unset
@@ -152,7 +152,7 @@ class http2handler(urlreq.httphandler, urlreq.httpshandler):
 
     def close_all(self):
         """Close and remove all connection objects being kept for reuse."""
-        for openconns in self._connections.values():
+        for openconns in list(self._connections.values()):
             for conn in openconns:
                 conn.close()
         self._connections = {}
@@ -217,7 +217,7 @@ class http2handler(urlreq.httphandler, urlreq.httpshandler):
         headers = dict(req.headers)
         headers.update(req.unredirected_hdrs)
         headers = dict(
-            (name.title(), val) for name, val in headers.items())
+            (name.title(), val) for name, val in list(headers.items()))
         try:
             path = req.get_selector()
             if '://' in path:

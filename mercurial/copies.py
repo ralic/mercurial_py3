@@ -5,7 +5,7 @@
 # This software may be used and distributed according to the terms of the
 # GNU General Public License version 2 or any later version.
 
-from __future__ import absolute_import
+
 
 import heapq
 
@@ -105,7 +105,7 @@ def _findlimit(repo, a, b):
 def _chain(src, dst, a, b):
     '''chain two sets of copies a->b'''
     t = a.copy()
-    for k, v in b.iteritems():
+    for k, v in b.items():
         if v in t:
             # found a chain
             if t[v] != k:
@@ -119,7 +119,7 @@ def _chain(src, dst, a, b):
             t[k] = v
 
     # remove criss-crossed copies
-    for k, v in t.items():
+    for k, v in list(t.items()):
         if k in src and v in dst:
             del t[k]
 
@@ -138,7 +138,7 @@ def _tracefile(fctx, am, limit=-1):
 def _dirstatecopies(d):
     ds = d._repo.dirstate
     c = ds.copies().copy()
-    for k in c.keys():
+    for k in list(c.keys()):
         if ds[k] not in 'anm':
             del c[k]
     return c
@@ -211,7 +211,7 @@ def _backwardrenames(a, b):
     # arbitrarily pick one of the renames.
     f = _forwardcopies(b, a)
     r = {}
-    for k, v in sorted(f.iteritems()):
+    for k, v in sorted(f.items()):
         # remove copies
         if v in a:
             continue
@@ -458,7 +458,7 @@ def mergecopies(repo, c1, c2, base):
     renamedelete = {}
     renamedeleteset = set()
     divergeset = set()
-    for of, fl in diverge.items():
+    for of, fl in list(diverge.items()):
         if len(fl) == 1 or of in c1 or of in c2:
             del diverge[of] # not actually divergent, or not a rename
             if of not in c1 and of not in c2:
@@ -510,7 +510,7 @@ def mergecopies(repo, c1, c2, base):
         if ic[0] in (m1 if dirtyc1 else m2):
             # backed-out rename on one side, but watch out for deleted files
             bothdiverge[f] = ic
-    for of, fl in bothdiverge.items():
+    for of, fl in list(bothdiverge.items()):
         if len(fl) == 2 and fl[0] == fl[1]:
             copy[fl[0]] = of # not actually divergent, just matching renames
 
@@ -544,7 +544,7 @@ def mergecopies(repo, c1, c2, base):
 
     # examine each file copy for a potential directory move, which is
     # when all the files in a directory are moved to a new directory
-    for dst, src in fullcopy.iteritems():
+    for dst, src in fullcopy.items():
         dsrc, ddst = pathutil.dirname(src), pathutil.dirname(dst)
         if dsrc in invalid:
             # already seen to be uninteresting
@@ -734,7 +734,7 @@ def duplicatecopies(repo, rev, fromrev, skiprev=None):
         # of the function is much faster (and is required for carrying copy
         # metadata across the rebase anyway).
         exclude = pathcopies(repo[fromrev], repo[skiprev])
-    for dst, src in pathcopies(repo[fromrev], repo[rev]).iteritems():
+    for dst, src in pathcopies(repo[fromrev], repo[rev]).items():
         # copies.pathcopies returns backward renames, so dst might not
         # actually be in the dirstate
         if dst in exclude:

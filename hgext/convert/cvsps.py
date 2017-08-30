@@ -4,7 +4,7 @@
 #
 # This software may be used and distributed according to the terms of the
 # GNU General Public License version 2 or any later version.
-from __future__ import absolute_import
+
 
 import os
 import re
@@ -433,7 +433,7 @@ def createlog(ui, directory=None, root="", rlog=True, cache=None):
 
             # find the branches starting from this revision
             branchpoints = set()
-            for branch, revision in branchmap.iteritems():
+            for branch, revision in branchmap.items():
                 revparts = tuple([int(i) for i in revision.split('.')])
                 if len(revparts) < 2: # bad tags
                     continue
@@ -751,7 +751,7 @@ def createchangeset(ui, log, fuzz=60, mergefrom=None, mergeto=None):
             # branchpoints such that it is the latest possible
             # commit without any intervening, unrelated commits.
 
-            for candidate in xrange(i):
+            for candidate in range(i):
                 if c.branch not in changesets[candidate].branchpoints:
                     if p is not None:
                         break

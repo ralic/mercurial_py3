@@ -91,7 +91,7 @@ See :hg:`help patterns` for more information about the glob patterns
 used.
 """
 
-from __future__ import absolute_import
+
 
 import os
 import re
@@ -234,7 +234,7 @@ def _checkhook(ui, repo, node, headsonly):
     # Get revisions to check and touched files at the same time
     files = set()
     revs = set()
-    for rev in xrange(repo[node].rev(), len(repo)):
+    for rev in range(repo[node].rev(), len(repo)):
         revs.add(rev)
         if headsonly:
             ctx = repo[rev]
@@ -288,7 +288,7 @@ def reposetup(ui, repo):
 
     if not repo.local():
         return
-    for name, fn in filters.iteritems():
+    for name, fn in filters.items():
         repo.adddatafilter(name, fn)
 
     ui.setconfig('patch', 'eol', 'auto', 'eol')

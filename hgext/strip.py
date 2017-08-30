@@ -3,7 +3,7 @@
 This extension allows you to strip changesets and all their descendants from the
 repository. See the command help for details.
 """
-from __future__ import absolute_import
+
 
 from mercurial.i18n import _
 from mercurial import (
@@ -147,9 +147,9 @@ def stripcmd(ui, repo, *revs, **opts):
             # a revision we have to only delete the bookmark and not strip
             # anything. revsets cannot detect that case.
             nodetobookmarks = {}
-            for mark, node in repomarks.iteritems():
+            for mark, node in repomarks.items():
                 nodetobookmarks.setdefault(node, []).append(mark)
-            for marks in nodetobookmarks.values():
+            for marks in list(nodetobookmarks.values()):
                 if bookmarks.issuperset(marks):
                     rsrevs = repair.stripbmrevset(repo, marks[0])
                     revs.update(set(rsrevs))

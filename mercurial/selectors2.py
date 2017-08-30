@@ -24,7 +24,7 @@
 
 # no-check-code
 
-from __future__ import absolute_import
+
 
 import collections
 import errno
@@ -135,7 +135,7 @@ class BaseSelector(object):
         except ValueError:
 
             # Search through all our mapped keys.
-            for key in self._fd_to_key.values():
+            for key in list(self._fd_to_key.values()):
                 if key.fileobj is fileobj:
                     return key.fd
 
@@ -168,7 +168,7 @@ class BaseSelector(object):
             if err.errno != errno.EBADF:
                 raise
             else:
-                for key in self._fd_to_key.values():
+                for key in list(self._fd_to_key.values()):
                     if key.fileobj is fileobj:
                         self._fd_to_key.pop(key.fd)
                         break

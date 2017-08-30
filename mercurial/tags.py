@@ -10,7 +10,7 @@
 # Eventually, it could take care of updating (adding/removing/moving)
 # tags too.
 
-from __future__ import absolute_import
+
 
 import errno
 
@@ -115,14 +115,14 @@ def difftags(ui, repo, oldfnodes, newfnodes):
 
     # list of (tag, old, new): None means missing
     entries = []
-    for tag, (new, __) in newtags.items():
+    for tag, (new, __) in list(newtags.items()):
         new = _nulltonone(new)
         old, __ = oldtags.pop(tag, (None, None))
         old = _nulltonone(old)
         if old != new:
             entries.append((tag, old, new))
     # handle deleted tags
-    for tag, (old, __) in oldtags.items():
+    for tag, (old, __) in list(oldtags.items()):
         old = _nulltonone(old)
         if old is not None:
             entries.append((tag, old, None))
@@ -244,7 +244,7 @@ def readlocaltags(ui, repo, alltags, tagtypes):
 
     # remove tags pointing to invalid nodes
     cl = repo.changelog
-    for t in filetags.keys():
+    for t in list(filetags.keys()):
         try:
             cl.rev(filetags[t][0])
         except (LookupError, ValueError):
@@ -324,7 +324,7 @@ def _readtags(ui, repo, lines, fn, recode=None, calcnodelines=False):
     # new entries. The difference can matter if there are thousands of tags.
     # Create a new sortdict to avoid the performance penalty.
     newtags = util.sortdict()
-    for tag, taghist in filetags.items():
+    for tag, taghist in list(filetags.items()):
         newtags[tag] = (taghist[-1], taghist[:-1])
     return newtags
 
@@ -339,7 +339,7 @@ def _updatetags(filetags, alltags, tagtype=None, tagtypes=None):
     if tagtype is None:
         assert tagtypes is None
 
-    for name, nodehist in filetags.iteritems():
+    for name, nodehist in filetags.items():
         if name not in alltags:
             alltags[name] = nodehist
             if tagtype is not None:
@@ -502,7 +502,7 @@ def _writetagcache(ui, repo, valid, cachetags):
     # we keep them in UTF-8 throughout this module.  If we converted
     # them local encoding on input, we would lose info writing them to
     # the cache.
-    for (name, (node, hist)) in sorted(cachetags.iteritems()):
+    for (name, (node, hist)) in sorted(cachetags.items()):
         for n in hist:
             cachefile.write("%s %s\n" % (hex(n), name))
         cachefile.write("%s %s\n" % (hex(node), name))

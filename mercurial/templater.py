@@ -5,7 +5,7 @@
 # This software may be used and distributed according to the terms of the
 # GNU General Public License version 2 or any later version.
 
-from __future__ import absolute_import
+
 
 import os
 import re
@@ -403,9 +403,9 @@ def runfilter(context, mapping, data):
         sym = findsymbolicname(arg)
         if sym:
             msg = (_("template filter '%s' is not compatible with keyword '%s'")
-                   % (filt.func_name, sym))
+                   % (filt.__name__, sym))
         else:
-            msg = _("incompatible use of template filter '%s'") % filt.func_name
+            msg = _("incompatible use of template filter '%s'") % filt.__name__
         raise error.Abort(msg)
 
 def buildmap(exp, context):
@@ -496,7 +496,7 @@ def _buildfuncargs(exp, context, curmethods, funcname, argspec):
     """
     def compiledict(xs):
         return util.sortdict((k, compileexp(x, context, curmethods))
-                             for k, x in xs.iteritems())
+                             for k, x in xs.items())
     def compilelist(xs):
         return [compileexp(x, context, curmethods) for x in xs]
 
@@ -561,7 +561,7 @@ def dict_(context, mapping, args):
         data[k] = evalfuncarg(context, mapping, v)
 
     data.update((k, evalfuncarg(context, mapping, v))
-                for k, v in args['kwargs'].iteritems())
+                for k, v in args['kwargs'].items())
     return templatekw.hybriddict(data)
 
 @templatefunc('diff([includepattern [, excludepattern]])')
@@ -1207,7 +1207,7 @@ def _readmapfile(mapfile):
 
     cache = {}
     tmap = {}
-    for key, val in conf[''].items():
+    for key, val in list(conf[''].items()):
         if not val:
             raise error.ParseError(_('missing value'), conf.source('', key))
         if val[0] in "'\"":
@@ -1373,8 +1373,8 @@ def stylemap(styles, paths=None):
 def loadfunction(ui, extname, registrarobj):
     """Load template function from specified registrarobj
     """
-    for name, func in registrarobj._table.iteritems():
+    for name, func in registrarobj._table.items():
         funcs[name] = func
 
 # tell hggettext to extract docstrings from these functions:
-i18nfunctions = funcs.values()
+i18nfunctions = list(funcs.values())

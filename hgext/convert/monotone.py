@@ -5,7 +5,7 @@
 #
 # This software may be used and distributed according to the terms of the
 # GNU General Public License version 2 or any later version.
-from __future__ import absolute_import
+
 
 import os
 import re
@@ -90,7 +90,7 @@ class monotone_source(common.converter_source, common.commandline):
     def mtnrunstdio(self, *args, **kwargs):
         # Prepare the command in automate stdio format
         command = []
-        for k, v in kwargs.iteritems():
+        for k, v in kwargs.items():
             command.append("%s:%s" % (len(k), k))
             if v:
                 command.append("%s:%s" % (len(v), v))
@@ -136,7 +136,7 @@ class monotone_source(common.converter_source, common.commandline):
                 raise error.Abort(_('bad mtn packet - no end of packet size'))
             lengthstr += read
         try:
-            length = long(lengthstr[:-1])
+            length = int(lengthstr[:-1])
         except TypeError:
             raise error.Abort(_('bad mtn packet - bad packet size %s')
                 % lengthstr)
@@ -281,16 +281,16 @@ class monotone_source(common.converter_source, common.commandline):
                     # d1(/a) => d3/d1(/a)
                     # d2 => d3
                     ignoremove[tofile] = 1
-            for tofile, fromfile in renamed.items():
+            for tofile, fromfile in list(renamed.items()):
                 self.ui.debug (_("copying file in renamed directory "
                                  "from '%s' to '%s'")
                                % (fromfile, tofile), '\n')
                 files[tofile] = rev
                 copies[tofile] = fromfile
-            for fromfile in renamed.values():
+            for fromfile in list(renamed.values()):
                 files[fromfile] = rev
 
-        return (files.items(), copies, set())
+        return (list(files.items()), copies, set())
 
     def getfile(self, name, rev):
         if not self.mtnisfile(name, rev):

@@ -6,7 +6,7 @@
 # This software may be used and distributed according to the terms of the
 # GNU General Public License version 2 or any later version.
 
-from __future__ import absolute_import
+
 
 import errno
 import hashlib
@@ -62,7 +62,7 @@ def _collectfiles(repo, striprev):
     """find out the filelogs affected by the strip"""
     files = set()
 
-    for x in xrange(striprev, len(repo)):
+    for x in range(striprev, len(repo)):
         files.update(repo[x].files())
 
     return sorted(files)
@@ -190,7 +190,7 @@ def strip(ui, repo, nodelist, backup=True, topic='backup'):
                 repo.file(fn).strip(striprev, tr)
             tr.endgroup()
 
-            for i in xrange(offset, len(tr.entries)):
+            for i in range(offset, len(tr.entries)):
                 file, troffset, ignore = tr.entries[i]
                 with repo.svfs(file, 'a', checkambig=True) as fp:
                     fp.truncate(troffset)

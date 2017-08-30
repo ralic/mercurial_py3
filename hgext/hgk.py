@@ -34,7 +34,7 @@ Revisions context menu will now display additional entries to fire
 vdiff on hovered and selected revisions.
 '''
 
-from __future__ import absolute_import
+
 
 import os
 
@@ -220,7 +220,7 @@ def revtree(ui, args, repo, full="tree", maxnr=0, parents=False):
             else:
                 i -= chunk
 
-            for x in xrange(chunk):
+            for x in range(chunk):
                 if i + x >= count:
                     l[chunk - x:] = [0] * (chunk - x)
                     break
@@ -231,7 +231,7 @@ def revtree(ui, args, repo, full="tree", maxnr=0, parents=False):
                 else:
                     if (i + x) in repo:
                         l[x] = 1
-            for x in xrange(chunk - 1, -1, -1):
+            for x in range(chunk - 1, -1, -1):
                 if l[x] != 0:
                     yield (i + x, full is not None and l[x] or None)
             if i == 0:
@@ -242,7 +242,7 @@ def revtree(ui, args, repo, full="tree", maxnr=0, parents=False):
         if len(ar) == 0:
             return 1
         mask = 0
-        for i in xrange(len(ar)):
+        for i in range(len(ar)):
             if sha in reachable[i]:
                 mask |= 1 << i
 
@@ -301,8 +301,8 @@ def revtree(ui, args, repo, full="tree", maxnr=0, parents=False):
                 catcommit(ui, repo, n, '    ', ctx)
             else:
                 (p1, p2) = repo.changelog.parents(n)
-                (h, h1, h2) = map(short, (n, p1, p2))
-                (i1, i2) = map(repo.changelog.rev, (p1, p2))
+                (h, h1, h2) = list(map(short, (n, p1, p2)))
+                (i1, i2) = list(map(repo.changelog.rev, (p1, p2)))
 
                 date = ctx.date()[0]
                 ui.write("%s %s:%s" % (date, h, mask))
@@ -342,7 +342,7 @@ def revlist(ui, repo, *revs, **opts):
 def view(ui, repo, *etc, **opts):
     "start interactive history viewer"
     os.chdir(repo.root)
-    optstr = ' '.join(['--%s %s' % (k, v) for k, v in opts.iteritems() if v])
+    optstr = ' '.join(['--%s %s' % (k, v) for k, v in opts.items() if v])
     if repo.filtername is None:
         optstr += '--hidden'
 

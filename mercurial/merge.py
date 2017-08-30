@@ -5,7 +5,7 @@
 # This software may be used and distributed according to the terms of the
 # GNU General Public License version 2 or any later version.
 
-from __future__ import absolute_import
+
 
 import errno
 import hashlib
@@ -351,7 +351,7 @@ class mergestate(object):
         if self.mergedriver:
             records.append(('m', '\0'.join([
                 self.mergedriver, self._mdstate])))
-        for d, v in self._state.iteritems():
+        for d, v in self._state.items():
             if v[0] == 'd':
                 records.append(('D', '\0'.join([d] + v)))
             # v[1] == local ('cd'), v[6] == other ('dc') -- not supported by
@@ -360,9 +360,9 @@ class mergestate(object):
                 records.append(('C', '\0'.join([d] + v)))
             else:
                 records.append(('F', '\0'.join([d] + v)))
-        for filename, extras in sorted(self._stateextras.iteritems()):
+        for filename, extras in sorted(self._stateextras.items()):
             rawextras = '\0'.join('%s\0%s' % (k, v) for k, v in
-                                  extras.iteritems())
+                                  extras.items())
             records.append(('f', '%s\0%s' % (filename, rawextras)))
         if self._labels is not None:
             labels = '\0'.join(self._labels)
@@ -432,7 +432,7 @@ class mergestate(object):
         return iter(sorted(self._state))
 
     def files(self):
-        return self._state.keys()
+        return list(self._state.keys())
 
     def mark(self, dfile, state):
         self._state[dfile][0] = state
@@ -444,14 +444,14 @@ class mergestate(object):
     def unresolved(self):
         """Obtain the paths of unresolved files."""
 
-        for f, entry in self._state.iteritems():
+        for f, entry in self._state.items():
             if entry[0] == 'u':
                 yield f
 
     def driverresolved(self):
         """Obtain the paths of driver-resolved files."""
 
-        for f, entry in self._state.items():
+        for f, entry in list(self._state.items()):
             if entry[0] == 'd':
                 yield f
 
@@ -555,7 +555,7 @@ class mergestate(object):
         """return counts for updated, merged and removed files in this
         session"""
         updated, merged, removed = 0, 0, 0
-        for r, action in self._results.itervalues():
+        for r, action in self._results.values():
             if r is None:
                 updated += 1
             elif r == 0:
@@ -572,7 +572,7 @@ class mergestate(object):
     def actions(self):
         """return lists of actions to perform on the dirstate"""
         actions = {'r': [], 'f': [], 'a': [], 'am': [], 'g': []}
-        for f, (r, action) in self._results.iteritems():
+        for f, (r, action) in self._results.items():
             if action is not None:
                 actions[action].append((f, None, "merge result"))
         return actions
@@ -636,7 +636,7 @@ def _checkunknownfiles(repo, wctx, mctx, force, actions, mergeforce):
             elif config == 'warn':
                 warnconflicts.update(conflicts)
 
-        for f, (m, args, msg) in actions.iteritems():
+        for f, (m, args, msg) in actions.items():
             if m in ('c', 'dc'):
                 if _checkunknownfile(repo, wctx, mctx, f):
                     conflicts.add(f)
@@ -650,7 +650,7 @@ def _checkunknownfiles(repo, wctx, mctx, force, actions, mergeforce):
         collectconflicts(ignoredconflicts, ignoredconfig)
         collectconflicts(unknownconflicts, unknownconfig)
     else:
-        for f, (m, args, msg) in actions.iteritems():
+        for f, (m, args, msg) in actions.items():
             if m == 'cm':
                 fl2, anc = args
                 different = _checkunknownfile(repo, wctx, mctx, f)
@@ -692,7 +692,7 @@ def _checkunknownfiles(repo, wctx, mctx, force, actions, mergeforce):
     for f in sorted(warnconflicts):
         repo.ui.warn(_("%s: replacing untracked file\n") % f)
 
-    for f, (m, args, msg) in actions.iteritems():
+    for f, (m, args, msg) in actions.items():
         backup = f in conflicts
         if m == 'c':
             flags, = args
@@ -815,7 +815,7 @@ def manifestmerge(repo, wctx, p2, pa, branchmerge, force, matcher,
 
     m1, m2, ma = wctx.manifest(), p2.manifest(), pa.manifest()
     copied = set(copy.values())
-    copied.update(movewithdir.values())
+    copied.update(list(movewithdir.values()))
 
     if '.hgsubstate' in m1:
         # check whether sub state is modified
@@ -833,7 +833,7 @@ def manifestmerge(repo, wctx, p2, pa, branchmerge, force, matcher,
         relevantfiles = set(ma.diff(m2).keys())
 
         # For copied and moved files, we need to add the source file too.
-        for copykey, copyvalue in copy.iteritems():
+        for copykey, copyvalue in copy.items():
             if copyvalue in relevantfiles:
                 relevantfiles.add(copykey)
         for movedirkey in movewithdir:
@@ -847,7 +847,7 @@ def manifestmerge(repo, wctx, p2, pa, branchmerge, force, matcher,
         matcher = matchmod.always('', '')
 
     actions = {}
-    for f, ((n1, fl1), (n2, fl2)) in diff.iteritems():
+    for f, ((n1, fl1), (n2, fl2)) in diff.items():
         if n1 and n2: # file exists on both local and remote side
             if f not in ma:
                 fa = copy.get(f, None)
@@ -964,7 +964,7 @@ def _resolvetrivial(repo, wctx, mctx, ancestor, actions):
     """Resolves false conflicts where the nodeid changed but the content
        remained the same."""
 
-    for f, (m, args, msg) in actions.items():
+    for f, (m, args, msg) in list(actions.items()):
         if m == 'cd' and f in ancestor and not wctx[f].cmp(ancestor[f]):
             # local did change but ended up with same content
             actions[f] = 'r', None, "prompt same"
@@ -1007,7 +1007,7 @@ def calculateupdates(repo, wctx, mctx, ancestors, branchmerge, force,
             if renamedelete is None or len(renamedelete) < len(renamedelete1):
                 renamedelete = renamedelete1
 
-            for f, a in sorted(actions.iteritems()):
+            for f, a in sorted(actions.items()):
                 m, args, msg = a
                 repo.ui.debug(' %s: %s -> %s\n' % (f, msg, m))
                 if f in fbids:
@@ -1027,7 +1027,7 @@ def calculateupdates(repo, wctx, mctx, ancestors, branchmerge, force,
             # bids is a mapping from action method to list af actions
             # Consensus?
             if len(bids) == 1: # all bids are the same kind of method
-                m, l = bids.items()[0]
+                m, l = list(bids.items())[0]
                 if all(a == l[0] for a in l[1:]): # len(bids) is > 1
                     repo.ui.note(_(" %s: consensus for %s\n") % (f, m))
                     actions[f] = l[0]
@@ -1053,7 +1053,7 @@ def calculateupdates(repo, wctx, mctx, ancestors, branchmerge, force,
                 for _f, args, msg in l:
                     repo.ui.note('  %s -> %s\n' % (msg, m))
             # Pick random action. TODO: Instead, prompt user when resolving
-            m, l = bids.items()[0]
+            m, l = list(bids.items())[0]
             repo.ui.warn(_(' %s: ambiguous merge - picked %s action\n') %
                          (f, m))
             actions[f] = l[0]
@@ -1174,7 +1174,7 @@ def applyupdates(repo, actions, wctx, mctx, overwrite, labels=None):
     updated, merged, removed = 0, 0, 0
     ms = mergestate.clean(repo, wctx.p1().node(), mctx.node(), labels)
     moves = []
-    for m, l in actions.items():
+    for m, l in list(actions.items()):
         l.sort()
 
     # 'cd' and 'dc' actions are treated like other merge conflicts
@@ -1215,7 +1215,7 @@ def applyupdates(repo, actions, wctx, mctx, overwrite, labels=None):
             wctx[f].audit()
             wctx[f].remove()
 
-    numupdates = sum(len(l) for m, l in actions.items() if m != 'k')
+    numupdates = sum(len(l) for m, l in list(actions.items()) if m != 'k')
 
     if [a for a in actions['r'] if a[0] == '.hgsubstate']:
         subrepo.submerge(repo, wctx, mctx, wctx, overwrite, labels)
@@ -1358,7 +1358,7 @@ def applyupdates(repo, actions, wctx, mctx, overwrite, labels=None):
     extraactions = ms.actions()
     if extraactions:
         mfiles = set(a[0] for a in actions['m'])
-        for k, acts in extraactions.iteritems():
+        for k, acts in extraactions.items():
             actions[k].extend(acts)
             # Remove these files from actions['m'] as well. This is important
             # because in recordupdates, files in actions['m'] are processed
@@ -1627,7 +1627,7 @@ def update(repo, node, branchmerge, force, ancestor=None,
             followcopies, matcher=matcher, mergeforce=mergeforce)
 
         if updatecheck == 'noconflict':
-            for f, (m, args, msg) in actionbyfile.iteritems():
+            for f, (m, args, msg) in actionbyfile.items():
                 if m not in ('g', 'k', 'e', 'r'):
                     msg = _("conflicting changes")
                     hint = _("commit or update --clean to discard changes")
@@ -1664,7 +1664,7 @@ def update(repo, node, branchmerge, force, ancestor=None,
 
         # Convert to dictionary-of-lists format
         actions = dict((m, []) for m in 'a am f g cd dc r dm dg m e k'.split())
-        for f, (m, args, msg) in actionbyfile.iteritems():
+        for f, (m, args, msg) in actionbyfile.items():
             if m not in actions:
                 actions[m] = []
             actions[m].append((f, args, msg))
@@ -1678,14 +1678,14 @@ def update(repo, node, branchmerge, force, ancestor=None,
                 _checkcollision(repo, wc.manifest(), actions)
 
         # divergent renames
-        for f, fl in sorted(diverge.iteritems()):
+        for f, fl in sorted(diverge.items()):
             repo.ui.warn(_("note: possible conflict - %s was renamed "
                            "multiple times to:\n") % f)
             for nf in fl:
                 repo.ui.warn(" %s\n" % nf)
 
         # rename and delete
-        for f, fl in sorted(renamedelete.iteritems()):
+        for f, fl in sorted(renamedelete.items()):
             repo.ui.warn(_("note: possible conflict - %s was deleted "
                            "and renamed to:\n") % f)
             for nf in fl:

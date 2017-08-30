@@ -5,7 +5,7 @@
 # This software may be used and distributed according to the terms of the
 # GNU General Public License version 2 or any later version.
 
-from __future__ import absolute_import
+
 
 import heapq
 
@@ -129,7 +129,7 @@ def _builddescendantsmap(repo, startrev, followfirst):
     """Build map of 'rev -> child revs', offset from startrev"""
     cl = repo.changelog
     nullrev = node.nullrev
-    descmap = [[] for _rev in xrange(startrev, len(cl))]
+    descmap = [[] for _rev in range(startrev, len(cl))]
     for currev in cl.revs(startrev + 1):
         p1rev, p2rev = cl.parentrevs(currev)
         if p1rev >= startrev:
@@ -292,7 +292,7 @@ def blockdescendants(fctx, fromline, toline):
             # surrounding interval. This is conservative but avoids loosing
             # information.
             if i in seen and seen[i][1] != linerange1:
-                lbs, ubs = zip(linerange1, seen[i][1])
+                lbs, ubs = list(zip(linerange1, seen[i][1]))
                 linerange1 = min(lbs), max(ubs)
             seen[i] = c, linerange1
         if inrange:

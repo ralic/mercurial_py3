@@ -1,6 +1,6 @@
 # coding=UTF-8
 
-from __future__ import absolute_import
+
 
 import base64
 import zlib
@@ -105,7 +105,7 @@ def extsetup(ui):
     revlog.REVIDX_FLAGS_ORDER.extend(flags)
 
     # Teach exchange to use changegroup 3
-    for k in exchange._bundlespeccgversions.keys():
+    for k in list(exchange._bundlespeccgversions.keys()):
         exchange._bundlespeccgversions[k] = '03'
 
     # Add wrappers for addrevision, responsible to set flags depending on the

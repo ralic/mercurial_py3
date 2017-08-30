@@ -1,4 +1,4 @@
-from __future__ import absolute_import, print_function
+
 import os
 import subprocess
 import sys
@@ -190,7 +190,7 @@ def antiambiguity():
 
     # try some times, because reproduction of ambiguity depends on
     # "filesystem time"
-    for i in xrange(5):
+    for i in range(5):
         fp = open(filename, 'w')
         fp.write('FOO')
         fp.close()
@@ -204,7 +204,7 @@ def antiambiguity():
 
         # repeat changing via checkambigatclosing, to examine whether
         # st_mtime is advanced multiple times as expected
-        for i in xrange(repetition):
+        for i in range(repetition):
             # explicit closing
             fp = vfsmod.checkambigatclosing(open(filename, 'a'))
             fp.write('FOO')

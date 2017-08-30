@@ -5,7 +5,7 @@
 # This software may be used and distributed according to the terms of the
 # GNU General Public License version 2 or any later version.
 
-from __future__ import absolute_import
+
 
 import os
 import sys
@@ -130,14 +130,14 @@ def _exthook(ui, repo, htype, name, cmd, args, throw):
     env['HG_HOOKTYPE'] = htype
     env['HG_HOOKNAME'] = name
 
-    for k, v in args.iteritems():
+    for k, v in args.items():
         if callable(v):
             v = v()
         if isinstance(v, dict):
             # make the dictionary element order stable across Python
             # implementations
             v = ('{' +
-                 ', '.join('%r: %r' % i for i in sorted(v.iteritems())) +
+                 ', '.join('%r: %r' % i for i in sorted(v.items())) +
                  '}')
         env['HG_' + k.upper()] = v
 
@@ -167,7 +167,7 @@ def _allhooks(ui):
     # sources would create a security vulnerability, make sure anything altered
     # in that section uses "_fromuntrusted" as its command.
     untrustedhooks = _hookitems(ui, _untrusted=True)
-    for name, value in untrustedhooks.items():
+    for name, value in list(untrustedhooks.items()):
         trustedvalue = hooks.get(name, (None, None, name, _fromuntrusted))
         if value != trustedvalue:
             (lp, lo, lk, lv) = trustedvalue

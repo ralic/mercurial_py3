@@ -102,7 +102,7 @@ significantly off if other threads' work patterns are not similar to the
 main thread's work patterns.
 """
 # no-check-code
-from __future__ import absolute_import, division, print_function
+
 
 import collections
 import contextlib
@@ -182,7 +182,7 @@ state = ProfileState()
 class CodeSite(object):
     cache = {}
 
-    __slots__ = (u'path', u'lineno', u'function', u'source')
+    __slots__ = ('path', 'lineno', 'function', 'source')
 
     def __init__(self, path, lineno, function):
         self.path = path
@@ -237,7 +237,7 @@ class CodeSite(object):
         return os.path.basename(self.path)
 
 class Sample(object):
-    __slots__ = (u'stack', u'time')
+    __slots__ = ('stack', 'time')
 
     def __init__(self, stack, time):
         self.stack = stack
@@ -306,7 +306,7 @@ def start(mechanism='thread'):
                 rpt or state.sample_interval, 0.0)
         elif mechanism == 'thread':
             frame = inspect.currentframe()
-            tid = [k for k, f in sys._current_frames().items() if f == frame][0]
+            tid = [k for k, f in list(sys._current_frames().items()) if f == frame][0]
             state.thread = threading.Thread(target=samplerthread,
                                  args=(tid,), name="samplerthread")
             state.thread.start()
@@ -424,7 +424,7 @@ class SiteStats(object):
                 if i == 0:
                     sitestat.addself()
 
-        return [s for s in stats.itervalues()]
+        return [s for s in stats.values()]
 
 class DisplayFormats:
     ByLine = 0
@@ -505,7 +505,7 @@ def display_by_method(data, fp):
 
     # compute sums for each function
     functiondata = []
-    for fname, sitestats in grouped.iteritems():
+    for fname, sitestats in grouped.items():
         total_cum_sec = 0
         total_self_sec = 0
         total_percent = 0
@@ -570,7 +570,7 @@ def display_about_method(data, fp, function=None, **kwargs):
                 else:
                     children[site] = 1
 
-    parents = [(parent, count) for parent, count in parents.iteritems()]
+    parents = [(parent, count) for parent, count in parents.items()]
     parents.sort(reverse=True, key=lambda x: x[1])
     for parent, count in parents:
         print('%6.2f%%   %s:%s   line %s: %s' %
@@ -603,7 +603,7 @@ def display_about_method(data, fp, function=None, **kwargs):
         total_self_percent
         ), file=fp)
 
-    children = [(child, count) for child, count in children.iteritems()]
+    children = [(child, count) for child, count in children.items()]
     children.sort(reverse=True, key=lambda x: x[1])
     for child, count in children:
         print('        %6.2f%%   line %s: %s' %
@@ -641,14 +641,14 @@ def display_hotpath(data, fp, limit=0.05, **kwargs):
 
     def _write(node, depth, multiple_siblings):
         site = node.site
-        visiblechildren = [c for c in node.children.itervalues()
+        visiblechildren = [c for c in node.children.values()
                              if c.count >= (limit * root.count)]
         if site:
             indent = depth * 2 - 1
             filename = ''
             function = ''
             if len(node.children) > 0:
-                childsite = list(node.children.itervalues())[0].site
+                childsite = list(node.children.values())[0].site
                 filename = (childsite.filename() + ':').ljust(15)
                 function = childsite.function
 
@@ -662,7 +662,7 @@ def display_hotpath(data, fp, limit=0.05, **kwargs):
             codestring = codepattern % ('line', site.lineno, site.getsource(30))
 
             finalstring = liststring + codestring
-            childrensamples = sum([c.count for c in node.children.itervalues()])
+            childrensamples = sum([c.count for c in node.children.values()])
             # Make frames that performed more than 10% of the operation red
             if node.count - childrensamples > (0.1 * root.count):
                 finalstring = '\033[91m' + finalstring + '\033[0m'
@@ -705,7 +705,7 @@ def write_to_flame(data, fp, scriptpath=None, outputfile=None, **kwargs):
         else:
             lines[line] = 1
 
-    for line, count in lines.iteritems():
+    for line, count in lines.items():
         file.write("%s %s\n" % (line, count))
 
     file.close()

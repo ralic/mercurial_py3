@@ -584,7 +584,7 @@ class hginstall(install):
         # mercurial.egg-info generation, since that is part of modern
         # packaging.
         excl = set(['bdist_egg'])
-        return filter(lambda x: x not in excl, install.get_sub_commands(self))
+        return [x for x in install.get_sub_commands(self) if x not in excl]
 
 class hginstalllib(install_lib):
     '''
@@ -833,7 +833,7 @@ def ordinarypath(p):
 for root in ('templates',):
     for curdir, dirs, files in os.walk(os.path.join('mercurial', root)):
         curdir = curdir.split(os.sep, 1)[1]
-        dirs[:] = filter(ordinarypath, dirs)
+        dirs[:] = list(filter(ordinarypath, dirs))
         for f in filter(ordinarypath, files):
             f = os.path.join(curdir, f)
             packagedata['mercurial'].append(f)

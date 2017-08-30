@@ -5,7 +5,7 @@
 # This software may be used and distributed according to the terms of the
 # GNU General Public License version 2 or any later version.
 
-from __future__ import absolute_import
+
 
 import re
 
@@ -282,10 +282,10 @@ class sshpeer(wireproto.wirepeer):
             else:
                 wireargs[k] = args[k]
                 del args[k]
-        for k, v in sorted(wireargs.iteritems()):
+        for k, v in sorted(wireargs.items()):
             self._pipeo.write("%s %d\n" % (k, len(v)))
             if isinstance(v, dict):
-                for dk, dv in v.iteritems():
+                for dk, dv in v.items():
                     self._pipeo.write("%s %d\n" % (dk, len(dv)))
                     self._pipeo.write(dv)
             else:

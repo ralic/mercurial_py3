@@ -43,7 +43,7 @@
 # completes fairly quickly, includes both shell and Python scripts, and
 # includes some scripts that run daemon processes.)
 
-from __future__ import absolute_import, print_function
+
 
 import difflib
 import distutils.version as version
@@ -64,9 +64,10 @@ import threading
 import time
 import unittest
 import xml.dom.minidom as minidom
+import imp
 
 try:
-    import Queue as queue
+    import queue as queue
 except ImportError:
     import queue
 
@@ -79,7 +80,7 @@ except (ImportError, AttributeError):
 
 if os.environ.get('RTUNICODEPEDANTRY', False):
     try:
-        reload(sys)
+        imp.reload(sys)
         sys.setdefaultencoding("undefined")
     except NameError:
         pass
@@ -407,7 +408,7 @@ def getparser():
                       help=("Automatically bisect any failures using this "
                             "revision as a known-good revision."))
 
-    for option, (envvar, default) in defaults.items():
+    for option, (envvar, default) in list(defaults.items()):
         defaults[option] = type(default)(os.environ.get(envvar, default))
     parser.set_defaults(**defaults)
 
@@ -986,7 +987,7 @@ class Test(unittest.TestCase):
         reqnames = {'PYTHON', 'TESTDIR', 'TESTTMP'}
 
         with open(scriptpath, 'w') as envf:
-            for name, value in origenviron.items():
+            for name, value in list(origenviron.items()):
                 if not name_regex.match(name):
                     # Skip environment variables with unusual names not
                     # allowed by most shells.
@@ -1011,7 +1012,7 @@ class Test(unittest.TestCase):
         env['TESTTMP'] = self._testtmp
         env['HOME'] = self._testtmp
         # This number should match portneeded in _getport
-        for port in xrange(3):
+        for port in range(3):
             # This list should be parallel to _portmap in _getreplacements
             defineport(port)
         env["HGRCPATH"] = os.path.join(self._threadtmp, b'.hgrc')
@@ -1043,7 +1044,7 @@ class Test(unittest.TestCase):
                 del env[k]
 
         # unset env related to hooks
-        for k in env.keys():
+        for k in list(env.keys()):
             if k.startswith('HG_'):
                 del env[k]
 
@@ -1860,7 +1861,7 @@ class TestSuite(unittest.TestSuite):
 
                     if ignored:
                         continue
-            for _ in xrange(self._runs_per_test):
+            for _ in range(self._runs_per_test):
                 tests.append(get())
 
         runtests = list(tests)
@@ -1905,7 +1906,7 @@ class TestSuite(unittest.TestSuite):
                 with iolock:
                     sys.stdout.write(d + '  ')
                     sys.stdout.flush()
-                for x in xrange(10):
+                for x in range(10):
                     if channels:
                         time.sleep(.1)
                 count += 1
@@ -2310,7 +2311,7 @@ class TestRunner(object):
                             raise
                         perf[f] = -1e9 # file does not exist, tell early
                         return -1e9
-                    for kw, mul in slow.items():
+                    for kw, mul in list(slow.items()):
                         if kw in f:
                             val *= mul
                     if f.endswith(b'.py'):
@@ -2568,10 +2569,10 @@ class TestRunner(object):
         if port is None:
             portneeded = 3
             # above 100 tries we just give up and let test reports failure
-            for tries in xrange(100):
+            for tries in range(100):
                 allfree = True
                 port = self.options.port + self._portoffset
-                for idx in xrange(portneeded):
+                for idx in range(portneeded):
                     if not checkportisavailable(port + idx):
                         allfree = False
                         break

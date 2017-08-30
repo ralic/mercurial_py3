@@ -11,7 +11,7 @@ Reads current and peak memory usage from ``/proc/self/status`` and
 prints it to ``stderr`` on exit.
 '''
 
-from __future__ import absolute_import
+
 
 def memusage(ui):
     """Report memory usage of the current process."""
@@ -25,7 +25,7 @@ def memusage(ui):
             if key in result:
                 result[key] = int(parts[1])
     ui.write_err(", ".join(["%s: %.1f MiB" % (k, v / 1024.0)
-                            for k, v in result.iteritems()]) + "\n")
+                            for k, v in result.items()]) + "\n")
 
 def extsetup(ui):
     ui.atexit(memusage, ui)

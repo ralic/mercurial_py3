@@ -1,4 +1,4 @@
-from __future__ import absolute_import, print_function
+
 
 from mercurial import (
     util,
@@ -75,6 +75,6 @@ clt = clientpeer(srv)
 
 print(clt.greet("Foobar"))
 b = clt.iterbatch()
-map(b.greet, ('Fo, =;:<o', 'Bar'))
+list(map(b.greet, ('Fo, =;:<o', 'Bar')))
 b.submit()
 print([r for r in b.results()])

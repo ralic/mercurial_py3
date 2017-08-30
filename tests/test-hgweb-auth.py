@@ -1,4 +1,4 @@
-from __future__ import absolute_import, print_function
+
 
 from mercurial import demandimport; demandimport.enable()
 from mercurial import (
@@ -19,13 +19,13 @@ origui = myui.load()
 
 def writeauth(items):
     ui = origui.copy()
-    for name, value in items.iteritems():
+    for name, value in items.items():
         ui.setconfig('auth', name, value)
     return ui
 
 def dumpdict(dict):
     return '{' + ', '.join(['%s: %s' % (k, dict[k])
-                            for k in sorted(dict.iterkeys())]) + '}'
+                            for k in sorted(dict.keys())]) + '}'
 
 def test(auth, urls=None):
     print('CFG:', dumpdict(auth))
@@ -36,7 +36,7 @@ def test(auth, urls=None):
         for name in ('.username', '.password'):
             if (p + name) not in auth:
                 auth[p + name] = p
-    auth = dict((k, v) for k, v in auth.iteritems() if v is not None)
+    auth = dict((k, v) for k, v in auth.items() if v is not None)
 
     ui = writeauth(auth)
 

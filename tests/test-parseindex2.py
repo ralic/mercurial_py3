@@ -3,7 +3,7 @@
 It also checks certain aspects of the parsers module as a whole.
 """
 
-from __future__ import absolute_import, print_function
+
 
 import struct
 import subprocess
@@ -24,7 +24,7 @@ def gettype(q):
     return int(q & 0xFFFF)
 
 def offset_type(offset, type):
-    return long(long(offset) << 16 | type)
+    return int(int(offset) << 16 | type)
 
 indexformatng = ">Qiiiiii20s12x"
 

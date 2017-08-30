@@ -8,7 +8,7 @@
 # This was originally copied from the public domain code at
 # http://www.python.org/dev/peps/pep-0333/#the-server-gateway-side
 
-from __future__ import absolute_import
+
 
 from .. import (
     encoding,
@@ -23,7 +23,7 @@ def launch(application):
     util.setbinary(util.stdin)
     util.setbinary(util.stdout)
 
-    environ = dict(encoding.environ.iteritems())
+    environ = dict(iter(encoding.environ.items()))
     environ.setdefault('PATH_INFO', '')
     if environ.get('SERVER_SOFTWARE', '').startswith('Microsoft-IIS'):
         # IIS includes script_name in PATH_INFO

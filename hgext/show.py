@@ -25,7 +25,7 @@ The following config options can influence operation.
    performed.
 """
 
-from __future__ import absolute_import
+
 
 from mercurial.i18n import _
 from mercurial.node import nullrev
@@ -424,7 +424,7 @@ def extsetup(ui):
 # to do this more robustly.
 # TODO make this more robust.
 def _updatedocstring():
-    longest = max(map(len, showview._table.keys()))
+    longest = max(list(map(len, list(showview._table.keys()))))
     entries = []
     for key in sorted(showview._table.keys()):
         entries.append(pycompat.sysstr('    %s   %s' % (

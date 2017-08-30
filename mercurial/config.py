@@ -5,7 +5,7 @@
 # This software may be used and distributed according to the terms of the
 # GNU General Public License version 2 or any later version.
 
-from __future__ import absolute_import
+
 
 import errno
 import os
@@ -68,7 +68,7 @@ class config(object):
     def sections(self):
         return sorted(self._data.keys())
     def items(self, section):
-        return list(self._data.get(section, {}).iteritems())
+        return list(self._data.get(section, {}).items())
     def set(self, section, item, value, source=""):
         if pycompat.ispy3:
             assert not isinstance(value, str), (

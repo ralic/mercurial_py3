@@ -145,7 +145,7 @@ future, dropping the stream may become an option for channel we do not care to
 preserve.
 """
 
-from __future__ import absolute_import, division
+
 
 import errno
 import re
@@ -271,7 +271,7 @@ class unbundlerecords(object):
     def __len__(self):
         return len(self._sequences)
 
-    def __nonzero__(self):
+    def __bool__(self):
         return bool(self._sequences)
 
     __bool__ = __nonzero__
@@ -1589,7 +1589,7 @@ def handlechangegroup(op, inpart):
     assert not inpart.read()
 
 _remotechangegroupparams = tuple(['url', 'size', 'digests'] +
-    ['digest:%s' % k for k in util.DIGESTS.keys()])
+    ['digest:%s' % k for k in list(util.DIGESTS.keys())])
 @parthandler('remote-changegroup', _remotechangegroupparams)
 def handleremotechangegroup(op, inpart):
     """apply a bundle10 on the repo, given an url and validation information
@@ -1703,7 +1703,7 @@ def handlecheckupdatedheads(op, inpart):
         op.gettransaction()
 
     currentheads = set()
-    for ls in op.repo.branchmap().itervalues():
+    for ls in op.repo.branchmap().values():
         currentheads.update(ls)
 
     for h in heads:

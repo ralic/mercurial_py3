@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from __future__ import absolute_import, print_function
+
 
 __doc__ = """Tiny HTTP Proxy.
 
@@ -49,7 +49,7 @@ class ProxyHandler (httpserver.basehttprequesthandler):
             self.__base_handle()
 
     def log_request(self, code='-', size='-'):
-        xheaders = [h for h in self.headers.items() if h[0].startswith('x-')]
+        xheaders = [h for h in list(self.headers.items()) if h[0].startswith('x-')]
         self.log_message('"%s" %s %s%s',
                          self.requestline, str(code), str(size),
                          ''.join([' %s:%s' % h for h in sorted(xheaders)]))
@@ -103,7 +103,7 @@ class ProxyHandler (httpserver.basehttprequesthandler):
                     self.request_version))
                 self.headers['Connection'] = 'close'
                 del self.headers['Proxy-Connection']
-                for key_val in self.headers.items():
+                for key_val in list(self.headers.items()):
                     soc.send("%s: %s\r\n" % key_val)
                 soc.send("\r\n")
                 self._read_write(soc)

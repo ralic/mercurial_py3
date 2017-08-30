@@ -4,7 +4,7 @@
 #
 # This software may be used and distributed according to the terms of the
 # GNU General Public License version 2 or any later version.
-from __future__ import absolute_import
+
 
 import base64
 import datetime
@@ -156,7 +156,7 @@ class converter_source(object):
         if not encoding:
             encoding = self.encoding or 'utf-8'
 
-        if isinstance(s, unicode):
+        if isinstance(s, str):
             return s.encode("utf-8")
         try:
             return s.decode(encoding).encode("utf-8")
@@ -325,7 +325,7 @@ class commandline(object):
 
     def _cmdline(self, cmd, *args, **kwargs):
         cmdline = [self.command, cmd] + list(args)
-        for k, v in kwargs.iteritems():
+        for k, v in kwargs.items():
             if len(k) == 1:
                 cmdline.append('-' + k)
             else:

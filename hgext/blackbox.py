@@ -35,7 +35,7 @@ Examples::
 
 """
 
-from __future__ import absolute_import
+
 
 import errno
 import re
@@ -140,7 +140,7 @@ def wrapui(ui):
                     path = fp.name
                     _closelog(self._bbvfs)
                     maxfiles = self.configint('blackbox', 'maxfiles', 7)
-                    for i in xrange(maxfiles - 1, 1, -1):
+                    for i in range(maxfiles - 1, 1, -1):
                         rotate(oldpath='%s.%d' % (path, i - 1),
                                newpath='%s.%d' % (path, i))
                     rotate(oldpath=path,

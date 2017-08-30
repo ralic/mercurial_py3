@@ -6,7 +6,7 @@
 # This software may be used and distributed according to the terms of the
 # GNU General Public License version 2 or any later version.
 
-from __future__ import absolute_import
+
 
 from .i18n import _
 from .node import nullrev
@@ -148,7 +148,7 @@ class revlogbaseddag(basedag):
                     if (r is not None
                         and r != nullrev
                         and r not in rl.filteredrevs)]
-        return map(self._internalize, ids)
+        return list(map(self._internalize, ids))
 
 
 class revlogdag(revlogbaseddag):

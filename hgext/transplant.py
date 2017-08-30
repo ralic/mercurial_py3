@@ -13,7 +13,7 @@ possibly in another repository. The transplant is done using 'diff' patches.
 Transplanted patches are recorded in .hg/transplant/transplants, as a
 map from a changeset hash to its hash in the source repository.
 '''
-from __future__ import absolute_import
+
 
 import os
 import tempfile
@@ -70,7 +70,7 @@ class transplants(object):
         abspath = os.path.join(self.path, self.transplantfile)
         if self.transplantfile and os.path.exists(abspath):
             for line in self.opener.read(self.transplantfile).splitlines():
-                lnode, rnode = map(revlog.bin, line.split(':'))
+                lnode, rnode = list(map(revlog.bin, line.split(':')))
                 list = self.transplants.setdefault(rnode, [])
                 list.append(transplantentry(lnode, rnode))
 
@@ -79,9 +79,9 @@ class transplants(object):
             if not os.path.isdir(self.path):
                 os.mkdir(self.path)
             fp = self.opener(self.transplantfile, 'w')
-            for list in self.transplants.itervalues():
+            for list in self.transplants.values():
                 for t in list:
-                    l, r = map(nodemod.hex, (t.lnode, t.rnode))
+                    l, r = list(map(nodemod.hex, (t.lnode, t.rnode)))
                     fp.write(l + ':' + r + '\n')
             fp.close()
         self.dirty = False
@@ -664,7 +664,7 @@ def _dotransplant(ui, repo, *revs, **opts):
     sourcerepo = opts.get('source')
     if sourcerepo:
         peer = hg.peer(repo, opts, ui.expandpath(sourcerepo))
-        heads = map(peer.lookup, opts.get('branch', ()))
+        heads = list(map(peer.lookup, opts.get('branch', ())))
         target = set(heads)
         for r in revs:
             try:
@@ -675,7 +675,7 @@ def _dotransplant(ui, repo, *revs, **opts):
                                     onlyheads=sorted(target), force=True)
     else:
         source = repo
-        heads = map(source.lookup, opts.get('branch', ()))
+        heads = list(map(source.lookup, opts.get('branch', ())))
         cleanupfn = None
 
     try:
@@ -690,7 +690,7 @@ def _dotransplant(ui, repo, *revs, **opts):
             matchfn = lambda x: tf(x) and x not in prune
         else:
             matchfn = tf
-        merges = map(source.lookup, opts.get('merge', ()))
+        merges = list(map(source.lookup, opts.get('merge', ())))
         revmap = {}
         if revs:
             for r in scmutil.revrange(source, revs):

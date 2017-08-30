@@ -1,4 +1,4 @@
-from __future__ import absolute_import, print_function
+
 
 """ Multicast DNS Service Discovery for Python, v0.12
     Copyright (C) 2003, Paul Scott-Murphy
@@ -854,7 +854,7 @@ class DNSCache(object):
     def entries(self):
         """Returns a list of all entries"""
         try:
-            return list(itertools.chain.from_iterable(self.cache.values()))
+            return list(itertools.chain.from_iterable(list(self.cache.values())))
         except Exception:
             return []
 
@@ -903,7 +903,7 @@ class Engine(threading.Thread):
 
     def getReaders(self):
         self.condition.acquire()
-        result = self.readers.keys()
+        result = list(self.readers.keys())
         self.condition.release()
         return result
 
@@ -1044,7 +1044,7 @@ class ServiceBrowser(threading.Thread):
             if self.nexttime <= now:
                 out = DNSOutgoing(_FLAGS_QR_QUERY)
                 out.addQuestion(DNSQuestion(self.type, _TYPE_PTR, _CLASS_IN))
-                for record in self.services.values():
+                for record in list(self.services.values()):
                     if not record.isExpired(now):
                         out.addAnswerAtTime(record, now)
                 self.zeroconf.send(out)
@@ -1467,7 +1467,7 @@ class Zeroconf(object):
                     now = currentTimeMillis()
                     continue
                 out = DNSOutgoing(_FLAGS_QR_RESPONSE | _FLAGS_AA)
-                for info in self.services.values():
+                for info in list(self.services.values()):
                     out.addAnswerAtTime(DNSPointer(info.type, _TYPE_PTR,
                         _CLASS_IN, 0, info.name), 0)
                     out.addAnswerAtTime(
@@ -1574,7 +1574,7 @@ class Zeroconf(object):
         for question in msg.questions:
             if question.type == _TYPE_PTR:
                 if question.name == "_services._dns-sd._udp.local.":
-                    for stype in self.servicetypes.keys():
+                    for stype in list(self.servicetypes.keys()):
                         if out is None:
                             out = DNSOutgoing(_FLAGS_QR_RESPONSE | _FLAGS_AA)
                         out.addAnswer(msg,
@@ -1582,7 +1582,7 @@ class Zeroconf(object):
                                           "_services._dns-sd._udp.local.",
                                            _TYPE_PTR, _CLASS_IN,
                                            _DNS_TTL, stype))
-                for service in self.services.values():
+                for service in list(self.services.values()):
                     if question.name == service.type:
                         if out is None:
                             out = DNSOutgoing(_FLAGS_QR_RESPONSE | _FLAGS_AA)
@@ -1595,7 +1595,7 @@ class Zeroconf(object):
 
                     # Answer A record queries for any service addresses we know
                     if question.type == _TYPE_A or question.type == _TYPE_ANY:
-                        for service in self.services.values():
+                        for service in list(self.services.values()):
                             if service.server == question.name.lower():
                                 out.addAnswer(msg,
                                     DNSAddress(question.name, _TYPE_A,

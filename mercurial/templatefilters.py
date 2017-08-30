@@ -5,7 +5,7 @@
 # This software may be used and distributed according to the terms of the
 # GNU General Public License version 2 or any later version.
 
-from __future__ import absolute_import
+
 
 import cgi
 import os
@@ -145,7 +145,7 @@ def fill(text, width, initindent='', hangindent=''):
         while True:
             m = para_re.search(text, start)
             if not m:
-                uctext = unicode(text[start:], encoding.encoding)
+                uctext = str(text[start:], encoding.encoding)
                 w = len(uctext)
                 while 0 < w and uctext[w - 1].isspace():
                     w -= 1
@@ -212,7 +212,7 @@ def indent(text, prefix):
     num_lines = len(lines)
     endswithnewline = text[-1:] == '\n'
     def indenter():
-        for i in xrange(num_lines):
+        for i in range(num_lines):
             l = lines[i]
             if i and l.strip():
                 yield prefix
@@ -229,14 +229,14 @@ def json(obj, paranoid=True):
         return 'false'
     elif obj is True:
         return 'true'
-    elif isinstance(obj, (int, long, float)):
+    elif isinstance(obj, (int, float)):
         return pycompat.bytestr(obj)
     elif isinstance(obj, bytes):
         return '"%s"' % encoding.jsonescape(obj, paranoid=paranoid)
     elif util.safehasattr(obj, 'keys'):
         out = ['"%s": %s' % (encoding.jsonescape(k, paranoid=paranoid),
                              json(v, paranoid))
-               for k, v in sorted(obj.iteritems())]
+               for k, v in sorted(obj.items())]
         return '{' + ', '.join(out) + '}'
     elif util.safehasattr(obj, '__iter__'):
         out = [json(i, paranoid) for i in obj]
@@ -259,7 +259,7 @@ def obfuscate(text):
     """Any text. Returns the input text rendered as a sequence of
     XML entities.
     """
-    text = unicode(text, encoding.encoding, 'replace')
+    text = str(text, encoding.encoding, 'replace')
     return ''.join(['&#%d;' % ord(c) for c in text])
 
 @templatefilter('permissions')
@@ -430,8 +430,8 @@ def websub(text, websubtable):
 def loadfilter(ui, extname, registrarobj):
     """Load template filter from specified registrarobj
     """
-    for name, func in registrarobj._table.iteritems():
+    for name, func in registrarobj._table.items():
         filters[name] = func
 
 # tell hggettext to extract docstrings from these functions:
-i18nfunctions = filters.values()
+i18nfunctions = list(filters.values())

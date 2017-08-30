@@ -36,7 +36,7 @@ A few obvious properties that are not currently handled realistically:
 - Symlinks and binary files are ignored
 '''
 
-from __future__ import absolute_import
+
 import bisect
 import collections
 import itertools
@@ -201,7 +201,7 @@ def analyze(ui, repo, *revs, **opts):
             for filename, mar, lineadd, lineremove, isbin in parsegitdiff(diff):
                 if isbin:
                     continue
-                added = sum(lineadd.itervalues(), 0)
+                added = sum(iter(lineadd.values()), 0)
                 if mar == 'm':
                     if added and lineremove:
                         lineschanged[roundto(added, 5),
@@ -216,7 +216,7 @@ def analyze(ui, repo, *revs, **opts):
                     linesinfilesadded[roundto(added, 5)] += 1
                 elif mar == 'r':
                     fileremoves += 1
-                for length, count in lineadd.iteritems():
+                for length, count in lineadd.items():
                     linelengths[length] += count
             fileschanged[filechanges] += 1
             filesadded[fileadds] += 1
@@ -225,14 +225,14 @@ def analyze(ui, repo, *revs, **opts):
 
     invchildren = zerodict()
 
-    for rev, count in children.iteritems():
+    for rev, count in children.items():
         invchildren[count] += 1
 
     if output != '-':
         ui.status(_('writing output to %s\n') % output)
 
     def pronk(d):
-        return sorted(d.iteritems(), key=lambda x: x[1], reverse=True)
+        return sorted(iter(d.items()), key=lambda x: x[1], reverse=True)
 
     json.dump({'revs': len(revs),
                'initdirs': pronk(dirs),
@@ -282,7 +282,7 @@ def synthesize(ui, repo, descpath, **opts):
     def cdf(l):
         if not l:
             return [], []
-        vals, probs = zip(*sorted(l, key=lambda x: x[1], reverse=True))
+        vals, probs = list(zip(*sorted(l, key=lambda x: x[1], reverse=True)))
         t = float(sum(probs, 0))
         s, cdfs = 0, []
         for v in probs:
@@ -362,7 +362,7 @@ def synthesize(ui, repo, descpath, **opts):
                 path = os.path.dirname(path)
             return True
 
-        for i in xrange(0, initcount):
+        for i in range(0, initcount):
             ui.progress(_synthesizing, i, unit=_files, total=initcount)
 
             path = pickpath()
@@ -381,7 +381,7 @@ def synthesize(ui, repo, descpath, **opts):
         ui.progress(_synthesizing, None)
         message = 'synthesized wide repo with %d files' % (len(files),)
         mc = context.memctx(repo, [pctx.node(), nullid], message,
-                            files.iterkeys(), filectxfn, ui.username(),
+                            iter(files.keys()), filectxfn, ui.username(),
                             '%d %d' % util.makedate())
         initnode = mc.commit()
         if ui.debugflag:
@@ -394,7 +394,7 @@ def synthesize(ui, repo, descpath, **opts):
     # Synthesize incremental revisions to the repository, adding repo depth.
     count = int(opts['count'])
     heads = set(map(repo.changelog.rev, repo.heads()))
-    for i in xrange(count):
+    for i in range(count):
         progress(_synthesizing, i, unit=_changesets, total=count)
 
         node = repo.changelog.node
@@ -425,11 +425,11 @@ def synthesize(ui, repo, descpath, **opts):
         pl = [p1, p2]
         pctx = repo[r1]
         mf = pctx.manifest()
-        mfk = mf.keys()
+        mfk = list(mf.keys())
         changes = {}
         if mfk:
-            for __ in xrange(pick(fileschanged)):
-                for __ in xrange(10):
+            for __ in range(pick(fileschanged)):
+                for __ in range(10):
                     fctx = pctx.filectx(random.choice(mfk))
                     path = fctx.path()
                     if not (path in nevertouch or fctx.isbinary() or
@@ -437,18 +437,18 @@ def synthesize(ui, repo, descpath, **opts):
                         break
                 lines = fctx.data().splitlines()
                 add, remove = pick(lineschanged)
-                for __ in xrange(remove):
+                for __ in range(remove):
                     if not lines:
                         break
                     del lines[random.randrange(0, len(lines))]
-                for __ in xrange(add):
+                for __ in range(add):
                     lines.insert(random.randint(0, len(lines)), makeline())
                 path = fctx.path()
                 changes[path] = context.memfilectx(repo, path,
                                                    '\n'.join(lines) + '\n')
-            for __ in xrange(pick(filesremoved)):
+            for __ in range(pick(filesremoved)):
                 path = random.choice(mfk)
-                for __ in xrange(10):
+                for __ in range(10):
                     path = random.choice(mfk)
                     if path not in changes:
                         changes[path] = None
@@ -456,16 +456,16 @@ def synthesize(ui, repo, descpath, **opts):
         if filesadded:
             dirs = list(pctx.dirs())
             dirs.insert(0, '')
-        for __ in xrange(pick(filesadded)):
+        for __ in range(pick(filesadded)):
             pathstr = ''
             while pathstr in dirs:
                 path = [random.choice(dirs)]
                 if pick(dirsadded):
                     path.append(random.choice(words))
                 path.append(random.choice(words))
-                pathstr = '/'.join(filter(None, path))
+                pathstr = '/'.join([_f for _f in path if _f])
             data = '\n'.join(makeline()
-                             for __ in xrange(pick(linesinfilesadded))) + '\n'
+                             for __ in range(pick(linesinfilesadded))) + '\n'
             changes[pathstr] = context.memfilectx(repo, pathstr, data)
         def filectxfn(repo, memctx, path):
             return changes[path]
@@ -479,7 +479,7 @@ def synthesize(ui, repo, descpath, **opts):
         date = min(0x7fffffff, max(0, date))
         user = random.choice(words) + '@' + random.choice(words)
         mc = context.memctx(repo, pl, makeline(minimum=2),
-                            sorted(changes.iterkeys()),
+                            sorted(changes.keys()),
                             filectxfn, user, '%d %d' % (date, pick(tzoffset)))
         newnode = mc.commit()
         heads.add(repo.changelog.rev(newnode))
@@ -511,6 +511,6 @@ def renamedirs(dirs, words):
         replacements[dirpath] = renamed
         return renamed
     result = []
-    for dirpath, count in dirs.iteritems():
+    for dirpath, count in dirs.items():
         result.append([rename(dirpath.lstrip(os.sep)), count])
     return result

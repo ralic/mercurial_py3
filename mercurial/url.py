@@ -7,7 +7,7 @@
 # This software may be used and distributed according to the terms of the
 # GNU General Public License version 2 or any later version.
 
-from __future__ import absolute_import
+
 
 import base64
 import os
@@ -184,7 +184,7 @@ def _generic_proxytunnel(self):
             [(x, self.headers[x]) for x in self.headers
              if x.lower().startswith('proxy-')])
     self.send('CONNECT %s HTTP/1.0\r\n' % self.realhostport)
-    for header in proxyheaders.iteritems():
+    for header in proxyheaders.items():
         self.send('%s: %s\r\n' % header)
     self.send('\r\n')
 

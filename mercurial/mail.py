@@ -5,7 +5,7 @@
 # This software may be used and distributed according to the terms of the
 # GNU General Public License version 2 or any later version.
 
-from __future__ import absolute_import
+
 
 import email
 import email.charset
@@ -126,7 +126,7 @@ def _smtp(ui):
         try:
             return s.sendmail(sender, recipients, msg)
         except smtplib.SMTPRecipientsRefused as inst:
-            recipients = [r[1] for r in inst.recipients.values()]
+            recipients = [r[1] for r in list(inst.recipients.values())]
             raise error.Abort('\n' + '\n'.join(recipients))
         except smtplib.SMTPException as inst:
             raise error.Abort(inst)
@@ -333,4 +333,4 @@ def headdecode(s):
         except UnicodeDecodeError:
             pass
         uparts.append(part.decode('ISO-8859-1'))
-    return encoding.unitolocal(u' '.join(uparts))
+    return encoding.unitolocal(' '.join(uparts))

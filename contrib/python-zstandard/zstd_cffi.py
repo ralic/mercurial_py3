@@ -6,7 +6,7 @@
 
 """Python interface to the Zstandard (zstd) compression library."""
 
-from __future__ import absolute_import, unicode_literals
+
 
 import os
 import sys
@@ -18,7 +18,7 @@ from _zstd_cffi import (
 
 if sys.version_info[0] == 2:
     bytes_type = str
-    int_type = long
+    int_type = int
 else:
     bytes_type = bytes
     int_type = int
@@ -75,7 +75,7 @@ def _cpu_count():
         if sys.version_info[0] == 2:
             return os.sysconf(b'SC_NPROCESSORS_ONLN')
         else:
-            return os.sysconf(u'SC_NPROCESSORS_ONLN')
+            return os.sysconf('SC_NPROCESSORS_ONLN')
     except (AttributeError, ValueError):
         pass
 

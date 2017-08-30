@@ -15,8 +15,8 @@ You probably want to run it like this:
   $ python3 ../contrib/python3-ratchet.py \
   >   --working-tests=../contrib/python3-whitelist
 """
-from __future__ import print_function
-from __future__ import absolute_import
+
+
 
 import argparse
 import json
@@ -90,7 +90,7 @@ def main(argv=()):
         data = f.read()
     report = json.loads(data.split('=', 1)[1])
     newpass = set()
-    for test, result in report.items():
+    for test, result in list(report.items()):
         if result['result'] != 'success':
             continue
         # A new passing test! Huzzah!

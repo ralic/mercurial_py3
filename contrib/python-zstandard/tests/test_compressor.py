@@ -19,7 +19,7 @@ from .common import (
 if sys.version_info[0] >= 3:
     next = lambda it: it.__next__()
 else:
-    next = lambda it: it.next()
+    next = lambda it: it.__next__()
 
 
 def multithreaded_chunk_size(level, source_size=0):
@@ -50,12 +50,12 @@ class TestCompressor_compress(unittest.TestCase):
 
         cctx = zstd.ZstdCompressor(dict_data=d, threads=2)
 
-        with self.assertRaisesRegexp(zstd.ZstdError, 'compress\(\) cannot be used with both dictionaries and multi-threaded compression'):
+        with self.assertRaisesRegex(zstd.ZstdError, 'compress\(\) cannot be used with both dictionaries and multi-threaded compression'):
             cctx.compress(b'foo')
 
         params = zstd.get_compression_parameters(3)
         cctx = zstd.ZstdCompressor(compression_params=params, threads=2)
-        with self.assertRaisesRegexp(zstd.ZstdError, 'compress\(\) cannot be used with both compression parameters and multi-threaded compression'):
+        with self.assertRaisesRegex(zstd.ZstdError, 'compress\(\) cannot be used with both compression parameters and multi-threaded compression'):
             cctx.compress(b'foo')
 
     def test_compress_empty(self):
@@ -244,10 +244,10 @@ class TestCompressor_compressobj(unittest.TestCase):
         cobj.compress(b'foo')
         cobj.flush()
 
-        with self.assertRaisesRegexp(zstd.ZstdError, 'cannot call compress\(\) after compressor'):
+        with self.assertRaisesRegex(zstd.ZstdError, 'cannot call compress\(\) after compressor'):
             cobj.compress(b'foo')
 
-        with self.assertRaisesRegexp(zstd.ZstdError, 'compressor object already finished'):
+        with self.assertRaisesRegex(zstd.ZstdError, 'compressor object already finished'):
             cobj.flush()
 
     def test_flush_block_repeated(self):
@@ -701,7 +701,7 @@ class TestCompressor_read_from(unittest.TestCase):
         for chunk in cctx.read_from(b'foobar'):
             pass
 
-        with self.assertRaisesRegexp(ValueError, 'must pass an object with a read'):
+        with self.assertRaisesRegex(ValueError, 'must pass an object with a read'):
             for chunk in cctx.read_from(True):
                 pass
 
@@ -794,7 +794,7 @@ class TestCompressor_multi_compress_to_buffer(unittest.TestCase):
     def test_multithreaded_unsupported(self):
         cctx = zstd.ZstdCompressor(threads=2)
 
-        with self.assertRaisesRegexp(zstd.ZstdError, 'function cannot be called on ZstdCompressor configured for multi-threaded compression'):
+        with self.assertRaisesRegex(zstd.ZstdError, 'function cannot be called on ZstdCompressor configured for multi-threaded compression'):
             cctx.multi_compress_to_buffer([b'foo'])
 
     def test_invalid_inputs(self):
@@ -806,16 +806,16 @@ class TestCompressor_multi_compress_to_buffer(unittest.TestCase):
         with self.assertRaises(TypeError):
             cctx.multi_compress_to_buffer((1, 2))
 
-        with self.assertRaisesRegexp(TypeError, 'item 0 not a bytes like object'):
-            cctx.multi_compress_to_buffer([u'foo'])
+        with self.assertRaisesRegex(TypeError, 'item 0 not a bytes like object'):
+            cctx.multi_compress_to_buffer(['foo'])
 
     def test_empty_input(self):
         cctx = zstd.ZstdCompressor()
 
-        with self.assertRaisesRegexp(ValueError, 'no source elements found'):
+        with self.assertRaisesRegex(ValueError, 'no source elements found'):
             cctx.multi_compress_to_buffer([])
 
-        with self.assertRaisesRegexp(ValueError, 'source elements are empty'):
+        with self.assertRaisesRegex(ValueError, 'source elements are empty'):
             cctx.multi_compress_to_buffer([b'', b'', b''])
 
     def test_list_input(self):

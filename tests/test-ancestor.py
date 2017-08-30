@@ -1,4 +1,4 @@
-from __future__ import absolute_import, print_function
+
 
 import binascii
 import getopt
@@ -31,7 +31,7 @@ def buildgraph(rng, nodes=100, rootprob=0.05, mergeprob=0.2, prevprob=0.7):
     return value is a graph represented as an adjacency list.
     '''
     graph = [None] * nodes
-    for i in xrange(nodes):
+    for i in range(nodes):
         if i == 0 or rng.random() < rootprob:
             graph[i] = [nullrev]
         elif i == 1:
@@ -53,7 +53,7 @@ def buildgraph(rng, nodes=100, rootprob=0.05, mergeprob=0.2, prevprob=0.7):
 
 def buildancestorsets(graph):
     ancs = [None] * len(graph)
-    for i in xrange(len(graph)):
+    for i in range(len(graph)):
         ancs[i] = {i}
         if graph[i] == [nullrev]:
             continue
@@ -109,13 +109,13 @@ def test_missingancestors(seed, rng):
         nerrs[0] += 1
         gerrs[0] += 1
 
-    for g in xrange(graphcount):
+    for g in range(graphcount):
         graph = buildgraph(rng)
         ancs = buildancestorsets(graph)
         gerrs = [0]
-        for _ in xrange(testcount):
+        for _ in range(testcount):
             # start from nullrev to include it as a possibility
-            graphnodes = range(nullrev, len(graph))
+            graphnodes = list(range(nullrev, len(graph)))
             bases = samplerevs(graphnodes)
 
             # fast algorithm
@@ -124,7 +124,7 @@ def test_missingancestors(seed, rng):
             naiveinc = naiveincrementalmissingancestors(ancs, bases)
             seq = []
             revs = []
-            for _ in xrange(inccount):
+            for _ in range(inccount):
                 if rng.random() < 0.2:
                     newbases = samplerevs(graphnodes)
                     seq.append(('addbases', newbases))
@@ -258,13 +258,13 @@ def main():
     opts, args = getopt.getopt(sys.argv[1:], 's:', ['seed='])
     for o, a in opts:
         if o in ('-s', '--seed'):
-            seed = long(a, base=0) # accepts base 10 or 16 strings
+            seed = int(a, base=0) # accepts base 10 or 16 strings
 
     if seed is None:
         try:
-            seed = long(binascii.hexlify(os.urandom(16)), 16)
+            seed = int(binascii.hexlify(os.urandom(16)), 16)
         except AttributeError:
-            seed = long(time.time() * 1000)
+            seed = int(time.time() * 1000)
 
     rng = random.Random(seed)
     test_missingancestors(seed, rng)

@@ -7,7 +7,7 @@
 # GNU General Public License version 2 or any later version.
 
 '''setup for largefiles extension: uisetup'''
-from __future__ import absolute_import
+
 
 from mercurial.i18n import _
 

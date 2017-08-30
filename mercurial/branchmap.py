@@ -5,7 +5,7 @@
 # This software may be used and distributed according to the terms of the
 # GNU General Public License version 2 or any later version.
 
-from __future__ import absolute_import
+
 
 import struct
 
@@ -120,7 +120,7 @@ def replacecache(repo, bm):
     """
     rbheads = []
     closed = []
-    for bheads in bm.itervalues():
+    for bheads in bm.values():
         rbheads.extend(bheads)
         for h in bheads:
             r = repo.changelog.rev(h)
@@ -218,7 +218,7 @@ class branchcache(dict):
         return heads
 
     def iterbranches(self):
-        for bn, heads in self.iteritems():
+        for bn, heads in self.items():
             yield (bn, heads) + self._branchtip(heads)
 
     def copy(self):
@@ -234,7 +234,7 @@ class branchcache(dict):
                 cachekey.append(hex(self.filteredhash))
             f.write(" ".join(cachekey) + '\n')
             nodecount = 0
-            for label, nodes in sorted(self.iteritems()):
+            for label, nodes in sorted(self.items()):
                 for node in nodes:
                     nodecount += 1
                     if node in self._closednodes:
@@ -274,7 +274,7 @@ class branchcache(dict):
         # if older branchheads are reachable from new ones, they aren't
         # really branchheads. Note checking parents is insufficient:
         # 1 (branch a) -> 2 (branch b) -> 3 (branch a)
-        for branch, newheadrevs in newbranches.iteritems():
+        for branch, newheadrevs in newbranches.items():
             bheads = self.setdefault(branch, [])
             bheadset = set(cl.rev(node) for node in bheads)
 
@@ -303,7 +303,7 @@ class branchcache(dict):
             # cache key are not valid anymore
             self.tipnode = nullid
             self.tiprev = nullrev
-            for heads in self.values():
+            for heads in list(self.values()):
                 tiprev = max(cl.rev(node) for node in heads)
                 if tiprev > self.tiprev:
                     self.tipnode = cl.node(tiprev)
