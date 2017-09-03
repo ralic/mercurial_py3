@@ -1,4 +1,3 @@
-#
 # This is the mercurial setup script.
 #
 # 'python setup.py install', or
@@ -6,24 +5,24 @@
 
 import os
 
-supportedpy = '~= 2.7'
-if os.environ.get('HGALLOWPYTHON3', ''):
-    # Mercurial will never work on Python 3 before 3.5 due to a lack
-    # of % formatting on bytestrings, and can't work on 3.6.0 or 3.6.1
-    # due to a bug in % formatting in bytestrings.
-    #
-    # TODO: when we actually work on Python 3, use this string as the
-    # actual supportedpy string.
-    supportedpy = ','.join([
-        '>=2.7',
-        '!=3.0.*',
-        '!=3.1.*',
-        '!=3.2.*',
-        '!=3.3.*',
-        '!=3.4.*',
-        '!=3.6.0',
-        '!=3.6.1',
-    ])
+# supportedpy = '~= 2.7'
+# if os.environ.get('HGALLOWPYTHON3', ''):
+#     # Mercurial will never work on Python 3 before 3.5 due to a lack
+#     # of % formatting on bytestrings, and can't work on 3.6.0 or 3.6.1
+#     # due to a bug in % formatting in bytestrings.
+#     #
+#     # TODO: when we actually work on Python 3, use this string as the
+#     # actual supportedpy string.
+#     supportedpy = ','.join([
+#         '>=2.7',
+#         '!=3.0.*',
+#         '!=3.1.*',
+#         '!=3.2.*',
+#         '!=3.3.*',
+#         '!=3.4.*',
+#         '!=3.6.0',
+#         '!=3.6.1',
+#     ])
 
 import sys, platform
 if sys.version_info[0] >= 3:
@@ -36,32 +35,32 @@ else:
         end = kwargs.get('end', '\n')
         f.write(b' '.join(args) + end)
 
-# Attempt to guide users to a modern pip - this means that 2.6 users
-# should have a chance of getting a 4.2 release, and when we ratchet
-# the version requirement forward again hopefully everyone will get
-# something that works for them.
-if sys.version_info < (2, 7, 0, 'final'):
-    pip_message = ('This may be due to an out of date pip. '
-                   'Make sure you have pip >= 9.0.1.')
-    try:
-        import pip
-        pip_version = tuple([int(x) for x in pip.__version__.split('.')[:3]])
-        if pip_version < (9, 0, 1) :
-            pip_message = (
-                'Your pip version is out of date, please install '
-                'pip >= 9.0.1. pip {} detected.'.format(pip.__version__))
-        else:
-            # pip is new enough - it must be something else
-            pip_message = ''
-    except Exception:
-        pass
-    error = """
-Mercurial does not support Python older than 2.7.
-Python {py} detected.
-{pip}
-""".format(py=sys.version_info, pip=pip_message)
-    printf(error, file=sys.stderr)
-    sys.exit(1)
+# # Attempt to guide users to a modern pip - this means that 2.6 users
+# # should have a chance of getting a 4.2 release, and when we ratchet
+# # the version requirement forward again hopefully everyone will get
+# # something that works for them.
+# if sys.version_info < (2, 7, 0, 'final'):
+#     pip_message = ('This may be due to an out of date pip. '
+#                    'Make sure you have pip >= 9.0.1.')
+#     try:
+#         import pip
+#         pip_version = tuple([int(x) for x in pip.__version__.split('.')[:3]])
+#         if pip_version < (9, 0, 1) :
+#             pip_message = (
+#                 'Your pip version is out of date, please install '
+#                 'pip >= 9.0.1. pip {} detected.'.format(pip.__version__))
+#         else:
+#             # pip is new enough - it must be something else
+#             pip_message = ''
+#     except Exception:
+#         pass
+#     error = """
+# Mercurial does not support Python older than 2.7.
+# Python {py} detected.
+# {pip}
+# """.format(py=sys.version_info, pip=pip_message)
+#     printf(error, file=sys.stderr)
+#     sys.exit(1)
 
 # Solaris Python packaging brain damage
 try:
@@ -204,8 +203,8 @@ class hgcommand(object):
         returncode, out, err = runcmd(cmd, self.env)
         err = filterhgerr(err)
         if err or returncode != 0:
-            printf("stderr from '%s':" % (' '.join(cmd)), file=sys.stderr)
-            printf(err, file=sys.stderr)
+            print("stderr from '%s':" % (' '.join(cmd)), file=sys.stderr)
+            print(err, file=sys.stderr)
             return ''
         return out
 
