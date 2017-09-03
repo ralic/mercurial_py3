@@ -1,4 +1,4 @@
-#!/usr/local/opt/python/bin/python2.7
+#!/usr/local/opt/python3/bin/python3.6
 #
 # mercurial - scalable distributed SCM
 #
@@ -17,7 +17,7 @@ if os.environ.get('HGUNICODEPEDANTRY', False):
     except NameError:
         pass
 
-libdir = '../lib/python2.7/site-packages/'
+libdir = '/usr/local/lib/python3.6/site-packages'
 
 if libdir != '@' 'LIBDIR' '@':
     if not os.path.isabs(libdir):
