@@ -23,7 +23,7 @@ install:
   # - travis_retry git fetch --unshallow
 
 script: 
-  - python helpTest.py | grep Speech-Hacker
+  - python helpTest.py | grep mercurial
 
 after_success:
   - echo "OK, all done."
