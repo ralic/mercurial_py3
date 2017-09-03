@@ -20,7 +20,7 @@ before_install:
 
 install:
   # git describe requires complete history
-  - travis_retry git fetch --unshallow
+  # - travis_retry git fetch --unshallow
 
 script: 
   - python helpTest.py | grep Speech-Hacker
