@@ -1,4 +1,4 @@
-#!/usr/local/opt/python3/bin/python3.6
+#!/usr/local/bin/python3
 #
 # mercurial - scalable distributed SCM
 #
@@ -9,11 +9,10 @@
 
 import os
 import sys
-import imp
 
 if os.environ.get('HGUNICODEPEDANTRY', False):
     try:
-        imp.reload(sys)
+        reload(sys)
         sys.setdefaultencoding("undefined")
     except NameError:
         pass
